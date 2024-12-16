@@ -5,6 +5,7 @@ import { User } from "../models/user.js";
 import { Company } from "../models/Company.js";
 import { Interview } from "../models/Experience.js";
 import jwt from "jsonwebtoken";
+import axios from 'axios';
 import nodemailer from "nodemailer";
 
 
@@ -285,16 +286,52 @@ router.post("/add-interview", async (req, res) => {
   }
 });
 
-//API to fetch the interview experiences on the feed
-router.get("/fetchinterviewexperience", async (req, res) => {
-  try {
-    const interviews = await Interview.find({});
-    return res.json({ data: interviews });
-  } catch (error) {
-    console.error("Error fetching interview experiences:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+// 
+
+// In server-side/routes/user.js
+  router.get("/remote-jobs", async (req, res) => {
+    try {
+      const response = await axios.get('https://serpapi.com/search?engine=google_jobs', {
+        params: {
+          engine: 'google_jobs',
+          q: 'freshers entry level software engineer btech computer science',
+          location: 'India',
+          api_key: process.env.SERP_API_KEY,
+          chips: 'date_posted:week,experience_level:ENTRY_LEVEL',
+          hl: 'en',    // Number of results
+        }
+      });
+  
+      // Add keywords to filter more specifically for fresher roles
+      const fresherKeywords = [
+        'fresher',
+        'entry level',
+        'entry-level',
+        'graduate',
+        'new grad',
+        'trainee',
+        '0-1 year',
+        '0-2 years',
+        'btech',
+        'b.tech',
+        'computer science',
+      ];
+  
+      const jobs = response.data?.jobs_results || [];
+      
+      // Filter jobs specifically for freshers/entry-level
+      const filteredJobs = jobs.filter(job => {
+        const jobText = `${job.title} ${job.description}`.toLowerCase();
+        return fresherKeywords.some(keyword => jobText.includes(keyword.toLowerCase()));
+      }).slice(0, 30);
+  
+      res.json({ jobs: filteredJobs });
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      res.status(500).json({ message: 'Failed to fetch jobs' });
+    }
+  });
+
 
 router.get('/placementStatus/:userId', async (req, res) => {
   try {

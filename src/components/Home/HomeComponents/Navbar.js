@@ -26,6 +26,9 @@ const Navbar = () => {
               <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/companylisting">Company Listing</Link>
                 </li>
+              <li className="nav-item">
+                <Link className="nav-link mx-lg-2" to="/offcampus-jobs" >Off-Campus Jobs</Link>
+              </li>
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/scheduledInterview">Scheduled Interviews</Link>
                 </li>

@@ -16,6 +16,7 @@ import CompanyListing from "./components/Home/CompanyPages/CompanyListing.js";
 import Faqspage from "./components/Home/FAQs/FaqPage.js";
 import InterviewExperience from "./components/Home/InterviewExperiencePage/InterviewExperience.js";
 import AddExperience from "./components/Home/InterviewExperiencePage/AddExperience.js";
+import OffCampusJobs from './components/Home/CompanyPages/OffCampusJobs.js';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/admindashboard" element={<AdminDashboard />} />
         <Route path="/add-companies" element={<AddCompanies />} />
         <Route path="/companies" element={<Companycrud />} />
+        <Route path="/offcampus-jobs" element={<OffCampusJobs />} />
         <Route path="/forgotpassword" element={<ForgetPassword />} />
         <Route path="/resetPassword/:token" element={<ResetPassword />} />
         <Route path="/updatecompany/:id" element={<UpdateCompany />} />
