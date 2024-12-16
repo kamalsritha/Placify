@@ -54,15 +54,9 @@ function OffCampusJobs() {
       <Navbar />
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="container-fluid" style={{ marginTop: "100px", padding: "0 50px" }}>
-        <h1 style={{
-          color: "navy",
-          fontSize: "3rem",
-          textAlign: "center",
-          marginBottom: "20px"
-        }}>Entry Level Tech Jobs for BTech Graduates</h1>
         
         <div className="text-center mb-4" style={{ color: "#666" }}>
-          Recent job openings for Computer Science freshers
+          Recent job openings for students
         </div>
 
         {loading && (
