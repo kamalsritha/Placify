@@ -21,10 +21,10 @@ function AddCompanies() {
   const [jobdescription, setJobDescription] = useState("");
   const [website, setWebsite] = useState("");
   const [ctc, setCtc] = useState("");
+  const [doa,setDoa]=useState("");
   const [doi, setDoi] = useState("");
   const [tenthPercentage, setTenthPercentage] = useState("");
   const [twelfthPercentage, setTwelfthPercentage] = useState("");
-  const [sixthSemesterCGPA, setSixthSemesterCGPA] = useState("");
   const [graduationCGPA, setGraduationCGPA] = useState("");
   const [branches, setBranches] = useState([]);
 
@@ -48,6 +48,7 @@ function AddCompanies() {
       !jobprofile ||
       !jobdescription ||
       !website ||
+      !doa ||
       !doi ||
       !tenthPercentage ||
       !ctc ||
@@ -63,12 +64,12 @@ function AddCompanies() {
       jobdescription,
       website,
       ctc,
+      doa,
       doi,
       eligibilityCriteria: branches,
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
-      sixthSemesterCGPA,
     };
 
     axios
@@ -163,6 +164,15 @@ function AddCompanies() {
                 />
               </div>
               <div className="form-group">
+                <label htmlFor="examdate">Assessment Date</label>
+                <input
+                  type="date"
+                  id="assessment"
+                  className="form-control"
+                  onChange={(e) => setDoa(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
                 <label htmlFor="interviewdate">Interview Date</label>
                 <input
                   type="date"
@@ -177,47 +187,47 @@ function AddCompanies() {
             <td>
               <h4 className="mb-3">Eligibility Criteria</h4>
               <div className="form-group">
-                <label htmlFor="MCA">
+                <label htmlFor="Btech-CSIT">
                   <input
                     type="checkbox"
-                    id="MCA"
-                    value="MCA"
+                    id="Btech-CSIT"
+                    value="Btech-CSIT"
                     onChange={handleBranchChange}
                   />
-                  MCA
+                  Btech-CSIT
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="BTECH-IT">
+                <label htmlFor="Btech-IT">
                   <input
                     type="checkbox"
-                    id="BTECH-IT"
-                    value="BTECH-IT"
+                    id="Btech-IT"
+                    value="Btech-IT"
                     onChange={handleBranchChange}
                   />
                   Btech-IT
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="BTECH-CS">
+                <label htmlFor="Btech-CSE">
                   <input
                     type="checkbox"
-                    id="BTECH-CS"
-                    value="BTECH-CS"
+                    id="Btech-CSE"
+                    value="Btech-CSE"
                     onChange={handleBranchChange}
                   />
-                  Btech-CS
+                  Btech-CSE
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="BTECH-CYBERSECURITY">
+                <label htmlFor="Btech-Cybersecurity">
                   <input
                     type="checkbox"
-                    id="BTECH-CYBERSECURITY"
-                    value="BTECH-CYBERSECURITY"
+                    id="Btech-Cybersecurity"
+                    value="Btech-Cybersecurity"
                     onChange={handleBranchChange}
                   />
-                  Btech-Cybersecurity
+                  Btech-CS
                 </label>
               </div>
               <div className="form-group">
@@ -232,25 +242,58 @@ function AddCompanies() {
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="BTECH-INTEGRATED">
+                <label htmlFor="Btech-AIML">
                   <input
                     type="checkbox"
-                    id="BTECH-INTEGRATED"
-                    value="BTECH-INTEGRATED"
+                    id="Btech-AIML"
+                    value="Btech-AIML"
                     onChange={handleBranchChange}
                   />
-                  Btech-Integrated
+                  Btech-AIML
                 </label>
               </div>
               <div className="form-group">
-                <label htmlFor="BTECH-MECHATRONICS">
+                <label htmlFor="Btech-Mechanical">
                   <input
                     type="checkbox"
-                    id="BTECH-MECHATRONICS"
-                    value="BTECH-MECHATRONICS"
+                    id="Btech-Mechanical"
+                    value="Btech-Mechanical"
                     onChange={handleBranchChange}
                   />
-                  Btech-Mechatronics
+                  Btech-Mechanical
+                </label>
+              </div>
+              <div className="form-group">
+                <label htmlFor="Btech-ECE">
+                  <input
+                    type="checkbox"
+                    id="Btech-ECE"
+                    value="Btech-ECE"
+                    onChange={handleBranchChange}
+                  />
+                  Btech-ECE
+                </label>
+              </div>
+              <div className="form-group">
+                <label htmlFor="Btech-EEE">
+                  <input
+                    type="checkbox"
+                    id="Btech-EEE"
+                    value="Btech-EEE"
+                    onChange={handleBranchChange}
+                  />
+                 Btech-EEE
+                </label>
+              </div>
+              <div className="form-group">
+                <label htmlFor="BTech-Civil">
+                  <input
+                    type="checkbox"
+                    id="BTech-Civil"
+                    value="BTech-Civil"
+                    onChange={handleBranchChange}
+                  />
+                 BTech-Civil
                 </label>
               </div>
             
@@ -285,17 +328,6 @@ function AddCompanies() {
                   placeholder="Graduation CGPA"
                   step="0.01"
                   onChange={(e) => setGraduationCGPA(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="sixthSemesterCGPA">6th Semester CGPA</label>
-                <input
-                  type="number"
-                  id="sixthSemesterCGPA"
-                  className="form-control"
-                  placeholder="6th Semester CGPA"
-                  step="0.01"
-                  onChange={(e) => setSixthSemesterCGPA(e.target.value)}
                 />
               </div>
             </td>

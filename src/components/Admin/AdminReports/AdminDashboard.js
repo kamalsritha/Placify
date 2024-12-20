@@ -20,6 +20,7 @@ function AdminDashboard() {
   }, []);
   const [users, setUsers] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState("");
+  const [list,setList]=useState([]);
   const [originalUsers, setOriginalUsers] = useState([]);
   const [filters, setFilters] = useState({
     tenthPercentage: "",
@@ -34,6 +35,14 @@ function AdminDashboard() {
       .then((response) => {
         setUsers(response.data.data);
         setOriginalUsers(response.data.data);
+
+        const studentList = response.data.data.map((user) => ({
+          name: user.name,
+          rollNo: user.rollNo,
+          gender: user.gender,
+          stream: user.stream,
+        }));
+        setList(studentList);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -41,7 +50,7 @@ function AdminDashboard() {
   }, []);
 
   const handleDownload = () => {
-    const worksheet = XLSX.utils.json_to_sheet(users);
+    const worksheet = XLSX.utils.json_to_sheet(list);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
     XLSX.writeFile(workbook, "users_data.xlsx");
@@ -192,18 +201,12 @@ function AdminDashboard() {
               <th>Name</th>
               <th>Email</th>
               <th>Contact Number</th>
-              <th>SAP ID</th>
               <th>Roll No</th>
-
               <th>Date of Birth</th>
               <th>10th Percentage</th>
-              <th>10th School</th>
               <th>12th Percentage</th>
-              <th>12th College</th>
-              <th>Graduation College</th>
               <th>Graduation CGPA</th>
               <th>Stream</th>
-              <th>6th Semester CGPA</th>
               <th>Placement Status</th>
               <th>Company Placed</th>
             </tr>
@@ -214,18 +217,12 @@ function AdminDashboard() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.contactNumber}</td>
-                <td>{user.sapId}</td>
                 <td>{user.rollNo}</td>
-
                 <td>{user.dob}</td>
                 <td>{user.tenthPercentage}</td>
-                <td>{user.tenthSchool}</td>
                 <td>{user.twelfthPercentage}</td>
-                <td>{user.twelfthCollege}</td>
-                <td>{user.graduationCollege}</td>
                 <td>{user.graduationCGPA}</td>
                 <td>{user.stream}</td>
-                <td>{user.sixthSemesterCGPA}</td>
                 <td>{user.placementStatus}</td>
                 <td>{user.companyPlaced}</td>
               </tr>

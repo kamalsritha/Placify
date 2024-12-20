@@ -26,15 +26,14 @@ function UpdateCompany() {
   const [jobprofile, setJobProfile] = useState(company.jobprofile);
   const [ctc, setCtc] = useState(company.ctc);
   const [doi, setDoi] = useState(company.doi);
+  const [doa, setDoa] = useState(company.doa);
   const [tenthPercentage, setTenthPercentage] = useState(
     company.tenthPercentage
   );
   const [twelfthPercentage, setTwelfthPercentage] = useState(
     company.twelfthPercentage
   );
-  const [sixthSemesterCGPA, setSixthSemesterCGPA] = useState(
-    company.graduationCGPA
-  );
+
   const [graduationCGPA, setGraduationCGPA] = useState(
     company.sixthSemesterCGPA
   );
@@ -48,11 +47,11 @@ function UpdateCompany() {
       companyname,
       jobprofile,
       ctc,
+      doa,
       doi,
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
-      sixthSemesterCGPA,
     };
 
     axios
@@ -64,11 +63,11 @@ function UpdateCompany() {
             companyname,
             jobprofile,
             ctc,
+            doa,
             doi,
             tenthPercentage,
             twelfthPercentage,
-            graduationCGPA,
-            sixthSemesterCGPA,
+            graduationCGPA
           })
         );
 
@@ -144,6 +143,16 @@ function UpdateCompany() {
                     />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="examdate">Assessment Date</label>
+                    <input
+                      type="date"
+                      id="assessment"
+                      value={doa}
+                      className="form-control"
+                      onChange={(e) => setDoa(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="interviewdate">Interview Date</label>
                     <input
                       type="date"
@@ -191,19 +200,6 @@ function UpdateCompany() {
                       step="0.01"
                       value={graduationCGPA}
                       onChange={(e) => setGraduationCGPA(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="sixthSemesterCGPA">6th Semester CGPA</label>
-                    <input
-                      type="number"
-                      id="sixthSemesterCGPA"
-                      className="form-control"
-                      value={sixthSemesterCGPA}
-                      placeholder="6th Semester CGPA"
-                      step="0.01"
-                      onChange={(e) => setSixthSemesterCGPA(e.target.value)}
                     />
                   </div>
 

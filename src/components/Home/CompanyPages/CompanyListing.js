@@ -39,8 +39,8 @@ function CompanyListing() {
         const response = await axios.get(
           "http://localhost:3001/auth/getCompanies"
         );
+        console.log(response.data.doi);
         dispatch(getCompanies(response.data));
-        console.log(response);
       } catch (err) {
         console.log(err);
       }
@@ -103,6 +103,15 @@ function CompanyListing() {
             }}
           >
             CTC: {company.ctc} LPA
+          </p>
+          <p
+            style={{
+              fontSize: "1rem",
+              color: "#666",
+              marginBottom: "10px",
+            }}
+          >
+            Assessment Date: {company.doa}
           </p>
           <p
             style={{

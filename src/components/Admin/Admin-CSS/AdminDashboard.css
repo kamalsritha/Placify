@@ -58,15 +58,16 @@
 .button-spacing {
   margin-right: 10px;
 }
+
 .filter-button:hover {
   background-color: #5C6B9C;
 }
 
 .user-table {
-  width: 9%;
+  width: 90%; /* Adjusted width for better alignment */
+  margin: 20px auto; /* Centers the table horizontally */
   border-collapse: collapse;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
   animation: fadeInTable 1s ease-in-out forwards;
 }
 

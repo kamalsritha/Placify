@@ -10,16 +10,11 @@ function Registration() {
   const [password, setPassword] = useState("");
   const [repass, setRpass] = useState("");
   const [contactNumber, setContactNumber] = useState("");
-  const [sapId, setSapId] = useState("");
   const [rollNo, setRollNo] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
   const [tenthPercentage, setTenthPercentage] = useState("");
-  const [tenthSchool, setTenthSchool] = useState("");
   const [twelfthPercentage, setTwelfthPercentage] = useState("");
-  const [twelfthCollege, setTwelfthCollege] = useState("");
-  const [graduationCollege, setGraduationCollege] = useState("");
-  const [sixthSemesterCGPA, setSixthSemesterCGPA] = useState("");
   const [graduationCGPA, setGraduationCGPA] = useState("");
   const [stream, setStream] = useState("");
   const navigate = useNavigate();
@@ -50,18 +45,13 @@ function Registration() {
       !password ||
       !repass ||
       !contactNumber ||
-      !sapId ||
       !rollNo ||
       !gender ||
       !dob ||
       !tenthPercentage ||
-      !tenthSchool ||
       !twelfthPercentage ||
-      !twelfthCollege ||
-      !graduationCollege ||
       !graduationCGPA||
-      !stream ||
-      !sixthSemesterCGPA
+      !stream 
     ) {
       alert("Please fill in all fields");
       return;
@@ -72,17 +62,11 @@ function Registration() {
       email,
       password,
       contactNumber,
-      sapId,
       rollNo,
       gender,
       dob,
       tenthPercentage,
-      tenthSchool,
       twelfthPercentage,
-      twelfthCollege,
-      graduationCollege,
-      graduationCGPA,
-      sixthSemesterCGPA,
       graduationCGPA,
       stream,
       isAdmin: null,
@@ -100,7 +84,6 @@ function Registration() {
     setStream(e.target.value);
 
     setGraduationCGPA("");
-    setSixthSemesterCGPA("");
   };
 
   return (
@@ -158,16 +141,7 @@ function Registration() {
             onChange={(e) => setTenthPercentage(e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="tenthSchool">School Name</label>
-          <input
-            type="text"
-            id="tenthSchool"
-            className="form-control"
-            placeholder="10th Standard School Name"
-            onChange={(e) => setTenthSchool(e.target.value)}
-          />
-        </div>
+
         <div className="form-group">
           <label htmlFor="twelfthPercentage">12th Percentage</label>
           <input
@@ -177,16 +151,6 @@ function Registration() {
             placeholder="12th Percentage"
             step="0.01"
             onChange={(e) => setTwelfthPercentage(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="twelfthCollege">12th Standard College Name</label>
-          <input
-            type="text"
-            id="twelfthCollege"
-            className="form-control"
-            placeholder="12th Standard College Name"
-            onChange={(e) => setTwelfthCollege(e.target.value)}
           />
         </div>
 
@@ -221,27 +185,6 @@ function Registration() {
               onChange={(e) => setGraduationCGPA(e.target.value)}
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="sixthSemesterCGPA">6th Semester CGPA</label>
-            <input
-              type="number"
-              id="sixthSemesterCGPA"
-              className="form-control"
-              placeholder="6th Semester CGPA"
-              step="0.01"
-              onChange={(e) => setSixthSemesterCGPA(e.target.value)}
-            />
-          </div>
-        <div className="form-group">
-          <label htmlFor="graduationCollege">Graduation College Name</label>
-          <input
-            type="text"
-            id="graduationCollege"
-            className="form-control"
-            placeholder="Graduation College Name"
-            onChange={(e) => setGraduationCollege(e.target.value)}
-          />
-        </div>
 
         <div className="form-group">
           <label htmlFor="contactNumber">Contact Number</label>
@@ -253,16 +196,7 @@ function Registration() {
             onChange={(e) => setContactNumber(e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="sapId">Sap ID</label>
-          <input
-            type="text"
-            id="sapId"
-            className="form-control"
-            placeholder="Sap ID"
-            onChange={(e) => setSapId(e.target.value)}
-          />
-        </div>
+
         <div className="form-group">
           <label htmlFor="rollNo">Roll No</label>
           <input

@@ -332,6 +332,16 @@ router.post("/add-interview", async (req, res) => {
     }
   });
 
+  router.get("/fetchinterviewexperience", async (req, res) => {
+    try {
+      const interviews = await Interview.find({});
+      return res.json({ data: interviews });
+    } catch (error) {
+      console.error("Error fetching interview experiences:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+
 
 router.get('/placementStatus/:userId', async (req, res) => {
   try {
@@ -503,8 +513,8 @@ router.get("/jobs/eligible", verifyUser, async (req, res) => {
 // It retrieves all users from the database and sends them as a response.
 router.get("/getUsers", async (req, res) => {
   try {
-    const allUsers = await User.find({});
-
+    const allUsers = await User.find({isAdmin : null});
+    console.log(allUsers);
     res.send({ data: allUsers });
   } catch (error) {
     console.log(error);
@@ -535,7 +545,6 @@ router.put("/updatecompany/:id", (req, res) => {
     tenthPercentage: req.body.tenthPercentage,
     twelfthPercentage: req.body.twelfthPercentage,
     graduationCGPA: req.body.graduationCGPA,
-    sixthSemesterCGPA: req.body.sixthSemesterCGPA,
   })
     .then((company) => res.json(company))
     .catch((err) => res.json(err));
