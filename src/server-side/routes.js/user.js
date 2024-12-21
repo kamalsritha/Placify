@@ -1,12 +1,13 @@
 import express from "express";
 import bcryt from "bcrypt";
-const router = express.Router();
 import { User } from "../models/user.js";
 import { Company } from "../models/Company.js";
 import { Interview } from "../models/Experience.js";
 import jwt from "jsonwebtoken";
 import axios from 'axios';
 import nodemailer from "nodemailer";
+const router = express.Router();
+
 
 
 //User EndPoints and Admin EndPoints
