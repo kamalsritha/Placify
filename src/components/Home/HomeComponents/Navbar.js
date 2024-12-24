@@ -41,6 +41,9 @@ const Navbar = () => {
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/" onClick={handleLogout}>Logout</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link mx-lg-2" to="/profile">My Profile</Link>
+                </li>
                 </ul>
               </div>
         </div>

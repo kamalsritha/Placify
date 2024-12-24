@@ -137,6 +137,20 @@ router.get("/currentUser", verifyUser, async (req, res) => {
   }
 });
 
+router.post("/getCompaniesByIds", async (req, res) => {
+  const { companyIds } = req.body;
+  console.log(companyIds)
+  let companies = [];
+
+for (const com of companyIds) {
+  const company = await Company.findOne({ _id: com });
+  if (company) {
+    companies.push(company.companyname);
+  }
+}
+res.json(companies);
+});
+
 // This API is designed to handle the functionality of sending a reset password link via email to the user which is valid till 5mins.
 router.post("/forgotpassword", async (req, res) => {
   const { email } = req.body;

@@ -17,6 +17,7 @@ import Faqspage from "./components/Home/FAQs/FaqPage.js";
 import InterviewExperience from "./components/Home/InterviewExperiencePage/InterviewExperience.js";
 import AddExperience from "./components/Home/InterviewExperiencePage/AddExperience.js";
 import OffCampusJobs from './components/Home/CompanyPages/OffCampusJobs.js';
+import Profile from "./components/Home/HomeComponents/Profile.js";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -47,6 +48,7 @@ function App() {
         <Route path="/interviewexperience" element={<InterviewExperience />} />
         <Route path="/addexperience" element={<AddExperience />} />
         <Route path="/faq" element={<Faqspage />} />
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
     </Router>
   );

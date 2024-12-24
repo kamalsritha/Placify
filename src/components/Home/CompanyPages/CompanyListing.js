@@ -22,7 +22,6 @@ function CompanyListing() {
         const data = response.data;
         const jobIds = data.map((job) => job._id); // Extract _id for each job
         setIds(jobIds); // Update the ids state
-        console.log("Eligible job IDs:", jobIds);
       } catch (error) {
         console.error("Error checking eligible jobs:", error);
       }
