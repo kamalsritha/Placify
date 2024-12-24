@@ -172,8 +172,7 @@ function CompanyPage() {
                   <strong>6th Semester CGPA:</strong> {company.sixthSemesterCGPA}<br />
                 </p>
               </div>
-              {Array.isArray(ids) && ids.includes(company.id) ? (
-                hasApplied ? (
+              {hasApplied ? (
                   <button
                     className="apply-btn"
                     disabled
@@ -190,7 +189,7 @@ function CompanyPage() {
                   >
                     Already Applied
                   </button>
-                ) : (
+                ) : Array.isArray(ids) && ids.includes(company.id) ? (
                   <button
                     onClick={() => handleApply(company._id, currentUser._id)}
                     className="apply-btn"
@@ -209,15 +208,16 @@ function CompanyPage() {
                   >
                     Apply Now
                   </button>
-                )
-              ) : (
-                <p  style={{
-            fontSize: "1.5rem",
-            color: "red", // Red text color
-            fontWeight: "bold", // Bold font
-            marginTop: "10px",
-          }}>Not Eligible for this Job</p>
-              )}
+                ) : (
+                  <p style={{
+                    fontSize: "1.5rem",
+                    color: "red",
+                    fontWeight: "bold",
+                    marginTop: "10px",
+                  }}>
+                    Not Eligible for this Job
+                  </p>
+                )}
             </div>
           ))}
         </div>
