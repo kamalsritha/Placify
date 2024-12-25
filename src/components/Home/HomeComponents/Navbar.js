@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Home-CSS/AdminNav.css';
+import icon from "../Assets/profile.jpg"
 
 const Navbar = () => {
   function handleLogout() {
@@ -42,7 +43,7 @@ const Navbar = () => {
                   <Link className="nav-link mx-lg-2" to="/" onClick={handleLogout}>Logout</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link mx-lg-2" to="/profile">My Profile</Link>
+                  <Link className="nav-link mx-lg-2" to="/profile"><img src={icon} alt="Profile" width="30px" height="30px"></img></Link>
                 </li>
                 </ul>
               </div>
