@@ -21,18 +21,13 @@ router.post("/register", async (req, res) => {
     email,
     password,
     contactNumber,
-    sapId,
     rollNo,
     gender,
     dob,
     tenthPercentage,
-    tenthSchool,
     twelfthPercentage,
-    twelfthCollege,
-    graduationCollege,
     graduationCGPA,
     stream,
-    sixthSemesterCGPA,
     isAdmin,
   } = req.body;
   const user = await User.findOne({ email });
@@ -46,18 +41,13 @@ router.post("/register", async (req, res) => {
     email,
     password: hashpassword,
     contactNumber,
-    sapId,
     rollNo,
     gender,
     dob,
     tenthPercentage,
-    tenthSchool,
     twelfthPercentage,
-    twelfthCollege,
-    graduationCollege,
     graduationCGPA,
     stream,
-    sixthSemesterCGPA,
     isAdmin,
   });
 
@@ -396,12 +386,14 @@ router.post("/add-companies", async (req, res) => {
     jobdescription,
     website,
     ctc,
+    doa,
     doi,
     eligibilityCriteria,
     tenthPercentage,
     twelfthPercentage,
     graduationCGPA,
-    sixthSemesterCGPA,
+    expire
+    
   } = req.body;
 
   try {
@@ -411,12 +403,14 @@ router.post("/add-companies", async (req, res) => {
       jobdescription,
       website,
       ctc,
+      doa,
       doi,
       eligibilityCriteria,
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
-      sixthSemesterCGPA,
+      expire
+      
     });
 
     await newCompany.save();
@@ -427,7 +421,6 @@ router.post("/add-companies", async (req, res) => {
       tenthPercentage: { $gte: tenthPercentage },
       twelfthPercentage: { $gte: twelfthPercentage },
       graduationCGPA: { $gte: graduationCGPA },
-      sixthSemesterCGPA: { $gte: sixthSemesterCGPA }
     });
 
     const transporter = nodemailer.createTransport({
@@ -511,7 +504,6 @@ router.get("/jobs/eligible", verifyUser, async (req, res) => {
       tenthPercentage: { $lte: user.tenthPercentage },
       twelfthPercentage: { $lte: user.twelfthPercentage },
       graduationCGPA: { $lte: user.graduationCGPA },
-      sixthSemesterCGPA: { $lte: user.sixthSemesterCGPA },
       _id: { $nin: user.appliedCompanies } // Exclude already applied companies
     });
 
@@ -541,7 +533,6 @@ router.get("/getUsers", async (req, res) => {
 router.get("/getCompanies", async (req, res) => {
   try {
     const allCompanies = await Company.find({});
-
     res.send({ data: allCompanies });
   } catch (error) {
     console.log(error);

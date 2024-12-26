@@ -53,7 +53,6 @@ function CompanyListing() {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:3001/auth/getCompanies");
-        console.log("Companies DOI:", response.data.doi);
         dispatch(getCompanies(response.data));
       } catch (err) {
         console.error(err);

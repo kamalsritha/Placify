@@ -27,6 +27,7 @@ function AddCompanies() {
   const [twelfthPercentage, setTwelfthPercentage] = useState("");
   const [graduationCGPA, setGraduationCGPA] = useState("");
   const [branches, setBranches] = useState([]);
+  const [expire,setExpire]=useState([]);
 
   const navigate = useNavigate();
   const handleBranchChange = (e) => {
@@ -52,7 +53,8 @@ function AddCompanies() {
       !doi ||
       !tenthPercentage ||
       !ctc ||
-      !twelfthPercentage
+      !twelfthPercentage||
+      !expire
     ) {
       alert("Please fill in all fields");
       return;
@@ -70,6 +72,7 @@ function AddCompanies() {
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
+      expire
     };
 
     axios
@@ -164,7 +167,7 @@ function AddCompanies() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="examdate">Assessment Date</label>
+                <label htmlFor="assessment">Assessment Date</label>
                 <input
                   type="date"
                   id="assessment"
@@ -331,6 +334,18 @@ function AddCompanies() {
                 />
               </div>
             </td>
+          </tr>
+          <tr>
+            <td> <div className="form-group">
+                <label htmlFor="expire">Last Date to Apply</label>
+                <input
+                  type="date"
+                  id="expire"
+                  className="form-control"
+                  onChange={(e) => setExpire(e.target.value)}
+                />
+              </div>
+              </td>
           </tr>
         </tbody>
       </table>

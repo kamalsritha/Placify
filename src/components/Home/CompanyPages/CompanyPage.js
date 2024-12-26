@@ -157,6 +157,9 @@ function CompanyPage() {
                   <strong>CTC:</strong> {company.ctc} LPA
                 </p>
                 <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
+                  <strong>Assessment Date:</strong> {company.doa}
+                </p>
+                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
                   <strong>Interview Date:</strong> {company.doi}
                 </p>
                 <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
@@ -167,7 +170,9 @@ function CompanyPage() {
                   <strong>10th Percentage:</strong> {company.tenthPercentage}<br />
                   <strong>12th Percentage:</strong> {company.twelfthPercentage}<br />
                   <strong>Graduation CGPA:</strong> {company.graduationCGPA}<br />
-                  <strong>6th Semester CGPA:</strong> {company.sixthSemesterCGPA}<br />
+                </p>
+                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
+                  <strong>Expires on:</strong> {company.expire.slice(0,10)}
                 </p>
               </div>
               {hasApplied ? (

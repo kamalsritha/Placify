@@ -13,13 +13,14 @@ const companySlice = createSlice({
           companyname: company.companyname,
           jobprofile: company.jobprofile,
           ctc: company.ctc,
+          doa:company.doa,
           doi: company.doi,
           eligibilityCriteria: company.eligibilityCriteria,
           jobdescription:company.jobdescription,
           tenthPercentage: company.tenthPercentage,
           twelfthPercentage: company.twelfthPercentage,
           graduationCGPA: company.graduationCGPA,
-          sixthSemesterCGPA: company.sixthSemesterCGPA
+          expire:company.expire,
         }));
       } else if (typeof action.payload.data === 'object') {
         // Assuming you only have one company object instead of an array
@@ -29,13 +30,15 @@ const companySlice = createSlice({
           companyname: company.companyname,
           jobprofile: company.jobprofile,
           ctc: company.ctc,
+          doa:company.doa,
           doi: company.doi,
           jobdescription: company.jobdescription,
           eligibilityCriteria: company.eligibilityCriteria,
           tenthPercentage: company.tenthPercentage,
           twelfthPercentage: company.twelfthPercentage,
           graduationCGPA: company.graduationCGPA,
-          sixthSemesterCGPA: company.sixthSemesterCGPA
+          expire:company.expire,
+          
         }];
       } else {
         console.error("Payload data is not an array or object:", action.payload.data);

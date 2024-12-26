@@ -5,13 +5,17 @@ const CompanySchema = new mongoose.Schema({
     jobdescription: { type: String, required: true },
     website: { type: String, required: true},
     ctc: { type: Number, required: true },
-    doa: { type: String },
-    doi: { type: String },
+    doa: { type: String,required: true},
+    doi: { type: String,required: true},
     eligibilityCriteria: [{ type: String }],
     tenthPercentage: { type: Number, required: true },
     twelfthPercentage: { type: Number, required: true },
     graduationCGPA: { type: Number },
+    expire: { type: Date, required: true },
+    created:{ type: Date, default: Date.now },
 });
+
+CompanySchema.index({ expire: 1 }, { expireAfterSeconds: 0 });
 
 const CompanyModel = mongoose.model("Company", CompanySchema);
 export {CompanyModel as Company}
