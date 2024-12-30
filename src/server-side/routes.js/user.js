@@ -6,7 +6,11 @@ import { Interview } from "../models/Experience.js";
 import jwt from "jsonwebtoken";
 import axios from 'axios';
 import nodemailer from "nodemailer";
+import fileUpload from 'express-fileupload';
+import stringSimilarity from 'string-similarity';
+
 const router = express.Router();
+router.use(fileUpload());
 
 
 
@@ -371,6 +375,124 @@ router.get('/placementStatus/:userId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching placement status:', error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+// In your backend user.js
+
+router.post("/atsScore", async (req, res) => {
+  try {
+    if (!req.files || !req.files.resume) {
+      return res.status(400).json({ message: "No resume uploaded" });
+    }
+
+    const resumeFile = req.files.resume;
+    const jobDescription = req.body.jobDescription;
+
+    // Read resume text
+    const resumeText = resumeFile.data.toString('utf8');
+
+    // Define important categories of keywords
+    const keywordCategories = {
+      technicalSkills: [
+        'SQL', 'Python', 'Java', 'software', 'engineering', 'developer', 'architecture',
+        'ETL', 'data', 'algorithms', 'debugging', 'code', 'technical', 'design',
+        'REST', 'API', 'database', 'development', 'programming'
+      ],
+      tools: [
+        'Tableau', 'Power BI', 'OAC', 'SQL', 'PySpark', 'Business Intelligence'
+      ],
+      concepts: [
+        'architecture', 'requirements', 'design', 'documentation', 'analysis',
+        'quality', 'performance', 'implementation', 'enhancement'
+      ],
+      softSkills: [
+        'collaboration', 'learning', 'development', 'teamwork', 'communication'
+      ]
+    };
+
+    // Convert texts to lowercase for comparison
+    const resumeLower = resumeText.toLowerCase();
+    const jobDescLower = jobDescription.toLowerCase();
+
+    // Calculate matches for each category
+    let scores = {};
+    let matches = [];
+    let missing = [];
+
+    Object.entries(keywordCategories).forEach(([category, keywords]) => {
+      let categoryMatches = 0;
+      let categoryMissing = [];
+
+      keywords.forEach(keyword => {
+        const keywordLower = keyword.toLowerCase();
+        if (resumeLower.includes(keywordLower)) {
+          categoryMatches++;
+          matches.push(keyword);
+        } else if (jobDescLower.includes(keywordLower)) {
+          categoryMissing.push(keyword);
+        }
+      });
+
+      scores[category] = (categoryMatches / keywords.length) * 100;
+      missing = [...missing, ...categoryMissing];
+    });
+
+    // Calculate weighted score
+    const weights = {
+      technicalSkills: 0.4,
+      tools: 0.2,
+      concepts: 0.25,
+      softSkills: 0.15
+    };
+
+    const finalScore = Object.entries(scores).reduce((total, [category, score]) => {
+      return total + (score * weights[category]);
+    }, 0);
+
+    // Additional bonus points for education and experience
+    let bonusPoints = 0;
+
+    // Check for relevant education keywords
+    if (resumeLower.includes('computer science') || 
+        resumeLower.includes('information technology') ||
+        resumeLower.includes('engineering')) {
+      bonusPoints += 10;
+    }
+
+    // Check for relevant experience
+    if (resumeLower.includes('internship') || 
+        resumeLower.includes('project') ||
+        resumeLower.includes('experience')) {
+      bonusPoints += 10;
+    }
+
+    // Final score with bonus
+    const totalScore = Math.min(100, finalScore + bonusPoints);
+
+    // Detailed analysis
+    const analysis = {
+      score: Math.round(totalScore),
+      categoryScores: scores,
+      matches: [...new Set(matches)],
+      missingKeywords: [...new Set(missing)].slice(0, 5),
+      details: {
+        technicalMatch: Math.round(scores.technicalSkills),
+        toolsMatch: Math.round(scores.tools),
+        conceptsMatch: Math.round(scores.concepts),
+        softSkillsMatch: Math.round(scores.softSkills)
+      }
+    };
+
+    res.json(analysis);
+
+  } catch (error) {
+    console.error("Error analyzing resume:", error);
+    res.status(500).json({ 
+      message: "Error analyzing resume",
+      error: error.message 
+    });
   }
 });
 

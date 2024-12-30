@@ -6,9 +6,11 @@ import { getCompanies } from "../../../redux/companySlice.jsx";
 import Footer from "../HomeComponents/Footer.js";
 import Navbar from "../HomeComponents/Navbar.js";
 import ApplyJobs from "../Assets/applyjobs.png";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from "react-router-dom"
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 function CompanyPage() {
   const { id } = useParams();
@@ -17,9 +19,75 @@ function CompanyPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const companies = useSelector((state) => state.companies.companies);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isResumeUploaded, setIsResumeUploaded] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [atsScore, setAtsScore] = useState(null);
 
-  const location = useLocation(); // Access location
-  const { ids } = location.state || {}; 
+  const location = useLocation();
+  const { ids } = location.state || {};
+
+  const handleResumeUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check file size (1MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("File size should be less than 2MB");
+        return;
+      }
+
+       // Check file type
+      const validTypes = [
+        'application/pdf',
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Please upload a PDF, DOC, DOCX, or TXT file");
+        return;
+      }
+  
+      setResumeFile(file);
+      setIsResumeUploaded(true);
+      toast.success("Resume uploaded successfully!");
+    } else {
+      setResumeFile(null);
+      setIsResumeUploaded(false);
+    }
+  };
+
+  const handleCheckScore = async () => {
+    if (!resumeFile) {
+      toast.error("Please upload a resume first!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", resumeFile);
+    formData.append("jobDescription", companies[0].jobdescription);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/auth/atsScore",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data) {
+        setAtsScore(response.data);
+        toast.success(`Resume match score: ${response.data.score}%`);
+      } else {
+        toast.error("Failed to analyze resume");
+      }
+    } catch (error) {
+      console.error("Error analyzing resume:", error);
+      toast.error("Error analyzing resume");
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,28 +118,7 @@ function CompanyPage() {
       .catch((err) => {
         console.error("Error fetching current user:", err);
       });
-  }, []);
-
-  useEffect(() => {
-    const checkEligibleJobs = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/auth/jobs/eligible');
-
-        if (response.data.length > 0) {
-          toast.info('You have new job opportunities available!', {
-            position: "top-right",
-            autoClose: 5000
-          });
-        }
-      } catch (error) {
-        console.error('Error checking eligible jobs:', error);
-      }
-    };
-
-    if (currentUser) {
-      checkEligibleJobs();
-    }
-  }, [currentUser]);
+  }, [navigate]);
 
   useEffect(() => {
     const checkIfApplied = async () => {
@@ -84,6 +131,11 @@ function CompanyPage() {
   }, [currentUser, companies, id]);
 
   const handleApply = async (companyId, userId) => {
+    if (!isResumeUploaded) {
+      toast.error("Please upload your resume first!");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `http://localhost:3001/auth/applyCompany/${userId}/${id}`
@@ -105,122 +157,225 @@ function CompanyPage() {
   return (
     <>
       <Navbar />
-      <h1 style={{ alignContent: "center", marginTop: "150px", color: "navy", fontSize: "3rem" }}>Apply Jobs</h1>
+      <ToastContainer />
       <div
-        className="company-list-container"
-        style={{ padding: "20px", display: "flex" }}
+        style={{
+          marginTop: "100px",
+          textAlign: "center",
+          fontFamily: "Arial, sans-serif",
+          color: "#2c3e50",
+        }}
       >
-        {/* Image */}
-        <div style={{ flex: "0 0 50%", marginRight: "30px", marginTop: "45px" }}>
+        <h1 style={{ fontSize: "2.5rem", fontWeight: "700" }}>Apply for Jobs</h1>
+        <p style={{ fontSize: "1rem", color: "#7f8c8d" }}>
+          Find the right opportunities for you
+        </p>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          gap: "20px",
+          padding: "40px",
+        }}
+      >
+        <div style={{ flex: "1", textAlign: "center" }}>
           <img
             src={ApplyJobs}
-            alt="Apply Job Image"
+            alt="Apply for Jobs"
             style={{
-              width: "500px",
-              height: "500px",
+              maxWidth: "100%",
+              height: "auto",
               borderRadius: "10px",
-              marginLeft: "150px",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
             }}
           />
         </div>
 
-        {/* Card View */}
-        <div style={{ flex: "0 0 40%", display: "flex", flexDirection: "column", marginTop: "10px" }}>
+        <div style={{ flex: "1", maxWidth: "600px" }}>
           {companies.map((company) => (
             <div
               key={company.id}
-              className="company-card"
               style={{
-                backgroundColor: "#fff",
-                borderRadius: "10px",
+                marginBottom: "20px",
                 padding: "20px",
-                marginBottom: "30px",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                overflow: "hidden",
+                borderRadius: "10px",
+                backgroundColor: "#ecf0f1",
+                color: "#2c3e50",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
               }}
             >
-              <h1
-                className="company-name"
+              <h2
                 style={{
-                  fontSize: "3rem",
-                  marginBottom: "20px",
-                  textAlign: "center",
-                  color: "#007bff",
+                  color: "#3498db",
+                  fontSize: "1.8rem",
+                  marginBottom: "10px",
                 }}
               >
                 {company.companyname}
-              </h1>
-              <div className="company-info" style={{ marginBottom: "20px" }}>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>CTC:</strong> {company.ctc} LPA
-                </p>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>Assessment Date:</strong> {company.doa}
-                </p>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>Interview Date:</strong> {company.doi}
-                </p>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>Job Description:</strong> {company.jobdescription}
-                </p>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>Eligibility Criteria</strong> <br />
-                  <strong>10th Percentage:</strong> {company.tenthPercentage}<br />
-                  <strong>12th Percentage:</strong> {company.twelfthPercentage}<br />
-                  <strong>Graduation CGPA:</strong> {company.graduationCGPA}<br />
-                </p>
-                <p style={{ color: "#333", fontSize: "1.5rem", marginBottom: "10px" }}>
-                  <strong>Expires on:</strong> {company.expire.slice(0,10)}
-                </p>
-              </div>
+              </h2>
+
+              <p><strong>CTC:</strong> {company.ctc} LPA</p>
+              <p><strong>Assessment Date:</strong> {company.doa}</p>
+              <p><strong>Interview Date:</strong> {company.doi}</p>
+              <p><strong>Expires On:</strong> {company.expire?.slice(0,10) || "N/A"}</p>
+              <p><strong>Job Description:</strong> {company.jobdescription}</p>
+              <p>
+                <strong>Eligibility:</strong> <br />
+                <strong>10th:</strong> {company.tenthPercentage}% <br />
+                <strong>12th:</strong> {company.twelfthPercentage}% <br />
+                <strong>Graduation:</strong> {company.graduationCGPA}
+              </p>
+
               {hasApplied ? (
+                <button
+                  disabled
+                  style={{
+                    marginTop: "15px",
+                    backgroundColor: "#bdc3c7",
+                    color: "#ffffff",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "not-allowed",
+                  }}
+                >
+                  Already Applied
+                </button>
+              ) : Array.isArray(ids) && ids.includes(company.id) ? (
+                <div style={{ marginTop: "15px" }}>
+                  <div style={{ marginBottom: "15px" }}>
+                    <input
+                      type="file"
+                      accept=".pdf,.txt,.doc,.docx"
+                      onChange={handleResumeUpload}
+                      style={{
+                        padding: "8px",
+                        border: "1px solid #bdc3c7",
+                        borderRadius: "4px",
+                        width: "100%"
+                      }}
+                    />
+                  </div>
+
                   <button
-                    className="apply-btn"
-                    disabled
+                    onClick={handleCheckScore}
+                    disabled={!isResumeUploaded}
                     style={{
-                      backgroundColor: "#cccccc",
-                      color: "#666666",
-                      padding: "12px 24px",
-                      borderRadius: "5px",
+                      backgroundColor: isResumeUploaded ? "#3498db" : "#bdc3c7",
+                      color: "#ffffff",
+                      padding: "10px 20px",
                       border: "none",
-                      fontSize: "1.5rem",
-                      alignSelf: "center",
-                      cursor: "not-allowed",
+                      borderRadius: "4px",
+                      cursor: isResumeUploaded ? "pointer" : "not-allowed",
+                      marginRight: "10px",
                     }}
                   >
-                    Already Applied
+                    Check Score
                   </button>
-                ) : Array.isArray(ids) && ids.includes(company.id) ? (
+
+                  {atsScore && (
+                    <div style={{ 
+                      marginTop: '20px', 
+                      padding: '20px', 
+                      backgroundColor: '#fff', 
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}>
+                      <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>
+                        ATS Score Analysis
+                      </h3>
+                      
+                      <div style={{ width: '100px', margin: '0 auto 20px' }}>
+                        <CircularProgressbar
+                          value={atsScore.score}
+                          text={`${atsScore.score}%`}
+                          styles={buildStyles({
+                            pathColor: atsScore.score >= 70 ? '#2ecc71' : '#e74c3c',
+                            textColor: '#2c3e50',
+                          })}
+                        />
+                      </div>
+
+                      {atsScore.matches?.length > 0 && (
+                        <div style={{ marginTop: '15px' }}>
+                          <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>
+                            Matching Keywords
+                          </h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                            {atsScore.matches.map((keyword, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  backgroundColor: '#2ecc71',
+                                  color: 'white',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.9em'
+                                }}
+                              >
+                                {keyword}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {atsScore.missingKeywords?.length > 0 && (
+                        <div style={{ marginTop: '15px' }}>
+                          <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>
+                            Suggested Keywords to Add
+                          </h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                            {atsScore.missingKeywords.map((keyword, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  backgroundColor: '#e74c3c',
+                                  color: 'white',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.9em'
+                                }}
+                              >
+                                {keyword}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <button
                     onClick={() => handleApply(company._id, currentUser._id)}
-                    className="apply-btn"
+                    disabled={!isResumeUploaded}
                     style={{
-                      backgroundColor: "#001f3f",
-                      color: "#fff",
-                      padding: "12px 24px",
-                      borderRadius: "5px",
+                      backgroundColor: isResumeUploaded ? "#2ecc71" : "#bdc3c7",
+                      color: "#ffffff",
+                      padding: "10px 20px",
                       border: "none",
-                      cursor: "pointer",
-                      fontSize: "1.5rem",
-                      alignSelf: "center",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                      transition: "transform 0.3s ease",
+                      borderRadius: "4px",
+                      cursor: isResumeUploaded ? "pointer" : "not-allowed",
+                      marginTop: "10px",
+                      width: "100%"
                     }}
                   >
                     Apply Now
                   </button>
-                ) : (
-                  <p style={{
-                    fontSize: "1.5rem",
-                    color: "red",
-                    fontWeight: "bold",
-                    marginTop: "10px",
-                  }}>
-                    Not Eligible for this Job
-                  </p>
-                )}
+                </div>
+              ) : (
+                <p style={{
+                  fontSize: "1.2rem",
+                  color: "#e74c3c",
+                  fontWeight: "bold",
+                  marginTop: "15px"
+                }}>
+                  Not Eligible for this Job
+                </p>
+              )}
             </div>
           ))}
         </div>

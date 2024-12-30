@@ -1,49 +1,117 @@
-import React from "react";
-import JobDescrip from "../Assets/jobdecript.png";
-import ApplyJob from "../Assets/applyjob.png";
-import CheckInterviewScheduled from "../Assets/checkinter.png";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const Work = () => {
-  const workInfoData = [
-    {
-      image: JobDescrip,
-      title: "See the Job Description",
-      text: "Navigate to the Jobs tab in the header to view the list of companies participating in recruitment events. Stay informed about which companies are offering job opportunities through this intuitive interface.",
-    },
-    {
-      image: ApplyJob,
-      title: "Apply For Jobs",
-      text: "Apply for jobs seamlessly through our platform. Browse available positions, submit applications, and track your progress all in one place, simplifying your job search process.",
-    },
-    {
-      image: CheckInterviewScheduled,
-      title: "Check the Interview Scheduled",
-      text: "Stay updated on your interview schedule effortlessly. Access details about upcoming interviews, including date, time, and location, to ensure you're prepared and on time for each opportunity.",
-    },
-  ];
+const Dashboard = () => {
+  const [totalCompanies, setTotalCompanies] = useState(0);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [placedStudents, setPlacedStudents] = useState(0);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const companiesResponse = await axios.get("http://localhost:3001/companies");
+        const studentsResponse = await axios.get("http://localhost:3001/students");
+        const placedResponse = await axios.get("http://localhost:3001/placedStudents");
+
+        setTotalCompanies(companiesResponse.data.totalCompanies);
+        setTotalStudents(studentsResponse.data.totalStudents);
+        setPlacedStudents(placedResponse.data.placedStudents);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const calculatePlacementPercentage = () => {
+    return totalStudents > 0 ? ((placedStudents / totalStudents) * 100).toFixed(2) : 0;
+  };
+
   return (
-    <div className="work-section-wrapper">
-      <div className="work-section-top">
-        <p className="primary-subheading" style={{color:"navy",fontSize:"50px"}}>Work</p>
-        <h1 className="primary-heading"style={{fontSize:"40px"}}>How It Works</h1>
-        <p className="primary-text">
-        Our Placex streamlines the job search process by matching students with relevant job opportunities.
-        we ensure seamless navigation and effective communication between students and recruiters.
-        </p>
-      </div>
-      <div className="work-section-bottom">
-        {workInfoData.map((data) => (
-          <div className="work-section-info" key={data.title}>
-            <div className="info-boxes-img-container">
-              <img src={data.image} alt="" style={{width:"150px",height:"150px"}} />
-            </div>
-            <h2>{data.title}</h2>
-            <p>{data.text}</p>
-          </div>
-        ))}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        backgroundColor: "#f9f9f9",
+        fontFamily: "'Poppins', sans-serif",
+        padding: "20px",
+      }}
+    >
+      {/* Dashboard Boxes */}
+      <div
+        style={{
+          display: "flex",
+          width: "90%",
+          maxWidth: "900px",
+          border: "1px solid #e0e0e0",
+          backgroundColor: "#ffffff",
+          borderRadius: "12px",
+          overflow: "hidden",
+          boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {/* Total Companies */}
+        <div
+          style={{
+            flex: 1,
+            padding: "30px",
+            textAlign: "center",
+            backgroundColor: "#f4f4f4",
+            color: "#333",
+            borderRight: "1px solid #e0e0e0",
+          }}
+        >
+          <h2 style={{ fontSize: "48px", margin: "10px 0", fontWeight: "700" }}>
+            {totalCompanies}
+          </h2>
+          <p style={{ fontSize: "18px", margin: "0", fontWeight: "500" }}>
+            Companies Arrived
+          </p>
+        </div>
+
+        {/* Total Students Placed */}
+        <div
+          style={{
+            flex: 1,
+            padding: "30px",
+            textAlign: "center",
+            backgroundColor: "#ffffff",
+            color: "#333",
+            borderRight: "1px solid #e0e0e0",
+          }}
+        >
+          <h2 style={{ fontSize: "48px", margin: "10px 0", fontWeight: "700" }}>
+            {placedStudents}
+          </h2>
+          <p style={{ fontSize: "18px", margin: "0", fontWeight: "500" }}>
+            Students Placed
+          </p>
+        </div>
+
+        {/* Placement Percentage */}
+        <div
+          style={{
+            flex: 1,
+            padding: "30px",
+            textAlign: "center",
+            backgroundColor: "#f4f4f4",
+            color: "#333",
+          }}
+        >
+          <h2 style={{ fontSize: "48px", margin: "10px 0", fontWeight: "700" }}>
+            {calculatePlacementPercentage()}%
+          </h2>
+          <p style={{ fontSize: "18px", margin: "0", fontWeight: "500" }}>
+            Placement Rate
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Work;
+export default Dashboard;

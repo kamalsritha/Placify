@@ -20,7 +20,7 @@ import OffCampusJobs from './components/Home/CompanyPages/OffCampusJobs.js';
 import Profile from "./components/Home/HomeComponents/Profile.js";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import LabAllocation from "./components/Admin/Lab Allocation/LabAllocation.js";
 
 function App() {
   return (
@@ -45,6 +45,7 @@ function App() {
           path="/scheduledInterviewdata"
           element={<ScheduledInterviewData />}
         />
+        <Route path="/admin/lab-allocation" element={<LabAllocation />} />
         <Route path="/interviewexperience" element={<InterviewExperience />} />
         <Route path="/addexperience" element={<AddExperience />} />
         <Route path="/faq" element={<Faqspage />} />
