@@ -501,6 +501,8 @@ router.post("/atsScore", async (req, res) => {
 
 // This API endpoint is responsible for adding new company details to the database.
 // Modify the existing add-companies endpoint
+
+
 router.post("/add-companies", async (req, res) => {
   const {
     companyname,
@@ -604,6 +606,112 @@ router.post("/add-companies", async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
+
+// router.post("/add-companies", async (req, res) => {
+//   const {
+//     companyname,
+//     jobprofile,
+//     jobdescription,
+//     website,
+//     ctc,
+//     doa,
+//     doi,
+//     eligibilityCriteria,
+//     tenthPercentage,
+//     twelfthPercentage,
+//     graduationCGPA,
+//     expire
+    
+//   } = req.body;
+
+//   try {
+//     const newCompany = new Company({
+//       companyname,
+//       jobprofile,
+//       jobdescription,
+//       website,
+//       ctc,
+//       doa,
+//       doi,
+//       eligibilityCriteria,
+//       tenthPercentage,
+//       twelfthPercentage,
+//       graduationCGPA,
+//       expire
+      
+//     });
+
+//     await newCompany.save();
+
+//     // Find eligible students based on criteria
+//     const eligibleStudents = await User.find({
+//       isAdmin: { $ne: "1" }, // Exclude admin users
+//       tenthPercentage: { $gte: tenthPercentage },
+//       twelfthPercentage: { $gte: twelfthPercentage },
+//       graduationCGPA: { $gte: graduationCGPA },
+//     });
+
+//     const transporter = nodemailer.createTransport({
+//       host: 'smtp.gmail.com',
+//       port: 587,  // Changed from 587 to 465
+//       secure: true, // Changed from false to true
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASSWORD  // This should be your app password
+//       },
+//       debug: true // Add this to see detailed logs
+//     });
+    
+//     // Add this verification step before using the transporter
+//     transporter.verify(function (error, success) {
+//       if (error) {
+//         console.log("Transporter verification error:", error);
+//       } else {
+//         console.log("Server is ready to send emails");
+//       }
+//     });
+//     // Send emails to eligible students
+//     for (const student of eligibleStudents) {
+//       const mailOptions = {
+//         from: process.env.EMAIL_USER,
+//         to: student.email,
+//         subject: `New Job Opportunity from ${companyname}`,
+//         html: `
+//           <h2>Congratulations! You've been shortlisted!</h2>
+//           <p>Dear ${student.name},</p>
+//           <p>You have been shortlisted for a new job opportunity at ${companyname}.</p>
+//           <h3>Job Details:</h3>
+//           <ul>
+//             <li><strong>Job Profile:</strong> ${jobprofile}</li>
+//             <li><strong>CTC:</strong> ${ctc} LPA</li>
+//             <li><strong>Interview Date:</strong> ${doi}</li>
+//             <li><strong>Job Description:</strong> ${jobdescription}</li>
+//             <li><strong>Company Website:</strong> ${website}</li>
+//           </ul>
+//           <p>Please log in to your dashboard to apply for this position.</p>
+//           <p><strong>Note:</strong> This opportunity is available based on your academic credentials meeting the company's criteria.</p>
+//           <p>Best regards,<br>Campus Recruitment Team</p>
+//         `
+//       };
+
+//       try {
+//         await transporter.sendMail(mailOptions);
+//       } catch (error) {
+//         console.error(`Failed to send email to ${student.email}:`, error);
+//       }
+//     }
+
+//     return res.json({ 
+//       message: "Company Registered and Notifications Sent",
+//       notifiedStudents: eligibleStudents.length 
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 
 
