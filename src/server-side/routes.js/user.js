@@ -157,13 +157,27 @@ router.post("/forgotpassword", async (req, res) => {
       expiresIn: "5m",
     });
 
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,  // Changed from 587 to 465
+      secure: true, // Changed from false to true
       auth: {
-        user: "", //The email id you want the mail to be sent from
-        pass: "", // Generate a special password from your google account
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD  // This should be your app password
       },
+      debug: true // Add this to see detailed logs
     });
+    
+    // Add this verification step before using the transporter
+    transporter.verify(function (error, success) {
+      if (error) {
+        console.log("Transporter verification error:", error);
+      } else {
+        console.log("Server is ready to send emails");
+      }
+    });
+    // Send emails to eligible student
+
 
     var mailOptions = {
       from: "jashmehtaa@gmail.com",
@@ -174,6 +188,7 @@ router.post("/forgotpassword", async (req, res) => {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
+        console.log("eeeeeeror");
         return res.json({ status: true, message: "Error sending the email" });
       } else {
         return res.json({ status: true, message: "Email Sent" });
@@ -392,6 +407,7 @@ router.post("/atsScore", async (req, res) => {
 
     // Read resume text
     const resumeText = resumeFile.data.toString('utf8');
+    console.log("Resume data : "+resumeText);
 
     // Define important categories of keywords
     const keywordCategories = {

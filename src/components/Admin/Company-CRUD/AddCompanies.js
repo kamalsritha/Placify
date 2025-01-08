@@ -84,6 +84,7 @@ function AddCompanies() {
       .catch((err) => {
         console.error("Error submitting data:", err);
       });
+      navigate("/companies");
   };
 
   return (
