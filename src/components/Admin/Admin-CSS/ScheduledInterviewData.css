@@ -1,20 +1,46 @@
-/* ScheduledInterviewData.css */
+.page-heading {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+}
 
 .split {
   display: flex;
-  justify-content: center; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  min-height: 100vh; /* Ensure the content takes at least the full height of the viewport */
-}
-
-.left {
-  flex: 1;
-  display: flex;
   justify-content: center;
-  align-items: center;
+  margin: 20px;
 }
 
+.file-upload-wrapper {
+  margin: 20px auto;
+  text-align: center;
+}
 
+.file-upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4200e9;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.file-upload-input {
+  display: none;
+}
+
+.btn {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.mt-3 {
+  margin-top: 15px;
+}
 
 .right {
   flex: 1;
@@ -22,41 +48,31 @@
 }
 
 .table-wrapper {
-  margin-top: 20px;
   overflow-x: auto;
 }
 
-table {
+.styled-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 18px;
-}
-
-th, td {
-  padding: 15px;
+  margin: 25px 0;
+  font-size: 1rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
-th {
-  background-color: rgb(33, 33, 250);
-  color: #fff;
+.styled-table th,
+.styled-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
 }
 
-tbody tr.highlighted {
-  background-color: #f0f0f0; /* Light gray for highlighted rows */
+.styled-table th {
+  background-color: #4200e9;
+  color: white;
 }
 
-
-tbody tr:hover {
-  background-color: #b3c6e7; /* Light navy blue on hover */
+.actions-column {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
-tbody td:first-child {
-  cursor: pointer;
-}
-
-/* Adjust button alignment */
-td button {
-  margin-right: 5px;
-}

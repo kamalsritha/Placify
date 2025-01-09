@@ -21,8 +21,10 @@ import Profile from "./components/Home/HomeComponents/Profile.js";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LabAllocation from "./components/Admin/Lab Allocation/LabAllocation.js";
+import Applicants from "./components/Admin/AdminReports/Applicants.js";
 
 function App() {
+ 
   return (
     <Router>
        <ToastContainer />
@@ -33,7 +35,7 @@ function App() {
         <Route path="/companylisting" element={<CompanyListing />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/add-companies" element={<AddCompanies />} />
+        <Route path="/add-companies" element={<AddCompanies />}/>
         <Route path="/companies" element={<Companycrud />} />
         <Route path="/offcampus-jobs" element={<OffCampusJobs />} />
         <Route path="/forgotpassword" element={<ForgetPassword />} />
@@ -41,15 +43,14 @@ function App() {
         <Route path="/updatecompany/:id" element={<UpdateCompany />} />
         <Route path="/companypage/:id" element={<CompanyPage />} />
         <Route path="/scheduledInterview" element={<ScheduledInterview />} />
-        <Route
-          path="/scheduledInterviewdata"
-          element={<ScheduledInterviewData />}
-        />
+        <Route path="/scheduledInterviewData/:id" element={<ScheduledInterviewData />} />
+        <Route path="/applicants" element={<Applicants />}/>
         <Route path="/admin/lab-allocation" element={<LabAllocation />} />
         <Route path="/interviewexperience" element={<InterviewExperience />} />
         <Route path="/addexperience" element={<AddExperience />} />
         <Route path="/faq" element={<Faqspage />} />
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="*" element={<h1>Page Not found</h1>}></Route>
       </Routes>
     </Router>
   );

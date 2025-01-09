@@ -3,6 +3,7 @@ import bcryt from "bcrypt";
 import { User } from "../models/user.js";
 import { Company } from "../models/Company.js";
 import { Interview } from "../models/Experience.js";
+import { CompanyData } from "../models/CompanyData.js";
 import jwt from "jsonwebtoken";
 import axios from 'axios';
 import nodemailer from "nodemailer";
@@ -520,6 +521,7 @@ router.post("/atsScore", async (req, res) => {
 
 
 router.post("/add-companies", async (req, res) => {
+
   const {
     companyname,
     jobprofile,
@@ -554,6 +556,9 @@ router.post("/add-companies", async (req, res) => {
     });
 
     await newCompany.save();
+
+    const Comp = new CompanyData({name: companyname});
+    await Comp.save();
 
     // Find eligible students based on criteria
     const eligibleStudents = await User.find({
@@ -843,14 +848,29 @@ router.get("/companyApplicants", async (req, res) => {
           email: applicant.email,
         })),
       };
-
+      
       companyData.push(companyInfo);
+      
     }
-
+    console.log("company applicant data  : "+companyData)
     res.json(companyData);
   } catch (error) {
     console.error("Error fetching company applicants:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/students", async (req, res) => {
+  try {
+    var count = await User.countDocuments({ placementStatus: "Placed" });
+    console.log("Placed students count: " + count);
+    var total = await User.countDocuments({ isAdmin: null });
+    console.log("total students count: "+total);
+    var companyCount=await CompanyData.countDocuments({});
+    res.json({ placedCount: count, totalCount : total,companiesCount:companyCount});
+  } catch (error) {
+    console.log("Error occurred while fetching placed students count:", error);
+    res.status(500).json({ message: "An error occurred while fetching the count" });
   }
 });
 
@@ -865,6 +885,31 @@ router.post("/updatePlacementStatus", async (req, res) => {
     if (user.placementStatus === "Placed" && status === "Placed") {
       return res.status(200).json({ message: "User is already placed." });
     }
+    const company = await Company.findById(companyId);
+    console.log(company.companyname);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found." });
+    }
+    user.placementStatus = status;
+    user.companyPlaced = company.companyname;
+    await user.save();
+    res.json({
+      message: `Placement status updated to ${status} successfully.`,
+    });
+  } catch (error) {
+    console.error("Error updating placement status:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/updateAssessmentStatus", async (req, res) => {
+  try {
+    const { userId, companyId, status } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
     const company = await Company.findById(companyId);
     console.log(company.companyname);
     if (!company) {

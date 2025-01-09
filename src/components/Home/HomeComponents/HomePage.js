@@ -13,6 +13,7 @@ const HomePage = () => {
 
   const [currentUser, setCurrentUser] = useState(null);
   const [placementStatus, setPlacementStatus] = useState(null);
+  const [AssessmentStatus, setAssessmentStatus]=useState(null);
 
   useEffect(() => {
     axios.get("http://localhost:3001/auth/verify").then((res) => {
