@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 import axios from 'axios';
 import nodemailer from "nodemailer";
 import fileUpload from 'express-fileupload';
+
+import { parseResume, calculateATSScore } from '../utils/atsScoring.js';
 import stringSimilarity from 'string-similarity';
 
 const router = express.Router();
@@ -409,7 +411,7 @@ router.get('/placementStatus/:userId', async (req, res) => {
 
 // In your backend user.js
 
-router.post("/atsScore", async (req, res) => {
+router.post("/atsScore1", async (req, res) => {
   try {
     if (!req.files || !req.files.resume) {
       return res.status(400).json({ message: "No resume uploaded" });
@@ -525,6 +527,59 @@ router.post("/atsScore", async (req, res) => {
   }
 });
 
+
+router.post("/atsScore", async (req, res) => {
+  try {
+    if (!req.files || !req.files.resume) {
+      return res.status(400).json({ message: "No resume uploaded" });
+    }
+
+    const resumeFile = req.files.resume;
+    const jobDescription = req.body.jobDescription;
+
+    // Validate file size (2MB limit)
+    if (resumeFile.size > 2 * 1024 * 1024) {
+      return res.status(400).json({ message: "File size should be less than 2MB" });
+    }
+
+    // Validate file type
+    const validTypes = [
+      'application/pdf',
+      'text/plain',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    
+    if (!validTypes.includes(resumeFile.mimetype)) {
+      return res.status(400).json({ message: "Please upload a PDF, DOC, DOCX, or TXT file" });
+    }
+
+    try {
+      // Parse the resume
+      const resumeText = await parseResume(resumeFile);
+      
+      // Calculate ATS score
+      const analysis = await calculateATSScore(resumeText, jobDescription);
+
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error processing resume:", error);
+      res.status(500).json({ 
+        message: "Error processing resume",
+        error: error.message 
+      });
+    }
+
+  } catch (error) {
+    console.error("Error analyzing resume:", error);
+    res.status(500).json({ 
+      message: "Error analyzing resume",
+      error: error.message 
+    });
+  }
+});
+
+export default router;
 
 //---------------------------------------------ADMIN ENDPOINTS--------------------------------------------------//
 
