@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios, { Axios } from "axios";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Login-CSS/login.css";
 
 function Login() {
@@ -8,7 +8,27 @@ function Login() {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/auth/validate", {
+          withCredentials: true,
+        });
+        if (response.data.status) {
+          setIsLoggedIn(true);
+          navigate(response.data.user.isAdmin === "1" ? "/admin" : "/home");
+        }
+      } catch (error) {
+        console.log("User is not authenticated");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -20,19 +40,18 @@ function Login() {
     const userData = { email, password };
     axios
       .post("http://localhost:3001/auth", userData)
-      .then((result) => {        
+      .then((result) => {
         if (result.data === "Success") {
           navigate("/home");
         } else if (result.data === "Password Incorrect") {
           setErrorMessage("Incorrect Password");
-        }
-        else if (result.data === "Admin") {
+        } else if (result.data === "Admin") {
           navigate("/admin");
         } else {
           setErrorMessage("Invalid User");
         }
       })
-      .catch((err) => console.log(err));
+      .catch(() => setErrorMessage("An error occurred. Please try again later."));
   };
 
   return (
@@ -62,15 +81,8 @@ function Login() {
         </div>
         <input type="submit" value="Login" className="btn btn-primary" />
       </form>
-      <button className="register-btn" onClick={() => navigate("/register")}>
-        Register
-      </button>
-      <button
-        className="register-btn"
-        onClick={() => navigate("/forgotpassword")}
-      >
-        Forgot Password
-      </button>
+      <button className="register-btn" onClick={() => navigate("/register")}>Register</button>
+      <button className="register-btn" onClick={() => navigate("/forgotpassword")}>Forgot Password</button>
     </div>
   );
 }

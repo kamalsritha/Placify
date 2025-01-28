@@ -33,10 +33,14 @@ function AdminDashboard() {
     axios
       .get("http://localhost:3001/auth/getUsers")
       .then((response) => {
-        setUsers(response.data.data);
-        setOriginalUsers(response.data.data);
+        const modifiedData = response.data.data.map((user) => ({
+          ...user,
+          placementStatus: user.placementStatus === null ? "Unplaced" : user.placementStatus,
+        }));
+        setUsers(modifiedData);
+        setOriginalUsers(modifiedData);
 
-        const studentList = response.data.data.map((user) => ({
+        const studentList = modifiedData.map((user) => ({
           name: user.name,
           rollNo: user.rollNo,
           gender: user.gender,
@@ -151,15 +155,17 @@ function AdminDashboard() {
               onChange={handleProgramChange}
               className="filter-input"
             >
-              <option value="">Select Stream</option>
-              <option value="MCA">MCA</option>
-              <option value="Btech-IT">Btech-IT</option>
-              <option value="Btech-CS">Btech-CS</option>
-              <option value="Btech-Cybersecurity">Btech-Cybersecurity</option>
-              <option value="Btech-Data Science">Btech-Data Science</option>
-              <option value="Btech-Mechatronics">Btech-Mechatronics</option>
-              <option value="Btech-EXTC">Btech-Extc</option>
-              <option value="BTech-Integrated">BTech-Integrated</option>
+            <option value="">Select Stream</option>
+            <option value="Btech-CSIT">Btech-CSIT</option>
+            <option value="Btech-IT">Btech-IT</option>
+            <option value="Btech-CSE">Btech-CSE</option>
+            <option value="Btech-Cybersecurity">Btech-Cybersecurity</option>
+            <option value="Btech-Data Science">Btech-Data Science</option>
+            <option value="Btech-AIML">Btech-AIML</option>
+            <option value="Btech-Mechanical">Btech-Mechanical</option>
+            <option value="Btech-ECE">Btech-ECE</option>
+            <option value="Btech-ECE">Btech-EEE</option>
+            <option value="BTech-Civil">BTech-Civil</option>
             </select>
           </div>
           <div className="filter-group">

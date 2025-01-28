@@ -27,7 +27,7 @@ const Work = () => {
         <p className="primary-subheading" style={{color:"navy",fontSize:"50px"}}>Work</p>
         <h1 className="primary-heading"style={{fontSize:"40px"}}>How It Works</h1>
         <p className="primary-text">
-        Our Placex platform enhances the job search process by facilitating seamless matching between students and pertinent job openings. 
+        Our Placify platform enhances the job search process by facilitating seamless matching between students and pertinent job openings. 
         We prioritize efficient navigation and foster effective communication channels between students and recruiters, 
         optimizing the placement experience for all stakeholders.
         </p>

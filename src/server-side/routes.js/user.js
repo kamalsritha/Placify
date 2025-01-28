@@ -60,24 +60,17 @@ router.post("/register", async (req, res) => {
   return res.json({ message: "User Registered" });
 });
 
-//User and Admin Login API
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
   if (!user) {
-    console.log("Invalid User");
     return res.json("Invalid User");
   }
 
   const validPassword = await bcryt.compare(password, user.password);
   if (!validPassword) {
-    console.log("Password Incorrect");
     return res.json("Password Incorrect");
-  }
-
-  if (user.isAdmin === "1") {
-    console.log("User is admin");
   }
 
   const token = jwt.sign(
@@ -86,29 +79,48 @@ router.post("/", async (req, res) => {
     { expiresIn: "1h" }
   );
 
-  res.cookie("token", token, { httpOnly: true, maxAge: 300000 });
+  res.cookie("token", token, { httpOnly: true, maxAge: 3600000 });
 
   return res.json(user.isAdmin === "1" ? "Admin" : "Success");
 });
 
-// Middleware function to verify the authenticity of a user's token before granting access to protected routes.
+router.post("/logout", (req, res) => {
+  res.clearCookie("token");
+  return res.json({ status: true, message: "Logged Out" });
+});
+
 const verifyUser = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
       return res.json({ status: false, message: "No Token" });
     }
-    const decoded = jwt.verify(token, process.env.KEY);
+    jwt.verify(token, process.env.KEY);
     next();
   } catch (err) {
     return res.json(err);
   }
 };
 
-// Route to verify the authenticity of a user's token.
-// It utilizes the verifyUser middleware to ensure that the user is authenticated.
 router.get("/verify", verifyUser, (req, res) => {
   return res.json({ status: true, message: "Authorized" });
+});
+
+router.get("/validate", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({ status: false, message: "No Token" });
+    }
+    const decoded = jwt.verify(token, process.env.KEY);
+    const user = await User.findById(decoded._id);
+    if (!user) {
+      return res.json({ status: false, message: "Invalid User" });
+    }
+    return res.json({ status: true, user });
+  } catch (err) {
+    return res.json({ status: false, message: "Invalid Token" });
+  }
 });
 
 // Route to fetch the current user's details.
