@@ -624,10 +624,9 @@ router.post("/add-companies", async (req, res) => {
 
     await newCompany.save();
 
-    const Comp = new CompanyData({name: companyname});
+    const Comp = new CompanyData({name: companyname,ctc:ctc});
     await Comp.save();
 
-    // Find eligible students based on criteria
     const eligibleStudents = await User.find({
       isAdmin: { $ne: "1" }, // Exclude admin users
       tenthPercentage: { $gte: tenthPercentage },
@@ -822,6 +821,7 @@ router.get("/jobs/eligible", verifyUser, async (req, res) => {
       tenthPercentage: { $lte: user.tenthPercentage },
       twelfthPercentage: { $lte: user.twelfthPercentage },
       graduationCGPA: { $lte: user.graduationCGPA },
+      eligibilityCriteria: { $in: [user.stream] },
       _id: { $nin: user.appliedCompanies } // Exclude already applied companies
     });
 
@@ -829,6 +829,20 @@ router.get("/jobs/eligible", verifyUser, async (req, res) => {
   } catch (error) {
     console.error('Error fetching eligible jobs:', error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get('/list', async (req, res) => {
+  try {
+    const result = await User.aggregate([
+      { $match: { companyPlaced: { $ne: null } } },  
+      { $group: { _id: "$companyPlaced", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

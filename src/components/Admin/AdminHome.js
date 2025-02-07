@@ -52,6 +52,9 @@ function AdminHome() {
                   <Link className="nav-link mx-lg-2" to="/admin/lab-allocation">Lab Allocation</Link>
                 </li>
                 <li className="nav-item">
+                  <Link className="nav-link mx-lg-2" to="/list">Placements</Link>
+                </li>
+                <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/" onClick={handleLogout}>Logout</Link>
                 </li>
               </ul>

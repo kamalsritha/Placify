@@ -22,6 +22,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LabAllocation from "./components/Admin/Lab Allocation/LabAllocation.js";
 import Applicants from "./components/Admin/AdminReports/Applicants.js";
+import List from "./components/Admin/AdminReports/List.js";
 
 function App() {
  
@@ -50,6 +51,7 @@ function App() {
         <Route path="/addexperience" element={<AddExperience />} />
         <Route path="/faq" element={<Faqspage />} />
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/list" element={<List/>}/>
         <Route path="*" element={<h1>Page Not found</h1>}></Route>
       </Routes>
     </Router>
