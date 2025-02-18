@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCompanies, deleteCompany } from "../../../redux/companySlice.jsx";
 import AdminHome from "../AdminHome.js";
 import Footer from "../AdminReusableComponents/AdminFooter.js";
-import interviewimg from "../Assets/company.png"; // Static image for the left side
+import interviewimg from "../Assets/company.png";
 import "../Admin-CSS/Companycrud.css";
 
 function Companycrud() {
@@ -43,7 +43,6 @@ function Companycrud() {
     setSelectedCompany(
       selectedCompany?.id === company.id ? null : company
     );
-   
   };
 
   const handleDelete = (id) => {
@@ -55,13 +54,39 @@ function Companycrud() {
       .catch((err) => console.log(err));
   };
 
+  const handleDownloadShortlist = async () => {
+    try {
+      const companyName = selectedCompany.companyname;
+      const tenthPercentage = selectedCompany.tenthPercentage;
+      const twelfthPercentage = selectedCompany.twelfthPercentage;
+      const graduationCGPA = selectedCompany.graduationCGPA;
+      const pass=selectedCompany.pass
+      const eligibilityCriteria=selectedCompany.eligibilityCriteria;
+
+      const response = await axios.get(
+        `http://localhost:3001/auth/download-shortlist?companyName=${companyName}&tenthPercentage=${tenthPercentage}&twelfthPercentage=${twelfthPercentage}&graduationCGPA=${graduationCGPA}&pass=${pass}&eligibilityCriteria=${eligibilityCriteria}`,
+        { responseType: "blob" }
+      );
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${companyName}_shortlist.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error("Error downloading shortlist:", err);
+    }
+  };
+
   return (
     <>
       <AdminHome />
       <h2 className="header-title text-center mb-5">Companies</h2>
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
         <div className="row w-100 justify-content-center">
-          {/* Left Side - Static Image */}
           <div className="col-lg-4 d-flex justify-content-center align-items-center mb-4">
             <img
               src={interviewimg}
@@ -76,7 +101,6 @@ function Companycrud() {
             />
           </div>
 
-          {/* Right Side - Companies List */}
           <div className="col-lg-8 d-flex flex-column justify-content-center">
             <div className="mb-4">
               <Link to="/add-companies" className="btn btn-success btn-sm">
@@ -84,7 +108,6 @@ function Companycrud() {
               </Link>
             </div>
 
-            {/* List of Companies */}
             <div className="d-flex flex-wrap justify-content-center">
               {companies.map((company) => (
                 <div
@@ -94,7 +117,7 @@ function Companycrud() {
                   style={{
                     cursor: "pointer",
                     border: selectedCompany?.id === company.id ? "2px solid #007bff" : "1px solid #ddd",
-                    borderRadius: "50px",  // Capsule shape
+                    borderRadius: "50px",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                     width: "350px",
                     background: "#f9f9f9",
@@ -104,23 +127,20 @@ function Companycrud() {
                     padding: "10px 20px",
                   }}
                 >
-                  {/* Company Logo */}
                   <img
-                    src={company.logo || interviewimg}  // Default to a generic image if no logo is available
+                    src={company.logo || interviewimg}
                     alt={company.companyname}
                     className="img-fluid rounded-circle"
                     style={{ width: "50px", height: "50px", marginRight: "20px" }}
                   />
 
-                  {/* Company Name */}
                   <div style={{ flexGrow: 1 }}>
                     <h5 className="mb-0">{company.companyname}</h5>
                   </div>
 
-                  {/* Delete Button */}
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent the toggleDetails from triggering
+                      e.stopPropagation();
                       handleDelete(company.id);
                     }}
                     className="btn btn-sm btn-danger"
@@ -134,7 +154,6 @@ function Companycrud() {
         </div>
       </div>
 
-      {/* Modal to show company details */}
       {selectedCompany && (
         <div
           className="modal fade show"
@@ -174,6 +193,7 @@ function Companycrud() {
                 <p><strong>10th %:</strong> {selectedCompany.tenthPercentage}</p>
                 <p><strong>12th %:</strong> {selectedCompany.twelfthPercentage}</p>
                 <p><strong>Graduation CGPA:</strong> {selectedCompany.graduationCGPA}</p>
+                <p><strong>Passout Year : </strong>{selectedCompany.pass}</p>
               </div>
               <div className="modal-footer">
                 <button
@@ -184,20 +204,25 @@ function Companycrud() {
                 >
                   Close
                 </button>
-                {/* Update Button */}
                 <Link
                   to={`/updatecompany/${selectedCompany.id}`}
                   className="btn btn-danger"
                 >
                   Update
                 </Link>
-                {/* Delete Button */}
                 <button
                   type="button"
                   className="btn btn-danger"
                   onClick={() => handleDelete(selectedCompany.id)}
                 >
                   Delete
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={handleDownloadShortlist}
+                >
+                  Download Shortlist
                 </button>
               </div>
             </div>

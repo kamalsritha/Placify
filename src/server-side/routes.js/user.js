@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import axios from 'axios';
 import nodemailer from "nodemailer";
 import fileUpload from 'express-fileupload';
+import ExcelJS from 'exceljs';
 
 import { parseResume, calculateATSScore } from '../utils/atsScoring.js';
 import stringSimilarity from 'string-similarity';
@@ -31,6 +32,7 @@ router.post("/register", async (req, res) => {
     rollNo,
     gender,
     dob,
+    pass,
     tenthPercentage,
     twelfthPercentage,
     graduationCGPA,
@@ -51,6 +53,7 @@ router.post("/register", async (req, res) => {
     rollNo,
     gender,
     dob,
+    pass,
     tenthPercentage,
     twelfthPercentage,
     graduationCGPA,
@@ -587,6 +590,73 @@ export default router;
 // Modify the existing add-companies endpoint
 
 
+router.get('/download-shortlist', async (req, res) => {
+  const { companyName, tenthPercentage, twelfthPercentage, graduationCGPA ,pass, eligibilityCriteria} = req.query;
+
+  try {
+    if (!companyName || !tenthPercentage || !twelfthPercentage || !graduationCGPA || !pass || !eligibilityCriteria) {
+      return res.status(400).json({ message: 'All parameters (companyName, tenthPercentage, twelfthPercentage, graduationCGPA) are required' });
+    }
+
+    const tenthPercent = parseFloat(tenthPercentage);
+    const twelfthPercent = parseFloat(twelfthPercentage);
+    const graduationCGPAValue = parseFloat(graduationCGPA);
+
+    const shortlistedStudents = await User.find({
+      isAdmin: {$eq : null},
+      tenthPercentage: { $gte: tenthPercent },
+      twelfthPercentage: { $gte: twelfthPercent },
+      graduationCGPA: { $gte: graduationCGPAValue },
+      pass: {$eq: pass},
+      stream: { $in: eligibilityCriteria }
+    });
+
+    console.log(pass);
+
+    if (shortlistedStudents.length === 0) {
+      return res.status(404).json({ message: 'No eligible students found' });
+    }
+
+    
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(`${companyName} Shortlist`);
+
+    // Updated columns, added rollno and removed marks and profile
+    worksheet.columns = [
+      { header: 'Roll No', key: 'rollNo', width: 30 },
+      { header: 'Student Name', key: 'name', width: 30 },
+      { header: 'Stream', key: 'stream', width: 30 },
+    ];
+
+    // Updated for loop to include rollno and exclude marks/profile
+    shortlistedStudents.forEach(student => {
+      worksheet.addRow({
+        name: student.name,
+        rollNo: student.rollNo, // Added rollno field
+        companyPlaced: student.companyPlaced,
+        tenthPercentage: student.tenthPercentage,
+        twelfthPercentage: student.twelfthPercentage,
+        graduationCGPA: student.graduationCGPA,
+        stream:student.stream
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=${companyName}_shortlist.xlsx`);
+
+    await workbook.xlsx.write(res);
+    res.end();
+    
+  } catch (error) {
+    console.error('Error generating shortlist:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
+
 router.post("/add-companies", async (req, res) => {
 
   const {
@@ -601,6 +671,7 @@ router.post("/add-companies", async (req, res) => {
     tenthPercentage,
     twelfthPercentage,
     graduationCGPA,
+    pass,
     expire
     
   } = req.body;
@@ -618,6 +689,7 @@ router.post("/add-companies", async (req, res) => {
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
+      pass,
       expire
       
     });
@@ -628,11 +700,14 @@ router.post("/add-companies", async (req, res) => {
     await Comp.save();
 
     const eligibleStudents = await User.find({
-      isAdmin: { $ne: "1" }, // Exclude admin users
+      isAdmin: { $ne: "1" },
       tenthPercentage: { $gte: tenthPercentage },
       twelfthPercentage: { $gte: twelfthPercentage },
       graduationCGPA: { $gte: graduationCGPA },
+      pass: { $eq: pass },
+      stream: { $in: eligibilityCriteria }  
     });
+    
 
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -836,15 +911,59 @@ router.get('/list', async (req, res) => {
   try {
     const result = await User.aggregate([
       { $match: { companyPlaced: { $ne: null } } },  
-      { $group: { _id: "$companyPlaced", count: { $sum: 1 } } },
+      
+      // Grouping by companyPlaced and counting students
+      { 
+        $group: { 
+          _id: "$companyPlaced", 
+          count: { $sum: 1 }
+        } 
+      },
+
+      // Joining with companydatas collection
+      {
+        $lookup: {
+          from: "companydatas",  // Ensure this matches the collection name in MongoDB
+          localField: "_id",     // _id from grouped data (companyPlaced)
+          foreignField: "name",  // Matching with "name" field in companydatas
+          as: "companyInfo"
+        }
+      },
+
+      // Unwinding companyInfo array to get company details
+      {
+        $unwind: "$companyInfo"
+      },
+
+      // Formatting output
+      {
+        $project: {
+          companyName: "$_id",
+          count: 1,
+          ctc: "$companyInfo.ctc",
+          _id: 0
+        }
+      },
+
+      // Sorting by number of students placed
       { $sort: { count: -1 } }
     ]);
 
+    // If no placements found, return 404
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No placements found" });
+    }
+
+    console.log(result);
     res.json(result);
   } catch (error) {
+    console.error("Error fetching placement data:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
+
 
 
 

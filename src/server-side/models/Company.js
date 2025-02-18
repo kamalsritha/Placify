@@ -12,6 +12,7 @@ const CompanySchema = new mongoose.Schema({
     tenthPercentage: { type: Number, required: true },
     twelfthPercentage: { type: Number, required: true },
     graduationCGPA: { type: Number },
+    pass : {type: String, required : true},
     expire: { type: Date, required: true },
     created:{ type: Date, default: Date.now },
 });

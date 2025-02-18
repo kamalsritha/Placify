@@ -13,6 +13,7 @@ function Registration() {
   const [rollNo, setRollNo] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
+  const [pass, setPass]=useState("");
   const [tenthPercentage, setTenthPercentage] = useState("");
   const [twelfthPercentage, setTwelfthPercentage] = useState("");
   const [graduationCGPA, setGraduationCGPA] = useState("");
@@ -51,7 +52,8 @@ function Registration() {
       !tenthPercentage ||
       !twelfthPercentage ||
       !graduationCGPA||
-      !stream 
+      !stream ||
+      !pass
     ) {
       alert("Please fill in all fields");
       return;
@@ -65,11 +67,12 @@ function Registration() {
       rollNo,
       gender,
       dob,
+      pass,
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
       stream,
-      isAdmin: null,
+      isAdmin: null
     };
     axios
       .post("http://localhost:3001/auth/register", userData)
@@ -226,6 +229,16 @@ function Registration() {
             id="dob"
             className="form-control"
             onChange={(e) => setDob(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="passout">Passout Year</label>
+          <input
+            type="text"
+            id="passout"
+            className="form-control"
+            placeholder="Passout Year"
+            onChange={(e) => setPass(e.target.value)}
           />
         </div>
 

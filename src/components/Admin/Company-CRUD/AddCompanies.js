@@ -28,6 +28,7 @@ function AddCompanies() {
   const [graduationCGPA, setGraduationCGPA] = useState("");
   const [branches, setBranches] = useState([]);
   const [expire,setExpire]=useState([]);
+  const [pass,setPass]=useState([]);
 
   const navigate = useNavigate();
   const handleBranchChange = (e) => {
@@ -54,7 +55,8 @@ function AddCompanies() {
       !tenthPercentage ||
       !ctc ||
       !twelfthPercentage||
-      !expire
+      !expire ||
+      !pass
     ) {
       alert("Please fill in all fields");
       return;
@@ -72,8 +74,11 @@ function AddCompanies() {
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
+      pass,
       expire
     };
+
+    console.log("adding....."+CompanyData.pass)
 
     axios
       .post("http://localhost:3001/auth/add-companies", CompanyData)
@@ -165,6 +170,16 @@ function AddCompanies() {
                   className="form-control"
                   placeholder="Offered CTC"
                   onChange={(e) => setCtc(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="pass">Passout Year</label>
+                <input
+                  type="text"
+                  id="pass"
+                  className="form-control"
+                  placeholder="Passout Year"
+                  onChange={(e) => setPass(e.target.value)}
                 />
               </div>
               <div className="form-group">
