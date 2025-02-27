@@ -8,11 +8,12 @@ const CompanySchema = new mongoose.Schema({
     doa: { type: String,required: true},
     doi: { type: String,required: true},
     eligibilityCriteria: [{ type: String }],
-    assesmentSelects:{type: Array, default:[]},
     tenthPercentage: { type: Number, required: true },
     twelfthPercentage: { type: Number, required: true },
+    interviewType:{type: String,require:true},
     graduationCGPA: { type: Number },
     pass : {type: String, required : true},
+    loc:{type:String,default:null},
     expire: { type: Date, required: true },
     created:{ type: Date, default: Date.now },
 });

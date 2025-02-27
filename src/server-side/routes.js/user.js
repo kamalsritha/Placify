@@ -9,6 +9,7 @@ import axios from 'axios';
 import nodemailer from "nodemailer";
 import fileUpload from 'express-fileupload';
 import ExcelJS from 'exceljs';
+import mongoose from "mongoose";
 
 import { parseResume, calculateATSScore } from '../utils/atsScoring.js';
 import stringSimilarity from 'string-similarity';
@@ -217,9 +218,7 @@ router.post("/forgotpassword", async (req, res) => {
   }
 });
 
-// This API endpoint is responsible for resetting the password of a user. It verifies the provided token,
-// then updates the user's password with the new hashed password. If the token is invalid, it returns an
-// error response indicating the token is invalid.
+
 router.post("/resetPassword/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -239,41 +238,223 @@ router.post("/resetPassword/:token", async (req, res) => {
   }
 });
 
+router.get("/expired", async (req, res) => {
+  try {
+    const activeCompanyIds = await Company.find({}, "_id").lean();
+    const activeCompanyIdSet = new Set(activeCompanyIds.map((c) => c._id.toString()));
+
+    const expiredCompanies = await CompanyData.find({
+      _id: { $nin: Array.from(activeCompanyIdSet) },
+      labs: false
+    });
+    
+
+    res.status(200).json({ expiredCompanies });
+  } catch (error) {
+    console.error("Error fetching expired companies:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get('/companies/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const company = await CompanyData.findById(id);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    res.status(200).json(company);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching company data', error });
+  }
+});
+
+
+router.get('/companies/:id/status-check', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const company = await CompanyData.findById(id);
+    const present = await Company.findById(id);
+    
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    const today = new Date();
+    const assessmentDate = new Date(company.doa);
+    const interviewDate = new Date(company.doi);
+
+    const statusCheck = {
+      isPresent: !present, 
+      isLabAllocated: company.labs === true,
+      isAssessmentExpired: assessmentDate < today,
+      isInterviewExpired: interviewDate < today,
+      asmt: company.assesmentSelects.length === 0 ,
+      intr1 : company.interviewSelects.length===0,
+      fintr : company.finalSelects.length===0,
+    };
+
+    console.log(statusCheck);
+    res.status(200).json(statusCheck);
+  } catch (error) {
+    res.status(500).json({ message: "Error checking company status", error });
+  }
+});
+
+router.get('/company-status/:companyId/:rollNo', async (req, res) => {
+  try {
+      const { companyId, rollNo } = req.params;
+      console.log(`Fetching status for Company ID: ${companyId}, Roll No: ${rollNo}`);
+
+      const company = await Company.findById(companyId);
+      if (company) {
+          return res.json({
+              isExpired: false,
+              isLabAllocated: false,
+              isAssessmentCompleted: false,
+              isInterviewCompleted: false,
+              isFinalCompleted: false,
+              assessmentSelected: "Waiting for Result",
+              interviewSelected: "Waiting for Result",
+              finalSelected: "Waiting for Result"
+          });
+      }
+
+      const comp = await CompanyData.findById(companyId);
+      if (!comp) {
+          return res.status(404).json({ error: "Company not found" });
+      }
+
+      const isExpired = true;
+      const isLabAllocated = comp.labs || false;
+      const isAssessmentCompleted = comp.doa && new Date(comp.doa) < new Date();
+      const isInterviewCompleted = comp.doi && new Date(comp.doi) < new Date();
+      const isFinalCompleted = comp.finalSelects?.length > 0;
+
+      let assessmentSelected = "Waiting for Result";
+      let interviewSelected = "Waiting for Result";
+      let finalSelected = "Waiting for Result";
+
+      if (isAssessmentCompleted && comp.assesmentSelects?.length > 0) {
+          assessmentSelected = comp.assesmentSelects.includes(rollNo) ? "Selected" : "Not Selected";
+      }
+
+      if (isInterviewCompleted && comp.interviewSelects?.length > 0) {
+          interviewSelected = comp.interviewSelects.includes(rollNo) ? "Selected" : "Not Selected";
+      }
+
+      if (isFinalCompleted) {
+          finalSelected = comp.finalSelects.includes(rollNo) ? "Selected" : "Not Selected";
+      }
+
+      console.log(`Assessment: ${assessmentSelected}, Interview: ${interviewSelected}, Final: ${finalSelected}`);
+
+      res.json({
+          isExpired,
+          isLabAllocated,
+          isAssessmentCompleted,
+          isInterviewCompleted,
+          isFinalCompleted,
+          assessmentSelected,
+          interviewSelected,
+          finalSelected
+      });
+  } catch (error) {
+      console.error('Error fetching company status:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+router.get('/applicant/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const company = await CompanyData.findById(id);
+
+      if (!company) {
+          return res.status(404).json({ message: 'Company not found' });
+      }
+
+      res.json({
+          applied: company.applicants 
+      });
+  } catch (error) {
+      console.error('Error fetching applicants:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.put('/labAllocation/:id', async (req, res) => {
+  console.log("lab...........")
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid ID format' });
+    }
+
+    const updatedCompany = await CompanyData.findByIdAndUpdate(
+      id,
+      { labs: true },
+      { new: true }
+    );
+
+    console.log("Updated company:", updatedCompany);
+
+    if (!updatedCompany) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    res.status(200).json({ message: 'Labs field updated successfully', data: updatedCompany });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating labs field', error: error.message });
+  }
+});
+
+
+
+
 //API to add a company ID to appliedCompanies array for a user
 router.post("/applyCompany/:userId/:companyId", async (req, res) => {
-  const { userId, companyId } = req.params;
-  console.log("User ID: ", userId);
-  console.log("Company ID:", companyId);
-
   try {
+    const { userId, companyId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(companyId)) {
+      return res.status(400).json({ message: "Invalid User ID or Company ID" });
+    }
+
     const user = await User.findById(userId);
-    console.log("User:", user);
+    const comp = await CompanyData.findById(companyId);
+    console.log(comp);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!user || !comp) {
+      return res.status(404).json({ message: "User or Company not found" });
     }
 
-    if (!user.appliedCompanies) {
-      user.appliedCompanies = [];
-    }
+    if (!user.appliedCompanies) user.appliedCompanies = [];
 
     if (user.appliedCompanies.includes(companyId)) {
-      return res
-        .status(400)
-        .json({ message: "User already applied to this company" });
+      return res.status(400).json({ message: "User already applied to this company" });
     }
 
     user.appliedCompanies.push(companyId);
     await user.save();
 
+    if (!comp.applicants) comp.applicants = [];
+    comp.applicants.push(user);
+
+    await comp.save();
+
     return res.json({ message: "Company applied successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Error in applyCompany:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// Endpoint to retrieve scheduled interviews for a user
+
 router.get("/scheduledInterviews/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -284,11 +465,17 @@ router.get("/scheduledInterviews/:userId", async (req, res) => {
     }
 
     const appliedCompanyIds = user.appliedCompanies;
-    const companies = await Company.find({ _id: { $in: appliedCompanyIds } });
+    const today = new Date(); 
+
+    const companies = await CompanyData.find({
+      _id: { $in: appliedCompanyIds },
+      doa: { $gt: today.toISOString().split('T')[0] }
+    });
+    
 
     const scheduledInterviews = companies.map((company) => ({
       companyName: company.companyname,
-      interviewDate: company.doi,
+      interviewDate: company.doa,
     }));
 
     return res.json({ scheduledInterviews });
@@ -672,12 +859,13 @@ router.post("/add-companies", async (req, res) => {
     twelfthPercentage,
     graduationCGPA,
     pass,
+    loc,
     expire
-    
   } = req.body;
-
+  
   try {
     const newCompany = new Company({
+      _id: new mongoose.Types.ObjectId(), 
       companyname,
       jobprofile,
       jobdescription,
@@ -690,15 +878,12 @@ router.post("/add-companies", async (req, res) => {
       twelfthPercentage,
       graduationCGPA,
       pass,
+      loc,
       expire
-      
     });
-
+  
     await newCompany.save();
-
-    const Comp = new CompanyData({name: companyname,ctc:ctc});
-    await Comp.save();
-
+  
     const eligibleStudents = await User.find({
       isAdmin: { $ne: "1" },
       tenthPercentage: { $gte: tenthPercentage },
@@ -707,20 +892,40 @@ router.post("/add-companies", async (req, res) => {
       pass: { $eq: pass },
       stream: { $in: eligibilityCriteria }  
     });
-    
+  
+    const Comp = new CompanyData({
+      _id: newCompany._id, 
+      companyname,
+      jobprofile,
+      jobdescription,
+      website,
+      ctc,
+      doa,
+      doi,
+      eligibilityCriteria,
+      tenthPercentage,
+      twelfthPercentage,
+      graduationCGPA,
+      pass,
+      loc,
+      expire,
+      eligible: eligibleStudents,
+      applicants:[],
+    });
+  
+    await Comp.save();
 
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 465,  // Changed from 587 to 465
-      secure: true, // Changed from false to true
+      port: 465,  
+      secure: true, 
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD  // This should be your app password
+        pass: process.env.EMAIL_PASSWORD 
       },
-      debug: true // Add this to see detailed logs
+      debug: true 
     });
     
-    // Add this verification step before using the transporter
     transporter.verify(function (error, success) {
       if (error) {
         console.log("Transporter verification error:", error);
@@ -769,135 +974,83 @@ router.post("/add-companies", async (req, res) => {
   }
 });
 
+router.get("/Applicants/:companyId", async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    console.log(companyId)
 
+    if (!mongoose.Types.ObjectId.isValid(companyId)) {
+      return res.status(400).json({ message: "Invalid company ID" });
+    }
 
-// router.post("/add-companies", async (req, res) => {
-//   const {
-//     companyname,
-//     jobprofile,
-//     jobdescription,
-//     website,
-//     ctc,
-//     doa,
-//     doi,
-//     eligibilityCriteria,
-//     tenthPercentage,
-//     twelfthPercentage,
-//     graduationCGPA,
-//     expire
-    
-//   } = req.body;
+    const appliedStudents = await User.find({ appliedCompanies: companyId });
+    const appliedStudentIds = new Set(appliedStudents.map(student => student._id.toString()));
+   
+    const companyData = await CompanyData.findById(companyId);
+    console.log(companyData);
+    if (!companyData) {
+      return res.status(404).json({ message: "Company data not found" });
+    }
 
-//   try {
-//     const newCompany = new Company({
-//       companyname,
-//       jobprofile,
-//       jobdescription,
-//       website,
-//       ctc,
-//       doa,
-//       doi,
-//       eligibilityCriteria,
-//       tenthPercentage,
-//       twelfthPercentage,
-//       graduationCGPA,
-//       expire
-      
-//     });
+    const notAppliedStudents = companyData.eligible
+      .filter(student => !appliedStudentIds.has(student._id.toString()))
+      .map(student => ({ rollNo: student.rollNo, name: student.name }));
 
-//     await newCompany.save();
+    res.status(200).json({ applied: appliedStudents, notApplied: notAppliedStudents });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
-//     // Find eligible students based on criteria
-//     const eligibleStudents = await User.find({
-//       isAdmin: { $ne: "1" }, // Exclude admin users
-//       tenthPercentage: { $gte: tenthPercentage },
-//       twelfthPercentage: { $gte: twelfthPercentage },
-//       graduationCGPA: { $gte: graduationCGPA },
-//     });
+router.get("/companies", async (req, res) => {
+  try {
+    const companies = await CompanyData.find({});
+    res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    res.status(500).json({ message: "Server error. Unable to fetch companies." });
+  }
+});
 
-//     const transporter = nodemailer.createTransport({
-//       host: 'smtp.gmail.com',
-//       port: 587,  // Changed from 587 to 465
-//       secure: true, // Changed from false to true
-//       auth: {
-//         user: process.env.EMAIL_USER,
-//         pass: process.env.EMAIL_PASSWORD  // This should be your app password
-//       },
-//       debug: true // Add this to see detailed logs
-//     });
-    
-//     // Add this verification step before using the transporter
-//     transporter.verify(function (error, success) {
-//       if (error) {
-//         console.log("Transporter verification error:", error);
-//       } else {
-//         console.log("Server is ready to send emails");
-//       }
-//     });
-//     // Send emails to eligible students
-//     for (const student of eligibleStudents) {
-//       const mailOptions = {
-//         from: process.env.EMAIL_USER,
-//         to: student.email,
-//         subject: `New Job Opportunity from ${companyname}`,
-//         html: `
-//           <h2>Congratulations! You've been shortlisted!</h2>
-//           <p>Dear ${student.name},</p>
-//           <p>You have been shortlisted for a new job opportunity at ${companyname}.</p>
-//           <h3>Job Details:</h3>
-//           <ul>
-//             <li><strong>Job Profile:</strong> ${jobprofile}</li>
-//             <li><strong>CTC:</strong> ${ctc} LPA</li>
-//             <li><strong>Interview Date:</strong> ${doi}</li>
-//             <li><strong>Job Description:</strong> ${jobdescription}</li>
-//             <li><strong>Company Website:</strong> ${website}</li>
-//           </ul>
-//           <p>Please log in to your dashboard to apply for this position.</p>
-//           <p><strong>Note:</strong> This opportunity is available based on your academic credentials meeting the company's criteria.</p>
-//           <p>Best regards,<br>Campus Recruitment Team</p>
-//         `
-//       };
+router.get('/track/companies/:applicantId', async (req, res) => {
+  try {
+    const { applicantId } = req.params;
+    console.log(applicantId);
+    const companies = await CompanyData.find({
+      "applicants._id": new mongoose.Types.ObjectId(applicantId)
+    });
 
-//       try {
-//         await transporter.sendMail(mailOptions);
-//       } catch (error) {
-//         console.error(`Failed to send email to ${student.email}:`, error);
-//       }
-//     }
+    if (companies.length === 0) {
+      return res.status(404).json({ message: "No companies found for the given applicant ID" });
+    }
 
-//     return res.json({ 
-//       message: "Company Registered and Notifications Sent",
-//       notifiedStudents: eligibleStudents.length 
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
+    res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error fetching company data:", error);
+    res.status(500).json({ message: "Error fetching company data", error });
+  }
+});
 
 
 
-// Add this new endpoint for fetching eligible jobs
 router.get("/jobs/eligible", verifyUser, async (req, res) => {
   try {
-    // Get current user from token
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.KEY);
     const userId = decoded._id;
 
-    // Find the user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Find companies where user meets criteria
     const eligibleCompanies = await Company.find({
       tenthPercentage: { $lte: user.tenthPercentage },
       twelfthPercentage: { $lte: user.twelfthPercentage },
       graduationCGPA: { $lte: user.graduationCGPA },
       eligibilityCriteria: { $in: [user.stream] },
-      _id: { $nin: user.appliedCompanies } // Exclude already applied companies
+      pass:user.pass,
+      _id: { $nin: user.appliedCompanies } 
     });
 
     return res.json(eligibleCompanies);
@@ -907,68 +1060,31 @@ router.get("/jobs/eligible", verifyUser, async (req, res) => {
   }
 });
 
-router.get('/list', async (req, res) => {
+router.get('/list/:passoutYear', async (req, res) => {
   try {
-    const result = await User.aggregate([
-      { $match: { companyPlaced: { $ne: null } } },  
-      
-      // Grouping by companyPlaced and counting students
-      { 
-        $group: { 
-          _id: "$companyPlaced", 
-          count: { $sum: 1 }
-        } 
-      },
+    const passoutYear = req.params.passoutYear;
 
-      // Joining with companydatas collection
-      {
-        $lookup: {
-          from: "companydatas",  // Ensure this matches the collection name in MongoDB
-          localField: "_id",     // _id from grouped data (companyPlaced)
-          foreignField: "name",  // Matching with "name" field in companydatas
-          as: "companyInfo"
-        }
-      },
-
-      // Unwinding companyInfo array to get company details
-      {
-        $unwind: "$companyInfo"
-      },
-
-      // Formatting output
+    const result = await CompanyData.aggregate([
+      { $match: { pass: passoutYear } },
       {
         $project: {
-          companyName: "$_id",
-          count: 1,
-          ctc: "$companyInfo.ctc",
+          companyName: "$companyname",
+          finalSelectCount: { $size: { $ifNull: ["$finalSelects", []] } },
+          ctc: "$ctc",
           _id: 0
         }
       },
-
-      // Sorting by number of students placed
-      { $sort: { count: -1 } }
+      { $sort: { finalSelectCount: -1 } }
     ]);
 
-    // If no placements found, return 404
-    if (result.length === 0) {
-      return res.status(404).json({ message: "No placements found" });
-    }
-
-    console.log(result);
     res.json(result);
   } catch (error) {
-    console.error("Error fetching placement data:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 
 
-
-
-
-// Route to fetch all users and generate user reports.
-// It retrieves all users from the database and sends them as a response.
 router.get("/getUsers", async (req, res) => {
   try {
     const allUsers = await User.find({isAdmin : null});
@@ -1032,7 +1148,7 @@ router.get("/getCompanies/:id", async (req, res) => {
 //This API fetches the users and the companies they have applied to
 router.get("/companyApplicants", async (req, res) => {
   try {
-    const companies = await Company.find(); // Assuming you have a Company model
+    const companies = await Company.find(); 
 
     const companyData = [];
 
@@ -1074,27 +1190,84 @@ router.get("/students", async (req, res) => {
   }
 });
 
+router.post("/updateShortlisting/:id/:activity/:rollNumbers", async (req, res) => {
+  try {
+    const { id, activity, rollNumbers } = req.params;
+
+    if (!id || !rollNumbers || !activity) {
+      return res.status(400).json({ message: "Invalid request data" });
+    }
+
+    // Map activity to the correct field in the database
+    const validActivities = {
+      assessment: "assesmentSelects",
+      interview: "interviewSelects",
+      final: "finalSelects",
+    };
+
+    const fieldName = validActivities[activity];
+
+    if (!fieldName) {
+      return res.status(400).json({ message: "Invalid activity type" });
+    }
+
+    const studentIdArray = rollNumbers.split(",");
+
+    const company = await CompanyData.findOne({ _id: id });
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    const updatedStudents = [...new Set([...company[fieldName], ...studentIdArray])];
+
+    await CompanyData.updateOne(
+      { _id: id },
+      { $set: { [fieldName]: updatedStudents } }
+    );
+
+    res.status(200).json({ message: `${activity} shortlisting updated successfully!` });
+  } catch (error) {
+    console.error("Error updating shortlisting:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
+
 // Backend API to update placementStatus
 router.post("/updatePlacementStatus", async (req, res) => {
   try {
-    const { userId, companyId, status } = req.body;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
+    const { userIds, companyId, status } = req.body;
+
+    console.log(userIds)
+
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({ message: "Invalid or empty userIds array." });
     }
-    if (user.placementStatus === "Placed" && status === "Placed") {
-      return res.status(200).json({ message: "User is already placed." });
-    }
-    const company = await Company.findById(companyId);
-    console.log(company.companyname);
+
+    const company = await CompanyData.findById(companyId);
     if (!company) {
       return res.status(404).json({ message: "Company not found." });
     }
-    user.placementStatus = status;
-    user.companyPlaced = company.companyname;
-    await user.save();
+
+    const users = await User.find({ rollNo: { $in: userIds } });
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found." });
+    }
+
+    const updatePromises = users.map((user) => {
+      user.placementStatus = status;
+      user.companyPlaced = company.companyname;
+      return user.save();
+    });
+
+    await Promise.all(updatePromises);
+
     res.json({
-      message: `Placement status updated to ${status} successfully.`,
+      message: `${users.length} users' placement status updated to ${status} successfully.`,
     });
   } catch (error) {
     console.error("Error updating placement status:", error);

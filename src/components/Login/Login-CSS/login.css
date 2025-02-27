@@ -67,8 +67,8 @@ button.register-btn:hover {
 }
 
 .error-message {
-    color: #d9534f; /* Bootstrap danger color for a more noticeable error message */
-    background-color: #f2dede; /* Background color for error message */
+    color: #d9534f; 
+    background-color: #f2dede; 
     padding: 10px;
     border-radius: 5px;
     width: 677px;

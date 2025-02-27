@@ -1,0 +1,140 @@
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  height: 100vh; 
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  width: 100%;
+}
+
+.timeline-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.timeline-dot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-right: 15px;
+}
+
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ccc;
+  border: 2px solid #ddd;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.timeline-dot.completed {
+  background-color: #4caf50;
+  border: 2px solid #388e3c;
+}
+
+.timeline-line {
+  width: 2px;
+  height: 40px;
+  background-color: #ddd;
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.timeline-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.timeline-stage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.timeline-text {
+  font-size: 14px;
+  color: #666;
+  transition: color 0.3s;
+  font-weight: 500;
+}
+
+.timeline-text.completed-text {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.stage-button {
+  background-color: #007bff;
+  color: white;
+  padding: 3px 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-left: 10px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.stage-button:hover {
+  background-color: #0056b3;
+}
+
+.disabled-link {
+  background-color: gray;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.lab-button {
+  padding: 3px 8px;
+  font-size: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 10px;
+  transition: background-color 0.3s;
+}
+
+.lab-button:hover {
+  background-color: #0056b3;
+}
+
+.timeline-stage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

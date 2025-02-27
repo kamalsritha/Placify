@@ -54,6 +54,10 @@ function Companycrud() {
       .catch((err) => console.log(err));
   };
 
+  const handleApplicants = () => {
+    navigate(`/applicants/${selectedCompany.id}`);
+  };
+
   const handleDownloadShortlist = async () => {
     try {
       const companyName = selectedCompany.companyname;
@@ -196,14 +200,10 @@ function Companycrud() {
                 <p><strong>Passout Year : </strong>{selectedCompany.pass}</p>
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                  onClick={() => setSelectedCompany(null)}
-                >
-                  Close
+                <button type="button" className="btn btn-success" onClick={handleApplicants}>
+                  Applicants
                 </button>
+              
                 <Link
                   to={`/updatecompany/${selectedCompany.id}`}
                   className="btn btn-danger"

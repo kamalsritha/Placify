@@ -46,7 +46,7 @@ function AdminHome() {
                   <Link className="nav-link mx-lg-2" to="/companies">Manage Companies</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link mx-lg-2" to="/applicants">Applicants</Link>
+                  <Link className="nav-link mx-lg-2" to="/track">Track</Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/admin/lab-allocation">Lab Allocation</Link>

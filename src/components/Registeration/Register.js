@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Registeration-CSS/RegistrationPage.css"; // Updated CSS file name
+import "./Registeration-CSS/RegistrationPage.css";
 
 function Registration() {
   const [name, setName] = useState("");
@@ -23,12 +23,11 @@ function Registration() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //Checking if password and repeat password match
     if (password !== repass) {
       alert("Passwords do not match");
       return;
     }
-    //using regular expressions to set conditions on password
+
     if (
       !password.match(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/

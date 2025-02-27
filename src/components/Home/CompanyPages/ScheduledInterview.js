@@ -56,7 +56,7 @@ function ScheduledInterview() {
         }}
       >
         <h1 className="text-center mb-4" style={{ color: " #003366" }}>
-          Scheduled Interviews
+          Scheduled Assessments
         </h1>
         <br></br>
         <div className="row w-100 justify-content-center">
@@ -95,13 +95,13 @@ function ScheduledInterview() {
                       {interview.companyName}
                     </h5>
                     <p className="mb-1" style={{ fontSize: "1.1rem", color: "#555" }}>
-                      <strong style={{ color: " #003366" }}>Interview Date:</strong> {interview.interviewDate}
+                      <strong style={{ color: " #003366" }}>Assessment Date:</strong> {interview.interviewDate}
                     </p>
                   </div>
                 ))
               ) : (
                 <p className="text-center" style={{ fontSize: "1.2rem", color: "#888" }}>
-                  You have no scheduled interviews.
+                  You have no scheduled Assessments.
                 </p>
               )}
             </div>

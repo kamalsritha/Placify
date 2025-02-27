@@ -1,0 +1,44 @@
+/* Wrapper for the entire Applicants component */
+.applicants-wrapper {
+    padding: 20px;
+    text-align: center;
+    margin-top:150px;
+}
+
+/* Heading */
+.heading {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Container for the company boxes */
+.company-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Adjusted spacing for smaller boxes */
+    justify-content: center;
+}
+
+/* Styling for each company box */
+.company-box {
+    background-color: #f9f9f9;
+    padding: 15px; /* Reduced padding for smaller size */
+    border: 1px solid #ddd;
+    border-radius: 12px; /* Rounded corners */
+    cursor: pointer;
+    text-align: center;
+    width: 180px; /* Rectangular width */
+    height: 70px; /* Rectangular height */
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Hover effect for the company box */
+.company-box:hover {
+    transform: scale(1.03);
+    background-color: #eaeaea;
+}

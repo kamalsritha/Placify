@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 import * as XLSX from "xlsx";
 import "../Admin-CSS/AdminDashboard.css";
-// import AdminNav from "../AdminReusableComponents/AdminNav.js";
 import Footer from "../AdminReusableComponents/AdminFooter.js";
 import AdminHome from "../AdminHome.js";
 
@@ -12,21 +10,22 @@ function AdminDashboard() {
   const navigate = useNavigate();
   useEffect(() => {
     axios.get("http://localhost:3001/auth/verify").then((res) => {
-      if (res.data.status) {
-      } else {
+      if (!res.data.status) {
         navigate("/");
       }
     });
   }, []);
+
   const [users, setUsers] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState("");
-  const [list,setList]=useState([]);
+  const [list, setList] = useState([]);
   const [originalUsers, setOriginalUsers] = useState([]);
   const [filters, setFilters] = useState({
     tenthPercentage: "",
     twelfthPercentage: "",
     graduationCGPA: "",
     placementStatus: "",
+    year: ""
   });
 
   useEffect(() => {
@@ -45,6 +44,7 @@ function AdminDashboard() {
           rollNo: user.rollNo,
           gender: user.gender,
           stream: user.stream,
+          year: user.pass,
         }));
         setList(studentList);
       })
@@ -71,7 +71,8 @@ function AdminDashboard() {
           user.graduationCGPA >= parseFloat(filters.graduationCGPA)) &&
         (!selectedProgram || user.stream === selectedProgram) &&
         (!filters.placementStatus ||
-          user.placementStatus === filters.placementStatus)
+          user.placementStatus === filters.placementStatus) &&
+        (!filters.year || new Date(user.pass).getFullYear().toString() === filters.year)
       );
     });
     setSelectedProgram("");
@@ -95,6 +96,7 @@ function AdminDashboard() {
       twelfthPercentage: "",
       graduationCGPA: "",
       placementStatus: "",
+      year: ""
     });
     setUsers(originalUsers);
   };
@@ -145,28 +147,18 @@ function AdminDashboard() {
             />
           </div>
           <div className="filter-group">
-            <label htmlFor="stream" className="filter-label">
-              Filter by Program:
+            <label htmlFor="year" className="filter-label">
+              Filter by Year:
             </label>
-            <select
-              id="stream"
-              name="stream"
-              value={selectedProgram}
-              onChange={handleProgramChange}
+            <input
+              type="number"
+              id="year"
+              name="year"
+              value={filters.year}
+              onChange={handleChange}
               className="filter-input"
-            >
-            <option value="">Select Stream</option>
-            <option value="Btech-CSIT">Btech-CSIT</option>
-            <option value="Btech-IT">Btech-IT</option>
-            <option value="Btech-CSE">Btech-CSE</option>
-            <option value="Btech-Cybersecurity">Btech-Cybersecurity</option>
-            <option value="Btech-Data Science">Btech-Data Science</option>
-            <option value="Btech-AIML">Btech-AIML</option>
-            <option value="Btech-Mechanical">Btech-Mechanical</option>
-            <option value="Btech-ECE">Btech-ECE</option>
-            <option value="Btech-ECE">Btech-EEE</option>
-            <option value="BTech-Civil">BTech-Civil</option>
-            </select>
+              placeholder="Enter year"
+            />
           </div>
           <div className="filter-group">
             <label htmlFor="placementStatus" className="filter-label">
@@ -184,6 +176,7 @@ function AdminDashboard() {
               <option value="Unplaced">Unplaced</option>
             </select>
           </div>
+
           <div className="filter-group">
             <button
               onClick={applyFilters}
@@ -194,8 +187,6 @@ function AdminDashboard() {
             <button onClick={resetFilters} className="filter-button">
               Reset Filters
             </button>
-            <div className="filter-container"></div>
-
             <button onClick={handleDownload} className="download-button">
               Download
             </button>
@@ -213,6 +204,7 @@ function AdminDashboard() {
               <th>12th Percentage</th>
               <th>Graduation CGPA</th>
               <th>Stream</th>
+              <th>passout Year</th>
               <th>Placement Status</th>
               <th>Company Placed</th>
             </tr>
@@ -229,6 +221,7 @@ function AdminDashboard() {
                 <td>{user.twelfthPercentage}</td>
                 <td>{user.graduationCGPA}</td>
                 <td>{user.stream}</td>
+                <td>{user.pass}</td>
                 <td>{user.placementStatus}</td>
                 <td>{user.companyPlaced}</td>
               </tr>

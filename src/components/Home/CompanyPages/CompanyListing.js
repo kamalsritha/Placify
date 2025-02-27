@@ -11,17 +11,16 @@ function CompanyListing() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const companies = useSelector((state) => state.companies.companies);
-  const [ids, setIds] = useState([]); // React state for ids array
+  const [ids, setIds] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Fetch eligible job IDs
   useEffect(() => {
     const fetchEligibleJobs = async () => {
       try {
         const response = await axios.get("http://localhost:3001/auth/jobs/eligible");
         const data = response.data;
-        const jobIds = data.map((job) => job._id); // Extract _id for each job
-        setIds(jobIds); // Update the ids state
+        const jobIds = data.map((job) => job._id); 
+        setIds(jobIds); 
       } catch (error) {
         console.error("Error checking eligible jobs:", error);
       }
@@ -30,7 +29,6 @@ function CompanyListing() {
     fetchEligibleJobs();
   }, []);
 
-  // Verify user authentication
   useEffect(() => {
     axios.get("http://localhost:3001/auth/verify").then((res) => {
       if (!res.data.status) {
@@ -48,7 +46,7 @@ function CompanyListing() {
       });
   }, [navigate]);
 
-  // Fetch companies
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,8 +70,8 @@ function CompanyListing() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            flexWrap: "wrap", // Allow cards to wrap onto multiple lines
-            gap: "20px", // Gap between cards
+            flexWrap: "wrap", 
+            gap: "20px", 
           }}
         >
           {companies.map((company) => (
@@ -83,9 +81,9 @@ function CompanyListing() {
                 width: "300px",
                 backgroundColor: "#f8f9fa",
                 borderRadius: "10px",
-                margin: "10px", // Add margin to separate cards
-                overflow: "hidden", // Hide overflowing content
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Box shadow for cards
+                margin: "10px",
+                overflow: "hidden", 
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
               }}
             >
               <div style={{ padding: "20px" }}>
@@ -138,17 +136,17 @@ function CompanyListing() {
               <div style={{ textAlign: "center", paddingBottom: "20px" }}>
                 <Link
                   to={`/companypage/${company.id}`}
-                  state={{ ids }} // Pass ids array using state
+                  state={{ ids }} 
                   style={{
                     textDecoration: "none",
-                    backgroundColor: "#001f3f", // Navy blue background color
+                    backgroundColor: "#001f3f", 
                     color: "#fff",
                     padding: "10px 20px",
                     borderRadius: "5px",
                     display: "inline-block",
                     cursor: "pointer",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Box shadow for button
-                    transition: "transform 0.3s ease", // Animation for button
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", 
+                    transition: "transform 0.3s ease", 
                   }}
                 >
                   Show Details

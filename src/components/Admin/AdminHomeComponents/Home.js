@@ -1,7 +1,7 @@
 import React from "react";
 import BannerBackground from "../Assets/home-banner-background.png";
 import BannerImage from "../Assets/interviewimg.png";
-import AdminHome from "./AdminHome.js";
+import AdminHome from "../AdminHome.js";
 
 const Home = () => {
   return (

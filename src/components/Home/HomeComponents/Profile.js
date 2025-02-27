@@ -12,6 +12,7 @@ function Profile() {
     tenthPercentage: "",
     twelfthPercentage: "",
     graduationCGPA: "",
+    pass:"",
     skills: [],
     companiesApplied: [], // Initialize as an empty array
   });
@@ -109,6 +110,9 @@ function Profile() {
           </p>
           <p>
             <strong>Graduation CGPA:</strong> {currentUser.graduationCGPA || "Not Provided"}
+          </p>
+          <p>
+            <strong>Passout Year:</strong> {currentUser.pass || "Not Provided"}
           </p>
           <p>
             <strong>Placement Status:</strong> {currentUser.placementStatus || "Not Placed"}

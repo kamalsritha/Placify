@@ -29,6 +29,7 @@ function AddCompanies() {
   const [branches, setBranches] = useState([]);
   const [expire,setExpire]=useState([]);
   const [pass,setPass]=useState([]);
+  const [loc,setLoc]=useState([]);
 
   const navigate = useNavigate();
   const handleBranchChange = (e) => {
@@ -56,7 +57,8 @@ function AddCompanies() {
       !ctc ||
       !twelfthPercentage||
       !expire ||
-      !pass
+      !pass ||
+      !loc
     ) {
       alert("Please fill in all fields");
       return;
@@ -75,10 +77,9 @@ function AddCompanies() {
       twelfthPercentage,
       graduationCGPA,
       pass,
+      loc,
       expire
     };
-
-    console.log("adding....."+CompanyData.pass)
 
     axios
       .post("http://localhost:3001/auth/add-companies", CompanyData)
@@ -97,14 +98,12 @@ function AddCompanies() {
   <AdminHome/>
   <h1 style={{marginTop:'90px',color: 'navy'}}>Add Companies</h1>
   <div className="container-fluid h-100">
-  <div className="row h-100 justify-content-center align-items-start"> {/* Adjust align-items to start */}
-    {/* Image column */}
+  <div className="row h-100 justify-content-center align-items-start"> 
     <div className="col-lg-4 d-flex justify-content-center align-items-center" style={{ minHeight: '400px', marginTop:'120px'}}> {/* Change height to fit-content */}
       <img src={AddCompany} alt="Add Company Image" className="img-fluid" style={{ maxWidth: '120%', maxHeight: '120%',marginLeft:'100px' }} />
     </div>
 
-    {/* Table column */}
-    <div className="col-lg-8 d-flex justify-content-center align-items-center custom-border"> {/* Add custom-border class */}
+    <div className="col-lg-8 d-flex justify-content-center align-items-center custom-border"> 
   <div className="form-container">
   <div className="card" style={{maxWidth:"100vh",width:"900%"}}>
     <form onSubmit={handleSubmit}>
@@ -198,6 +197,15 @@ function AddCompanies() {
                   id="interviewdate"
                   className="form-control"
                   onChange={(e) => setDoi(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="location">Interview Location</label>
+                <input
+                  type="text"
+                  id="location"
+                  className="form-control"
+                  onChange={(e) => setLoc(e.target.value)}
                 />
               </div>
             </td>

@@ -21,6 +21,7 @@ const companySlice = createSlice({
           twelfthPercentage: company.twelfthPercentage,
           graduationCGPA: company.graduationCGPA,
           pass: company.pass,
+          loc:company.loc,
           expire:company.expire,
         }));
       } else if (typeof action.payload.data === 'object') {
@@ -39,6 +40,7 @@ const companySlice = createSlice({
           twelfthPercentage: company.twelfthPercentage,
           graduationCGPA: company.graduationCGPA,
           pass: company.pass,
+          loc:company.loc,
           expire:company.expire,
           
         }];
