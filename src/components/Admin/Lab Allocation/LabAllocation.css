@@ -7,9 +7,11 @@
   
   .page-title {
     text-align: center;
-    color: #001f3f;
+    color: #333;
     margin-bottom: 2rem;
-    font-size: 2.5rem;
+    font-size: 28px;
+    font-weight: bold;
+    font-family: "Poppins";
   }
   
   .blocks-container {
@@ -27,7 +29,7 @@
   }
   
   .block-header {
-    background: #001f3f;
+    background: #333;
     color: white;
     padding: 1rem;
     text-align: center;
@@ -86,7 +88,7 @@
   }
   
   .generate-btn {
-    background: #001f3f;
+    background: black;
     color: white;
     border: none;
     padding: 1rem 2rem;

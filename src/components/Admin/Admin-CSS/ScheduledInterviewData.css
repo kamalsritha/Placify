@@ -18,7 +18,7 @@
 .file-upload-label {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #4200e9;
+  background-color: #333;
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -36,6 +36,12 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.btn-primary
+{
+  background:black;
+  color:white
 }
 
 .mt-3 {
@@ -66,7 +72,7 @@
 }
 
 .styled-table th {
-  background-color: #4200e9;
+  background-color: #333;
   color: white;
 }
 

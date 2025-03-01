@@ -164,6 +164,46 @@ for (const com of companyIds) {
 res.json(companies);
 });
 
+router.post("/getCompaniesApplied", async (req, res) => {
+  const { companyIds } = req.body;
+  let companies = [];
+
+for (const com of companyIds) {
+  const company = await CompanyData.findOne({ _id: com });
+  if (company) {
+    companies.push(company.companyname);
+  }
+}
+res.json(companies);
+});
+
+router.post("/updateCGPA", async (req, res) => {
+  try {
+    const { userId, cgpa } = req.body;
+
+    if (!userId || cgpa === undefined || cgpa < 0 || cgpa > 10) {
+      return res.status(400).json({ message: "Invalid CGPA value" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { graduationCGPA: cgpa },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "CGPA updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating CGPA:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
 // This API is designed to handle the functionality of sending a reset password link via email to the user which is valid till 5mins.
 router.post("/forgotpassword", async (req, res) => {
   const { email } = req.body;
@@ -477,6 +517,8 @@ router.get("/scheduledInterviews/:userId", async (req, res) => {
       companyName: company.companyname,
       interviewDate: company.doa,
     }));
+
+    console.log("data......"+scheduledInterviews);
 
     return res.json({ scheduledInterviews });
   } catch (error) {

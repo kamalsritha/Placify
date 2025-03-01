@@ -57,8 +57,7 @@ function AddCompanies() {
       !ctc ||
       !twelfthPercentage||
       !expire ||
-      !pass ||
-      !loc
+      !pass 
     ) {
       alert("Please fill in all fields");
       return;

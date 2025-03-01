@@ -25,7 +25,7 @@ const Feedback = () => {
             margin: "0",
           }}
         >
-          Placify Feedback
+          Placify
         </p>
         <h1
           style={{
@@ -35,7 +35,7 @@ const Feedback = () => {
             margin: "10px 0",
           }}
         >
-          What Students and Recruiters Are Saying
+          What Placify Offers to Students
         </h1>
       </div>
 
@@ -70,10 +70,9 @@ const Feedback = () => {
           }}
         >
           Placify is dedicated to simplifying the placement process for students
-          and recruiters alike. Our platform bridges the gap between talent and
+          and placement officers. Our platform bridges the gap between talent and
           opportunity by providing real-time updates, seamless scheduling, and
-          valuable insights. Whether you’re a student looking to land your dream
-          job or a recruiter seeking top-notch candidates, Placify ensures a
+          valuable insights.Placify ensures a
           smooth and efficient experience.
         </p>
 

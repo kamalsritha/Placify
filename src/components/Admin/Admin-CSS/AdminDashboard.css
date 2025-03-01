@@ -4,8 +4,9 @@
   font-size: 32px; 
   font-weight: bold;
   margin-bottom: 20px;
-  color: navy;
+  color: #333;
 }
+
 
 .filter-container {
   display: flex;
@@ -24,12 +25,12 @@
 
 .filter-input {
   width: 90%;
-  padding: 10px; /* Increased padding */
+  padding: 10px; 
   border: 1px solid #ccc;
   border-radius: 5px;
   font-weight: bold;
   margin-left: 20px;
-  font-size: 15px; /* Increased font size */
+  font-size: 15px; 
   font-family: 'Roboto', sans-serif;
   transition: all 0.3s ease;
 }
@@ -41,15 +42,15 @@
 }
 
 .filter-button {
-  padding: 14px 20px; /* Increased padding */
+  padding: 14px 20px;
   margin-top: 20px;
-  background-color: #00004d;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 18px; /* Increased font size */
+  font-size: 18px; 
   font-family: 'Roboto', sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -60,38 +61,39 @@
 }
 
 .filter-button:hover {
-  background-color: #5C6B9C;
+  background-color: #333;
 }
 
 .user-table {
-  width: 90%; /* Adjusted width for better alignment */
-  margin: 20px auto; /* Centers the table horizontally */
+  width: 90%; 
+  margin: 20px auto; 
   border-collapse: collapse;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   animation: fadeInTable 1s ease-in-out forwards;
+
 }
 
 .user-table th {
-  background-color: #4200e9;
+  background-color: #333;
   color:white;
   font-weight: bold;
   padding: 14px;
   font-size: 18px; 
-  font-family: 'Roboto', sans-serif;                
+  font-family: 'Poppins', sans-serif;                
 }
 
 .user-table th,
 .user-table td {
   border: 1px solid #ccc;
-  padding: 10px; /* Increased padding */
-  font-size: 16.4px; /* Increased font size */
-  font-family: 'Roboto', sans-serif;
+  padding: 10px; 
+  font-size: 16.4px; 
+  font-family: 'Poppins', sans-serif;
 }
 
 .download-button {
   margin-top: 20px;
-  padding: 14px 28px; /* Increased padding */
-  background-color: #00004d;
+  padding: 14px 28px; 
+  background-color: black;
   color: white;
   border: none;
   border-radius: 5px;
@@ -104,7 +106,7 @@
 }
 
 .download-button:hover {
-  background-color: #5C6B9C;
+  background-color: #333;
 }
 
 @keyframes fadeInTable {

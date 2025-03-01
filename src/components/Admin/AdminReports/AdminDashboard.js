@@ -105,7 +105,7 @@ function AdminDashboard() {
     <>
       <AdminHome />
       <div className="contain.er" style={{ marginTop: "150px" }}>
-        <h1 className="page-heading">User Reports</h1>
+        <h1 className="page-heading" style={{fontFamily:"Poppins", fontSize:"28px",fontWeight:"bold"}}>Create Shortlist</h1>
         <div className="filter-container">
           <div className="filter-group">
             <label htmlFor="tenthPercentage" className="filter-label">
@@ -184,7 +184,7 @@ function AdminDashboard() {
             >
               Apply Filters
             </button>
-            <button onClick={resetFilters} className="filter-button">
+            <button onClick={resetFilters} className="filter-button" >
               Reset Filters
             </button>
             <button onClick={handleDownload} className="download-button">

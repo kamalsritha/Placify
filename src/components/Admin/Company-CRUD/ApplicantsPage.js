@@ -50,7 +50,7 @@ function ApplicantsPage() {
       <div className="card p-4 shadow-lg" style={{ width: "500px" }}>
         <h2 className="text-center mb-4">Applicants for Company</h2>
         
-        {/* Bootstrap Tabs with Black Headers */}
+        
         <Tabs defaultActiveKey="applied" id="applicants-tabs" className="mb-3">
           <Tab eventKey="applied" title={<span style={{ color: "black", fontWeight: "bold" }}>Applied Students</span>}>
             <ul className="list-group mt-3">

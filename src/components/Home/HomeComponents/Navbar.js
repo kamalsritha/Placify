@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../UserContext.js"; 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../Home-CSS/AdminNav.css";
-import icon from "../Assets/profile.jpg";
+import icon from "../Assets/profile.png";
+import logo from "../Assets/placify_logo.png"; 
 import axios from "axios";
 
 const Navbar = () => {
@@ -24,7 +25,10 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg fixed-top">
       <div className="container-fluid">
-        <Link to="/home" className="navbar-brand me-auto">Placify</Link>
+        <Link to="/home" className="navbar-brand me-auto d-flex align-items-center">
+          <img src={logo} alt="Placify Logo" className="navbar-logo" />
+          <span className="navbar-text ms-2">Placify</span>
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -56,18 +60,17 @@ const Navbar = () => {
                 <Link className="nav-link mx-lg-2" to="/faq">FAQ</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link mx-lg-2" to="/interviewexperience">Interview Experience</Link>
+                <Link className="nav-link mx-lg-2" to="/interviewexperience">Experiences</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link mx-lg-2" to="/" onClick={handleLogout}>Logout</Link>
               </li>
-              {user && (
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/profile">
                     <img src={icon} alt="Profile" width="30px" height="30px" className="rounded-circle" />
                   </Link>
                 </li>
-              )}
+              
             </ul>
           </div>
         </div>

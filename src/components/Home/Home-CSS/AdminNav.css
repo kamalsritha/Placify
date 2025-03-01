@@ -90,12 +90,17 @@
 
 .container{
    display: flex;
-   justify-content: center; /* Center horizontally */
-   align-items: center; /* Center vertically */
+   justify-content: center; 
+   align-items: center;
    height: 250px;
-   background-color: transparent; /* Transparent background */
+   background-color: transparent; 
    width: 100%;
 }
 
+.navbar-logo {
+    width: 50px; 
+    height: auto; 
+  }
+  
 
     

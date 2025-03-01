@@ -1,4 +1,3 @@
-// JobNotifications.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -10,12 +9,11 @@ function JobNotifications() {
         const fetchEligibleJobs = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/auth/jobs/eligible');
-                // Check if response.data exists and handle the data structure correctly
-                const jobs = response.data?.data || []; // Access data property or default to empty array
+                const jobs = response.data?.data || []; 
                 setEligibleJobs(jobs);
             } catch (error) {
                 console.error('Error fetching eligible jobs:', error);
-                setEligibleJobs([]); // Set to empty array on error
+                setEligibleJobs([]); 
             }
         };
 

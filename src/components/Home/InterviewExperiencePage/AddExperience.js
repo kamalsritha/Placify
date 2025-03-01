@@ -65,11 +65,11 @@ function AddExperience() {
   return (
     <>
   <Navbar/>
-  <div style={{ maxWidth: '550px', margin: 'auto', fontFamily: 'Arial, sans-serif', padding: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', backgroundColor: '#fff', height: 'fit-content',minHeight: '400px', overflowY: 'auto',marginTop:'80px' }}>
-    <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: "2.5rem", color: "navy"  }}>Add Interview Experience</h2>
+  <div style={{ maxWidth: '550px', borderRadius:"10px",margin: 'auto',fontWeight: "Bold", fontFamily:"Poppins", padding: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', backgroundColor: '#fff', height: 'fit-content',minHeight: '400px', overflowY: 'auto',marginTop:'100px' }}>
+    <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: "2.5rem", color: "#333",fontWeight: 'Bold', fontFamily:"Poppins",fontSize:"28px"  }}>Add Interview Experience</h2>
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: '1rem' }}>
-        <label style={{ marginBottom: '0.5rem', color: '#333' }}>Username:</label>
+        <label style={{ marginBottom: '0.5rem', color: '#333',fontWeight: 'Bold', fontFamily:"Poppins" }}>Username:</label>
         <input type="text" name="username" value={formData.username} onChange={(e) => handleChange(e.target.name, e.target.value)} required style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '5px', width: '100%' }} />
       </div>
       <div style={{ marginBottom: '1rem' }}>
@@ -102,7 +102,7 @@ function AddExperience() {
           <option value="Pending">Pending</option>
         </select>
       </div>
-      <button type="submit" style={{ padding: '0.5rem', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', transition: 'background-color 0.3s', alignSelf: 'center', width: 'fit-content' }}>Submit</button>
+      <button type="submit" style={{ padding: '0.75rem', backgroundColor: 'black', color: 'white', border: 'none', borderRadius: '15px', cursor: 'pointer', transition: 'background-color 0.3s', alignSelf: 'center', width: 'fit-content' }}>Submit</button>
     </form>
     {alertMessage && <div style={{ marginTop: '1rem', padding: '0.5rem', backgroundColor: alertColor, color: '#fff', borderRadius: '5px', textAlign: 'center' }}>{alertMessage}</div>}
   </div>

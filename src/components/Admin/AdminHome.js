@@ -3,10 +3,12 @@ import '../Admin/Admin-CSS/AdminNav.css';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from "../Home/Assets/placify_logo.png";
+
 
 function AdminHome() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assume the user is logged in initially
-  const [errorMessage, setErrorMessage] = useState(""); // Error state for logout issues
+  const [isLoggedIn, setIsLoggedIn] = useState(true); 
+  const [errorMessage, setErrorMessage] = useState(""); 
   axios.defaults.withCredentials = true;
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ function AdminHome() {
       .then(() => {
         console.log("Logging out...");
         setIsLoggedIn(false);
-        navigate("/"); // Redirect to the login page or home
+        navigate("/"); 
       })
       .catch((error) => {
         console.error("Logout failed:", error);
@@ -26,27 +28,34 @@ function AdminHome() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg fixed-top">
-        <div className="container-fluid">
-          <Link className="navbar-brand me-auto" to="/">Placify</Link>
-          <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <div className="offcanvas-header">
-              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Placify</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
+    <nav className="navbar navbar-expand-lg fixed-top">
+      <div className="container-fluid">
+        <Link  className="navbar-brand me-auto d-flex align-items-center">
+          <img src={logo} alt="Placify Logo" className="navbar-logo" />
+          <span className="navbar-text ms-2">Placify</span>
+        </Link>
+        <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="offcanvas offcanvas-end" id="offcanvasNavbar">
+          <div className="offcanvas-header">
+            <h5 className="offcanvas-title">Placify</h5>
+            <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
+          </div>
             <div className="offcanvas-body">
               <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/admin">Home</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link mx-lg-2" to="/admindashboard">Reports</Link>
-                </li>
-                <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/companies">Manage Companies</Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/track">Track</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link mx-lg-2" to="/admindashboard">Shortlist</Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link mx-lg-2" to="/admin/lab-allocation">Lab Allocation</Link>

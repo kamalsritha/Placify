@@ -1,44 +1,115 @@
-/* Wrapper for the entire Applicants component */
-.applicants-wrapper {
-    padding: 20px;
-    text-align: center;
-    margin-top:150px;
+/* Container to hold everything properly */
+.companytrack-container {
+  margin-top: 150px;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Heading */
-.heading {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #333;
+/* Page heading styling */
+.page-heading {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
 
-/* Container for the company boxes */
-.company-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; /* Adjusted spacing for smaller boxes */
-    justify-content: center;
+/* Controls (Search, Sort, and Filter) */
+.controls {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* Styling for each company box */
-.company-box {
-    background-color: #f9f9f9;
-    padding: 15px; /* Reduced padding for smaller size */
-    border: 1px solid #ddd;
-    border-radius: 12px; /* Rounded corners */
-    cursor: pointer;
-    text-align: center;
-    width: 180px; /* Rectangular width */
-    height: 70px; /* Rectangular height */
-    font-size: 16px;
-    font-weight: bold;
-    transition: transform 0.2s, background-color 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+/* Search input */
+.search-input {
+  padding: 8px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-/* Hover effect for the company box */
-.company-box:hover {
-    transform: scale(1.03);
-    background-color: #eaeaea;
+/* Dropdowns */
+.dropdowns {
+  display: flex;
+  gap: 10px;
 }
+
+.sort-select,
+.filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.company-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.company-card {
+  width: 100%;
+  max-width: 350px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+}
+
+.company-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.date-text {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.past-date {
+  color: green;
+}
+
+
+.track-button {
+  display: block;       
+  width: 100%;         
+  max-width: 200px;     
+  margin: 10px auto;    
+  padding: 10px 0;     
+  text-align: center;  
+  background-color: black;
+  color: white;         
+  font-size: 16px;      
+  border: none;         
+  border-radius: 5px; 
+  cursor: pointer;    
+  border-radius: 20px;  
+  text-decoration: none; 
+}
+
+

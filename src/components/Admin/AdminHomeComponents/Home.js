@@ -13,12 +13,24 @@ const Home = () => {
           <img src={BannerBackground} alt="" />
         </div>
         <div className="home-text-section">
-          <h1 className="primary-heading" style={{color:"navy",fontSize:"50px", fontWeight:"700px",marginLeft:"150px"}} >
+          <h1 className="primary-heading" style={{color:"#2c3e50",fontFamily:"Poppins",fontSize:"50px", fontWeight:"bold",marginLeft:"150px",fontFamily:"Poppins"}} >
             Welcome Admin
           </h1>
-          <p className="primary-text" style={{marginLeft:"150px"}}>
-          Welcome to your Placement Management System Admin Interface! enables efficient data management for company details, and interview reports. Admins can effortlessly filter student data, manage company information, and oversee interview reports, facilitating streamlined placement operations.
-          </p>
+          <p
+  style={{
+    textAlign: "left",
+    maxWidth: "800px",
+    margin: "20px auto",
+    lineHeight: "1.6",
+    fontSize: "1rem",
+  }}
+>
+  Welcome to your Placify Admin Interface! It enables 
+  efficient data management for company details. 
+  Admins can effortlessly filter student data, manage company timelines, 
+  and oversee student reports, facilitating streamlined placement operations.
+</p>
+
           
         </div>
         <div className="home-image-section">

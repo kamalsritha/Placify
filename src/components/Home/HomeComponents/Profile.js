@@ -1,185 +1,180 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import Navbar from "./Navbar.js";
-import { useParams, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../UserContext.js";
 
 function Profile() {
-  const [currentUser, setCurrentUser] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    tenthPercentage: "",
-    twelfthPercentage: "",
-    graduationCGPA: "",
-    pass:"",
-    skills: [],
-    companiesApplied: [], // Initialize as an empty array
-  });
-
-  const [companyNames, setCompanyNames] = useState([]); // To store company names
-  const [showCompanies, setShowCompanies] = useState(false); // To toggle companies list visibility
+  const { user, setUser } = useContext(UserContext);
+  const [companyNames, setCompanyNames] = useState([]);
+  const [showCompanies, setShowCompanies] = useState(false);
+  const [newCGPA, setNewCGPA] = useState("");
 
   useEffect(() => {
-    // Fetch the current user data from the backend
+    if (user?.appliedCompanies?.length > 0) {
+      axios
+        .post("http://localhost:3001/auth/getCompaniesApplied", {
+          companyIds: user.appliedCompanies,
+        })
+        .then((res) => setCompanyNames(res.data))
+        .catch((err) => console.error("Error fetching company names:", err));
+    }
+  }, [user?.appliedCompanies]);
+
+  const handleUpdateCGPA = () => {
+    if (!newCGPA) return;
     axios
-      .get("http://localhost:3001/auth/currentUser")
+      .post("http://localhost:3001/auth/updateCGPA", {
+        userId: user._id,  
+        cgpa: newCGPA
+      }, { withCredentials: true })
       .then((res) => {
-        // Ensure companiesApplied is always an array
-        setCurrentUser({
-          ...res.data.user,
-          companiesApplied: res.data.user.appliedCompanies
-        });
+        setUser((prev) => ({ ...prev, graduationCGPA: newCGPA }));
+        setNewCGPA("");
       })
-      .catch((err) => {
-        console.error("Error fetching current user:", err);
-      });
-  }, []);
-
-  // Fetch company names based on company IDs when companiesApplied changes
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const res = await axios.post("http://localhost:3001/auth/getCompaniesByIds", {
-          companyIds: currentUser.companiesApplied,
-        });
-        console.log(res.data); // This is the resolved data from the response
-        setCompanyNames(res.data); // Set the company names in state
-      } catch (err) {
-        console.error("Error fetching company names:", err);
-      }
-    };
-  
-    fetchCompanies(); // Call the async function
-  }, [currentUser.companiesApplied]);
-
-  const handleShowCompanies = () => {
-    setShowCompanies(true); // Open modal
+      .catch((err) => console.error("Error updating CGPA:", err));
   };
 
-  const handleCloseModal = () => {
-    setShowCompanies(false); // Close modal
-  };
+  if (!user)
+    return (
+      <div className="loading-container">
+        <div className="spinner-border text-dark" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
 
   return (
     <>
       <Navbar />
-      <div
-        className="container"
-        style={{
-          textAlign: "center",
-          marginTop: "120px", // Ensure content starts below navbar
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "calc(100vh - 120px)", // Adjust the height for vertical centering
-        }}
-      >
-        <div
-          style={{
-            width: "500px",
-            backgroundColor: "#f8f9fa",
-            borderRadius: "10px",
-            padding: "20px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <h1 style={{ fontSize: "3rem", color: "navy", marginBottom: "40px" }}>My Profile</h1>
-          <h3 style={{ color: "#007bff", marginBottom: "20px" }}>Candidate Details</h3>
-          <p>
-            <strong>Name:</strong> {currentUser.name || "Not Provided"}
-          </p>
-          <p>
-            <strong>Email:</strong> {currentUser.email || "Not Provided"}
-          </p>
-          <p>
-            <strong>Phone:</strong> {currentUser.contactNumber || "Not Provided"}
-          </p>
-          <p>
-            <strong>Stream:</strong> {currentUser.stream || "Not Provided"}
-          </p>
-          <p>
-            <strong>10th Percentage:</strong> {currentUser.tenthPercentage || "Not Provided"}
-          </p>
-          <p>
-            <strong>12th Percentage:</strong> {currentUser.twelfthPercentage || "Not Provided"}
-          </p>
-          <p>
-            <strong>Graduation CGPA:</strong> {currentUser.graduationCGPA || "Not Provided"}
-          </p>
-          <p>
-            <strong>Passout Year:</strong> {currentUser.pass || "Not Provided"}
-          </p>
-          <p>
-            <strong>Placement Status:</strong> {currentUser.placementStatus || "Not Placed"}
-          </p>
-          <p>
-            <strong>Placed Company:</strong> {currentUser.companyPlaced || "Not Placed"}
-          </p>
+      <div className="profile-container d-flex align-items-center justify-content-center mt-5 mb-5">
+        <div className="profile-card p-4 shadow-lg bg-white rounded">
+          <h1 className="text-center mb-4" style={{fontFamily:"Poppins", fontWeight:"bold",fontSize:"28px",color:"#333"}}>My Profile</h1>
 
-          <div>
-            <button
-              onClick={handleShowCompanies}
-              className="btn btn-primary"
-              style={{ marginTop: "20px" }}
-            >
-              {showCompanies ? "Hide Companies" : "Show Companies Applied"}
-            </button>
-          </div>
-        </div>
-      </div>
+          <div className="d-flex flex-wrap justify-content-between">
+            {[
+              { label: "Name", value: user.name },
+              { label: "Email", value: user.email },
+              { label: "Phone", value: user.contactNumber },
+              { label: "Stream", value: user.stream },
+              { label: "10th Percentage", value: user.tenthPercentage },
+              { label: "12th Percentage", value: user.twelfthPercentage },
+              { label: "Passout Year", value: user.pass },
+              { label: "Placement Status", value: user.placementStatus || "Not Placed" },
+              { label: "Placed Company", value: user.companyPlaced || "Not Placed" },
+            ].map((item, index) => (
+              <div key={index} className="info-box p-3 m-2">
+                <strong>{item.label}:</strong>
+                <p>{item.value || "Not Provided"}</p>
+              </div>
+            ))}
 
-      {/* Modal to show companies */}
-      <div
-        className={`modal fade ${showCompanies ? "show" : ""}`}
-        id="companyModal"
-        tabIndex="-1"
-        aria-labelledby="companyModalLabel"
-        aria-hidden="true"
-        style={{ display: showCompanies ? "block" : "none" }}
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="companyModalLabel">
-                List of Companies Applied
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={handleCloseModal}
-              ></button>
-            </div>
-            <div className="modal-body">
-              {companyNames.length > 0 ? (
-                <ul>
-                  {companyNames.map((company, index) => (
-                    <li key={index}>{company}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No companies applied yet.</p>
-              )}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={handleCloseModal}
-              >
-                Close
+            <div className="info-box p-3 m-2 d-flex align-items-center">
+              <div>
+                <strong>Graduation CGPA:</strong>
+                <p>{user.graduationCGPA || "Not Provided"}</p>
+              </div>
+              <input
+                type="text"
+                className="form-control ms-2"
+                placeholder="Update CGPA"
+                value={newCGPA}
+                onChange={(e) => setNewCGPA(e.target.value)}
+                style={{ width: "100px" }}
+              />
+              <button className="btn ms-3 mb-3" style={{color:"white",background:"black" , borderRadius:"20px"}} onClick={handleUpdateCGPA}>
+                Update
               </button>
             </div>
           </div>
+
+          <div className="d-flex justify-content-center mt-3">
+  <button 
+    onClick={() => setShowCompanies(true)} 
+    className="btn btn-dark btn-sm"
+    style={{ width: "150px" , color:"white", background:"black", borderRadius:"20px"}} 
+  >
+    Show Companies
+  </button>
+</div>
+
+
         </div>
       </div>
+
+      {showCompanies && (
+        <div className="modal fade show d-block" id="companyModal">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" style={{ fontFamily: "Poppins", fontWeight: "bold" }}>
+                  List of Companies Applied
+                </h5>
+                <button className="btn-close" onClick={() => setShowCompanies(false)}></button>
+              </div>
+              <div className="modal-body">
+                {companyNames.length > 0 ? (
+                  <ul>
+                    {companyNames.map((company, index) => (
+                      <li key={index}>{company}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No companies applied yet.</p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" style={{color:"white", background:"black"}} onClick={() => setShowCompanies(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f6f9;
+  }
+  .profile-container {
+    min-height: 100vh;
+    padding-top: 80px; 
+    background-color: #f5f5f5;
+  }
+  .profile-card {
+    width: 80%;
+    max-width: 800px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  .info-box {
+    flex: 1;
+    min-width: 250px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-align: center;
+  }
+  .info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  }
+  .modal {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .modal-title {
+    font-family: "Poppins";
+    font-weight: bold;
+  }
+`}</style>
     </>
   );
 }

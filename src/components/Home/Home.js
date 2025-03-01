@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getCompanies, deleteCompany } from "../../redux/companySlice.jsx";
-import ScheduledInterview from "./CompanyPages/ScheduledInterview.js";
+import { getCompanies } from "../../redux/companySlice.jsx";
 import HomePage from './HomeComponents/HomePage.js';
-import About from "./HomeComponents/About.js";
 import Work from "./HomeComponents/Work.js";
 import Feedback from "./HomeComponents/Feedback.js";
-import Contact from "./HomeComponents/Contact.js";
-import Footer from "./HomeComponents/Footer.js";
 import JobNotifications from "./HomeComponents/JobNotifications.js";
 import { toast, ToastContainer } from 'react-toastify';
 import "./Home-CSS/Application.css";
@@ -71,7 +67,6 @@ function Home() {
       }
     };
 
-    // Only check for jobs if user is logged in
     if (currentUser) {
       checkEligibleJobs();
     }
@@ -79,18 +74,15 @@ function Home() {
     return () => {
       toast.dismiss('newJobs');
     };
-  }, [currentUser]); // Depend on currentUser
+  }, [currentUser]); 
 
   return (
     <div className="App">
-      <ToastContainer limit={1} /> {/* Limit to 1 toast at a time */}
+      <ToastContainer limit={1} /> 
       <HomePage />
-      <About />
       <JobNotifications />
       <Work />
       <Feedback />
-      <Contact />
-      <Footer />
     </div>
   );
 }

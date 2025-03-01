@@ -7,9 +7,8 @@ import Footer from "../HomeComponents/Footer.js";
 import Navbar from "../HomeComponents/Navbar.js";
 import ApplyJobs from "../Assets/applyjobs.png";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-// CircularProgress component remains unchanged
+
 const CircularProgress = ({ value }) => {
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
@@ -205,7 +204,7 @@ return (
         color: "#2c3e50",
       }}
     >
-      <h1 style={{ fontSize: "2.5rem", fontWeight: "700" }}>Apply for Jobs</h1>
+      <h1 style={{ fontSize: "28px", fontWeight: "bold" , color:"#333" }}>Apply for Jobs</h1>
       <p style={{ fontSize: "1rem", color: "#7f8c8d" }}>
         Find the right opportunities for you
       </p>
@@ -241,16 +240,18 @@ return (
               marginBottom: "20px",
               padding: "20px",
               borderRadius: "10px",
-              backgroundColor: "#ecf0f1",
+              backgroundColor: "#f5f5f5",
               color: "#2c3e50",
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
             }}
           >
             <h2
               style={{
-                color: "#3498db",
+                color: "black",
                 fontSize: "1.8rem",
                 marginBottom: "10px",
+                fontFamily:"Poppins",
+                fontWeight:"bold"
               }}
             >
               {company.companyname}
@@ -303,7 +304,7 @@ return (
                   onClick={handleCheckScore}
                   disabled={!isResumeUploaded}
                   style={{
-                    backgroundColor: isResumeUploaded ? "#3498db" : "#bdc3c7",
+                    backgroundColor: isResumeUploaded ? "#333" : "#bdc3c7",
                     color: "#ffffff",
                     padding: "10px 20px",
                     border: "none",
@@ -350,29 +351,6 @@ return (
                     </div>
                   )}
 
-                    {/* {atsScore.matches?.length > 0 && (
-                      <div style={{ marginTop: '15px' }}>
-                        <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>
-                          Matching Keywords
-                        </h4>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                          {atsScore.matches.map((keyword, index) => (
-                            <span
-                              key={index}
-                              style={{
-                                backgroundColor: '#2ecc71',
-                                color: 'white',
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.9em'
-                              }}
-                            >
-                              {keyword}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )} */}
 
                     {atsScore.missingKeywords?.length > 0 && (
                       <div style={{ marginTop: '15px' }}>
@@ -405,7 +383,7 @@ return (
                   onClick={() => handleApply(company._id, currentUser._id)}
                   disabled={!isResumeUploaded}
                   style={{
-                    backgroundColor: isResumeUploaded ? "#2ecc71" : "#bdc3c7",
+                    backgroundColor: isResumeUploaded ? "black" : "#bdc3c7",
                     color: "#ffffff",
                     padding: "10px 20px",
                     border: "none",

@@ -1,0 +1,105 @@
+.company-listing-container {
+    margin-top: 50px; /* Adjusted space for better spacing */
+  }
+  
+  /* Level 1: Heading */
+  .page-title {
+    font-size: 28px;
+    color: #333;
+    font-family: Poppins, sans-serif;
+    font-weight: bold;
+    text-align: center; /* Centered Heading */
+    margin-bottom: 30px; /* Space between heading and search/filter section */
+  }
+  
+  /* Level 2: Search and Filter Section */
+  .search-and-filter {
+    margin-bottom: 30px; /* Space between filter and company cards */
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .search-col {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 15px; /* Space between search bar and filters */
+  }
+  
+  .search-bar {
+    width: 100%;
+  }
+  
+  .filter-col {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    justify-content: center; /* Center align filters */
+  }
+  
+  .sort-select {
+    width: 100%;
+  }
+  
+  /* Level 3: Company Cards Section */
+  .company-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  
+  .company-card {
+    width: 100%;
+    max-width: 300px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .company-card-body {
+    padding: 20px;
+  }
+  
+  .company-name {
+    font-size: 1.5rem;
+    color: navy;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .company-details {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .company-card-footer {
+    text-align: center;
+    padding-bottom: 20px;
+  }
+  
+  .details-btn {
+    text-decoration: none;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+  }
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+  

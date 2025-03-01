@@ -1,77 +1,149 @@
-/* login.css */
-
-body {
-    background-color: #f0f0f0; /* Set a background color for the entire page */
+.placify-login-body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
-.container1 {
-    max-width: 750px; /* Reduce the width of the login form */
-    margin: 50px auto;
-    background: #fff; /* Add a background color behind the login form */
+.placify-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.placify-login-box {
+    display: flex;
+    width: 800px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.placify-login-title-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    background: #f9f9f9;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
 }
 
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
+.placify-login-title {
+    font-size: 24px;
     font-weight: bold;
+    color: #333;
+}
+
+.placify-login-tagline {
+    font-size: 14px;
+    color: #666;
+}
+
+.placify-login-form-section {
+    width: 60%;
+    padding: 40px;
+}
+
+.placify-login-heading {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.placify-login-error-message {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.placify-login-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.placify-login-form-group {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.placify-login-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
     color: #555;
 }
 
-.form-control {
-    width: calc(100% - 22px);
+.placify-login-form-control {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 14px;
 }
 
-input[type="submit"],
-button.register-btn {
-    width: calc(100% - 22px);
-    margin-bottom: 10px; /* Add margin to create space between buttons */
+.placify-login-btn-primary {
+    width: 50%;
     padding: 10px;
-    background: linear-gradient(to right, #001f3f, #003366); /* Change button color to navy blue */
-    color: #fff;
+    background: black;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: background 0.3s ease;
 }
 
-input[type="submit"]:hover,
-button.register-btn:hover {
-    background: linear-gradient(to right, #003366, #001f3f);
-}
 
-.link {
+.placify-login-links-container {
     text-align: center;
-    margin-top: 20px;
-    display: block;
-    color: #007bff;
-    text-decoration: none;
+    margin-top: 15px;
 }
 
-.link:hover {
-    text-decoration: underline;
-    color: #0056b3;
-}
-
-.error-message {
-    color: #d9534f; 
-    background-color: #f2dede; 
+.placify-login-btn-secondary {
+    background: none;
+    border: none;
     padding: 10px;
-    border-radius: 5px;
-    width: 677px;
-    margin-bottom: 15px;
-    border: 1px solid #ebccd1;
+    color: black;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-weight: bold;
 }
+
+.placify-login-btn-secondary:hover {
+    color: #6a11cb;
+}
+
+@media (max-width: 768px) {
+    .placify-login-box {
+        flex-direction: column;
+    }
+
+    .placify-login-title-section {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 20px;
+    }
+
+    .placify-login-form-section {
+        width: 100%;
+    }
+}
+

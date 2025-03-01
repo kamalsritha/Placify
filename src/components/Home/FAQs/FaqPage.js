@@ -30,7 +30,6 @@ function FaqPage() {
       item.addEventListener("click", handleClick);
     });
 
-    // Open the first accordion item on load
     items[0].classList.add("active");
 
     return () => {
@@ -266,7 +265,7 @@ function FaqPage() {
                   key={index}
                   style={{
                     width: "100%",
-                    maxWidth: "800px", // Increase the maximum width of the accordion item
+                    maxWidth: "800px", 
                     transition: "width 0.3s ease",
                     margin: "20px auto",
                     cursor: "pointer",

@@ -7,7 +7,7 @@
     left: 0;
     width: 100%;
     z-index: 1000;
-    background-color: #ffffff;
+    background-color: #f5f5f5;
     padding: 20px;
 }
 
@@ -20,7 +20,9 @@
 
 .faq-heading {
     font-size: 3rem;
-    color: navy;
+    color: #333;
+    font-weight: 'Bold';
+    font-family:"Poppins"
 }
 
 .main {
@@ -30,12 +32,17 @@
     flex-direction: column;
     padding: 20px;
     margin-top: 150px;
+    font-weight: 'Bold';
+    font-family:"Poppins";
 }
 
 .bloc-tabs {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    border-radius: 10px;
+    font-weight: 'Bold';
+    font-family:"Poppins";
 }
 
 .tabs {
@@ -46,19 +53,31 @@
     font-size: 18px;
     padding: 10px 15px;
     transition: background-color 0.3s ease;
+    color: #333;
+    font-weight: 'Bold';
+    font-family:"Poppins";
+    border-radius: 10px;
+    margin: 1px;
 }
 
 .tabs:hover {
-    background-color: #8982d5;
+    background-color: black;
+    color:white;
+    font-weight: 'Bold';
+    font-family:"Poppins";
 }
 
 .active-tabs {
-    background-color: #26268c;
+    background-color: black;
     color: #fff;
+    font-weight: 'Bold';
+    font-family:"Poppins";
 }
 
 .content-tabs {
     animation: fadeIn 0.9s ease;
+    font-weight: 'Bold';
+    font-family:"Poppins";
 }
 
 @keyframes fadeIn {
@@ -89,7 +108,7 @@
 }
 
 .accordion {
-    max-width: 800px; /* Increase maximum width */
+    max-width: 800px; 
     margin: 0 auto;
 }
 

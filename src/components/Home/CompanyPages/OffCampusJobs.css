@@ -1,0 +1,119 @@
+.offcampus-container {
+    margin-top: 150px;
+    padding: 0 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+ 
+  .page-heading {
+    color: #333;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+  }
+ 
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+  
+ 
+  .jobs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start; 
+    width: 100%;
+  }
+  
+  
+  .job-card {
+    width: 100%;
+    max-width: 350px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left; 
+  }
+  
+
+  .job-header {
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+
+  .job-title {
+    color: #001f3f;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  .job-company {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .job-details p {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .apply-button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 8px 0;
+    width: 100%;
+    border-radius: 5px;
+    font-weight: 500;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  
+  .job-source {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  .no-jobs {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 50vh;
+    text-align: center; 
+    width: 100%; 
+}
+
+.no-jobs p {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: bold;
+}
+
+
+  .job-source{
+    text-align: center;
+  }
+  

@@ -31,8 +31,8 @@ const List = () => {
   return (
     <>
       <AdminHome />
-      <div className="container text-center mt-3 d-flex align-items-center justify-content-center gap-3">
-        <h2 className="fw-bold">Placements</h2>
+      <div className="container text-center mt-4 d-flex align-items-center justify-content-center gap-3">
+        <h2 style={{color:"#333",fontFamily:"Poppins" , fontWeight:"bold", fontSize:"28px"}}>Placements</h2>
         <DatePicker
           selected={new Date(selectedYear, 0, 1)}
           onChange={(date) => setSelectedYear(date.getFullYear())}
@@ -52,7 +52,7 @@ const List = () => {
         ) : companies.length > 0 ? (
           <div className="table-responsive">
             <table className="table table-bordered table-hover text-center custom-table">
-              <thead className="table-primary">
+              <thead className="table-dark">
                 <tr>
                   <th>Company Name</th>
                   <th>Students Placed</th>

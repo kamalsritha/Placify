@@ -4,6 +4,7 @@ import Navbar from '../HomeComponents/Navbar.js';
 import Footer from '../HomeComponents/Footer.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './OffCampusJobs.css'; // Import the updated CSS
 
 function OffCampusJobs() {
   const [jobs, setJobs] = useState([]);
@@ -31,7 +32,7 @@ function OffCampusJobs() {
   }, []);
 
   const handleApply = (job) => {
-    const applyLink = job.apply_link || job.link || job.url || job.apply_options[0].link;
+    const applyLink = job.apply_link || job.link || job.url || job.apply_options?.[0]?.link;
 
     if (!applyLink) {
       toast.error('Application link not available');
@@ -51,104 +52,48 @@ function OffCampusJobs() {
     <>
       <Navbar />
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="container-fluid" style={{ marginTop: '100px', padding: '0 30px' }}>
-        <div className="text-center mb-4" style={{ color: '#333', fontWeight: 'bold', fontSize: '1.2rem' }}>
-          Recent Job Openings for Students
-        </div>
+      <div className="offcampus-container">
+        <div className="page-heading">Recent Job Openings for Students</div>
 
         {loading && (
-          <div className="text-center my-5">
-            <div className="spinner-border text-primary" role="status">
+          <div className="loading-container">
+            <div className="spinner-border text-dark" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
         )}
 
         {error && (
-          <div className="alert alert-danger text-center" role="alert">
-            {error}
-          </div>
+          <div className="alert alert-danger">{error}</div>
         )}
 
-        <div className="row g-2 justify-content-center"> {/* Adjusted gap for better spacing */}
+        <div className="jobs-list">
           {jobs.map((job, index) => (
-            <div key={index} className="col-12 col-md-6 col-lg-4 d-flex justify-content-center mb-4"> {/* Increased vertical margin */}
-              <div
-                className="card h-100"
-                style={{
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid #ddd',
-                  backgroundColor: '#f9f9f9',
-                }}
-              >
-                <div className="card-body d-flex flex-column">
-                  <div
-                    style={{
-                      borderBottom: '2px solid #e0e0e0',
-                      paddingBottom: '10px',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    <h5
-                      className="card-title"
-                      style={{
-                        color: '#001f3f',
-                        fontSize: '1.2rem',
-                        fontWeight: 'bold',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      {job.title}
-                    </h5>
-                    <h6 className="card-subtitle mb-2 text-muted" style={{ fontSize: '0.9rem' }}>
-                      {job.company_name}
-                    </h6>
-                  </div>
-
-                  <div style={{ fontSize: '0.85rem', color: '#555' }}>
-                    <div className="mb-1">
-                      <strong>Location:</strong> {job.location || 'Not specified'}
-                    </div>
-                    <div className="mb-1">
-                      <strong>Experience:</strong> Entry Level
-                    </div>
-                    <div className="mb-1">
-                      <strong>Posted:</strong> {job.detected_extensions?.posted_at || 'Recently'}
-                    </div>
-                  </div>
-
-                  <div className="mt-auto">
-                    <button
-                      onClick={() => handleApply(job)}
-                      className="btn w-100"
-                      style={{
-                        backgroundColor: '#001f3f',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '8px 0',
-                        borderRadius: '5px',
-                        fontWeight: '500',
-                        marginTop: '10px',
-                      }}
-                    >
-                      Apply Now
-                    </button>
-                    {job.via && (
-                      <small className="text-muted text-center d-block" style={{ marginTop: '5px' }}>
-                        Via {job.via}
-                      </small>
-                    )}
-                  </div>
+            <div key={index} className="job-card">
+              <div className="job-card-body">
+                <div className="job-header">
+                  <h5 className="job-title">{job.title}</h5>
+                  <h6 className="job-company">{job.company_name}</h6>
                 </div>
+
+                <div className="job-details">
+                  <p><strong>Location:</strong> {job.location || 'Not specified'}</p>
+                  <p><strong>Experience:</strong> Entry Level</p>
+                  <p><strong>Posted:</strong> {job.detected_extensions?.posted_at || 'Recently'}</p>
+                </div>
+
+                <button onClick={() => handleApply(job)} className="apply-button">
+                  Apply Now
+                </button>
+                {job.via && <small className="job-source">Via {job.via}</small>}
               </div>
             </div>
           ))}
         </div>
 
         {!loading && jobs.length === 0 && !error && (
-          <div className="text-center my-5">
-            <p className="h5">No entry-level tech jobs available at the moment. Please check back later.</p>
+          <div className="no-jobs">
+            <p>No entry-level tech jobs available at the moment. Please check back later.</p>
           </div>
         )}
       </div>
@@ -158,4 +103,3 @@ function OffCampusJobs() {
 }
 
 export default OffCampusJobs;
-
