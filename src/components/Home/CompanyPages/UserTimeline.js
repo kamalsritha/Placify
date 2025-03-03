@@ -126,7 +126,7 @@ function UserTimeline() {
                       <p className={`timeline-text ${isCompleted ? "completed-text" : ""}`}>
                         {stage} {dateInfo}
                       </p>
-                      {stage === "Interview" && statusText === "Waiting for Result" && (
+                      {stage === "Interview" && statusText === "Waiting for Result" && statusChecks.assessmentSelected==="Selected" && (
                         <div className="interview-buttons">
                           <button className="interview-button" onClick={addToCalendar}>Add</button>
                           {company?.loc ? (

@@ -1,0 +1,96 @@
+/* Full Container */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Banner Section */
+  .home-banner-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    margin-top: 150px;
+  }
+  
+  /* Left Side: Text Content */
+  .home-content {
+    flex: 1;
+    display: flex;
+    align-items: center; /* Ensures vertical centering */
+    justify-content: flex-start; /* Align to left */
+    text-align: center;
+  }
+  
+  /* Wrapper for text to ensure heading & description stay together */
+  .home-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* Primary Heading */
+  .primary-heading {
+    font-size: 50px;
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  /* Description Text */
+  .home-description {
+    max-width: 600px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+  }
+  
+  /* Right Side: Image */
+  .home-image-section img {
+    width: 100%;
+    max-width: 570px;
+    height: auto;
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 1024px) {
+    .primary-heading {
+      font-size: 40px;
+    }
+    .home-description {
+      font-size: 0.9rem;
+    }
+    .home-banner-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .home-content {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .primary-heading {
+      font-size: 35px;
+    }
+    .home-description {
+      font-size: 0.85rem;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .primary-heading {
+      font-size: 30px;
+    }
+    .home-description {
+      font-size: 0.8rem;
+    }
+  }
+  

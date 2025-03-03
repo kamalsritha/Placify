@@ -18,12 +18,6 @@ const router = express.Router();
 router.use(fileUpload());
 
 
-
-//User EndPoints and Admin EndPoints
-
-//---------------------------------------------USER ENDPOINTS--------------------------------------------------//
-
-//User Registeration API
 router.post("/register", async (req, res) => {
   const {
     name,
@@ -66,6 +60,49 @@ router.post("/register", async (req, res) => {
   return res.json({ message: "User Registered" });
 });
 
+router.post('/sendLabEmails', async (req, res) => {
+  const { studentsWithVenues, companyName, doa } = req.body;
+  console.log("date...."+doa);
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,  
+    secure: true, 
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD 
+    },
+    debug: true 
+  });
+
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log("Transporter verification error:", error);
+    } else {
+      console.log("Server is ready to send emails");
+    }
+  });
+
+  try {
+    for (const student of studentsWithVenues) {
+      console.log("Details...."+student);
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: student.Email,
+        subject: `Lab Allocation for ${companyName}`,
+        text: `Dear ${student.Name},\n\nYou have been allocated to ${student.Venue} for the lab assessment of ${companyName} on ${doa}.\n\nBest regards,\nPlacement Team`
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+
+    res.status(200).json({ message: 'Emails sent successfully' });
+  } catch (error) {
+    console.error('Email sending error:', error);
+    res.status(500).json({ message: 'Failed to send emails', error });
+  }
+});
+
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -91,9 +128,10 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
   return res.json({ status: true, message: "Logged Out" });
 });
+
 
 const verifyUser = async (req, res, next) => {
   try {
@@ -129,8 +167,6 @@ router.get("/validate", async (req, res) => {
   }
 });
 
-// Route to fetch the current user's details.
-// It verifies the user's token and retrieves the user's information.
 router.get("/currentUser", verifyUser, async (req, res) => {
   try {
     const token = req.cookies.token;
@@ -235,7 +271,6 @@ router.post("/forgotpassword", async (req, res) => {
         console.log("Server is ready to send emails");
       }
     });
-    // Send emails to eligible student
 
 
     var mailOptions = {
@@ -418,7 +453,8 @@ router.get('/applicant/:id', async (req, res) => {
       }
 
       res.json({
-          applied: company.applicants 
+          applied: company.applicants, 
+          doa:company.doa
       });
   } catch (error) {
       console.error('Error fetching applicants:', error);
@@ -815,8 +851,7 @@ export default router;
 
 //---------------------------------------------ADMIN ENDPOINTS--------------------------------------------------//
 
-// This API endpoint is responsible for adding new company details to the database.
-// Modify the existing add-companies endpoint
+
 
 
 router.get('/download-shortlist', async (req, res) => {
@@ -851,18 +886,18 @@ router.get('/download-shortlist', async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(`${companyName} Shortlist`);
 
-    // Updated columns, added rollno and removed marks and profile
+    
     worksheet.columns = [
       { header: 'Roll No', key: 'rollNo', width: 30 },
       { header: 'Student Name', key: 'name', width: 30 },
       { header: 'Stream', key: 'stream', width: 30 },
     ];
 
-    // Updated for loop to include rollno and exclude marks/profile
+    
     shortlistedStudents.forEach(student => {
       worksheet.addRow({
         name: student.name,
-        rollNo: student.rollNo, // Added rollno field
+        rollNo: student.rollNo, 
         companyPlaced: student.companyPlaced,
         tenthPercentage: student.tenthPercentage,
         twelfthPercentage: student.twelfthPercentage,
@@ -975,7 +1010,7 @@ router.post("/add-companies", async (req, res) => {
         console.log("Server is ready to send emails");
       }
     });
-    // Send emails to eligible students
+    
     for (const student of eligibleStudents) {
       const mailOptions = {
         from: process.env.EMAIL_USER,

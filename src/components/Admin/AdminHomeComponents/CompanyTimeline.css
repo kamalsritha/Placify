@@ -93,7 +93,7 @@
 }
 
 .stage-button {
-  background-color: #007bff;
+  background-color: black;
   color: white;
   padding: 3px 8px;
   text-decoration: none;
@@ -106,7 +106,7 @@
 }
 
 .stage-button:hover {
-  background-color: #0056b3;
+  background-color: #333;
 }
 
 .disabled-link {

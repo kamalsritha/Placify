@@ -1,16 +1,20 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import Navbar from "./Navbar.js";
-import { UserContext } from "../../../UserContext.js";
 
 function Profile() {
-  const { user, setUser } = useContext(UserContext);
   const [companyNames, setCompanyNames] = useState([]);
   const [showCompanies, setShowCompanies] = useState(false);
   const [newCGPA, setNewCGPA] = useState("");
+  const [user, setUser] = useState([])
 
   useEffect(() => {
+    const fetchData = async () => {
+    const userResponse = await axios.get("http://localhost:3001/auth/currentUser");
+        setUser(userResponse.data.user);
+    
+    
     if (user?.appliedCompanies?.length > 0) {
       axios
         .post("http://localhost:3001/auth/getCompaniesApplied", {
@@ -19,7 +23,9 @@ function Profile() {
         .then((res) => setCompanyNames(res.data))
         .catch((err) => console.error("Error fetching company names:", err));
     }
-  }, [user?.appliedCompanies]);
+  }
+  fetchData();
+  }, [user]);
 
   const handleUpdateCGPA = () => {
     if (!newCGPA) return;

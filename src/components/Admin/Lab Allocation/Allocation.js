@@ -10,15 +10,17 @@ import { useParams } from 'react-router-dom';
 function Allocation() {
   const [selectedLabs, setSelectedLabs] = useState([]);
   const [studentList, setStudentList] = useState([]);
+  const [doa, setDoa] = useState("");
   const [loading, setLoading] = useState(false);
   const { id, name } = useParams();
-  const companyName = decodeURIComponent(name);
+  const companyName = decodeURIComponent(name)
 
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/auth/applicant/${id}`);
         setStudentList(response.data.applied);
+        setDoa(response.data.doa);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -61,7 +63,7 @@ function Allocation() {
         }
         studentsInCurrentLab++;
 
-        return { RollNo: student.rollNo, Name: student.name, Venue: selectedLabs[currentLabIndex] };
+        return { RollNo: student.rollNo, Name: student.name, Email: student.email,Venue: selectedLabs[currentLabIndex] };
       });
 
       const ws = XLSX.utils.json_to_sheet([]);
@@ -71,8 +73,9 @@ function Allocation() {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Lab Venues");
       XLSX.writeFile(wb, `${companyName}_Lab_Venues.xlsx`);
-
+      
       await axios.put(`http://localhost:3001/auth/labAllocation/${id}`);
+      await axios.post('http://localhost:3001/auth/sendLabEmails', { studentsWithVenues, companyName, doa});
 
       toast.success('Venue allocation completed and downloaded');
     } catch (error) {

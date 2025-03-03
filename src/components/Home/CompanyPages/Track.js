@@ -23,10 +23,10 @@ function CompanyTrack() {
       return;
     }
 
-    localStorage.setItem("user", JSON.stringify(user));
-
     const fetchData = async () => {
       try {
+        const userResponse = await axios.get("http://localhost:3001/auth/currentUser");
+        setUser(userResponse.data.user);
         const response = await axios.get(`http://localhost:3001/auth/track/companies/${user._id}`);
         setCompanies(Array.isArray(response.data) ? response.data : []);
       } catch (err) {

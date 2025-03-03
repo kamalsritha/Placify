@@ -7,31 +7,36 @@
   color: #333;
 }
 
-
 .filter-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
 .filter-group {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
 }
 
 .filter-label {
-  margin-left: 20px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 3px;
 }
 
 .filter-input {
-  width: 90%;
-  padding: 10px; 
+  width: 100px;
+  padding: 5px;
+  font-size: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  font-weight: bold;
-  margin-left: 20px;
-  font-size: 15px; 
+  border-radius: 3px;
   font-family: 'Roboto', sans-serif;
+  font-weight: bold;
   transition: all 0.3s ease;
 }
 
@@ -41,72 +46,70 @@
   box-shadow: 0 0 0 2px rgba(0, 0, 77, 0.2);
 }
 
-.filter-button {
-  padding: 14px 20px;
-  margin-top: 20px;
-  background-color: black;
-  color: white;
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filter-button,
+.download-button {
+  padding: 8px 12px;
+  font-size: 14px;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
+  border-radius: 3px;
   font-weight: bold;
-  font-size: 18px; 
   font-family: 'Roboto', sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.button-spacing {
-  margin-right: 10px;
+.filter-button {
+  background-color: black;
+  color: white;
 }
 
 .filter-button:hover {
   background-color: #333;
 }
 
-.user-table {
-  width: 90%; 
-  margin: 20px auto; 
-  border-collapse: collapse;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  animation: fadeInTable 1s ease-in-out forwards;
-
-}
-
-.user-table th {
-  background-color: #333;
-  color:white;
-  font-weight: bold;
-  padding: 14px;
-  font-size: 18px; 
-  font-family: 'Poppins', sans-serif;                
-}
-
-.user-table th,
-.user-table td {
-  border: 1px solid #ccc;
-  padding: 10px; 
-  font-size: 16.4px; 
-  font-family: 'Poppins', sans-serif;
-}
-
 .download-button {
-  margin-top: 20px;
-  padding: 14px 28px; 
   background-color: black;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 18px; /* Increased font size */
-  font-family: 'Roboto', sans-serif;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .download-button:hover {
   background-color: #333;
+}
+
+.user-table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  animation: fadeInTable 1s ease-in-out forwards;
+  font-size: 14px;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+}
+
+.user-table th {
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
 @keyframes fadeInTable {

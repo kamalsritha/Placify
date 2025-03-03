@@ -109,7 +109,7 @@ function AdminDashboard() {
         <div className="filter-container">
           <div className="filter-group">
             <label htmlFor="tenthPercentage" className="filter-label">
-              Filter by 10th Percentage:
+              10th Percentage
             </label>
             <input
               type="number"
@@ -122,7 +122,7 @@ function AdminDashboard() {
           </div>
           <div className="filter-group">
             <label htmlFor="twelfthPercentage" className="filter-label">
-              Filter by 12th Percentage:
+              12th Percentage
             </label>
             <input
               type="number"
@@ -135,7 +135,7 @@ function AdminDashboard() {
           </div>
           <div className="filter-group">
             <label htmlFor="graduationCGPA" className="filter-label">
-              Filter by Graduation CGPA:
+              Graduation CGPA
             </label>
             <input
               type="number"
@@ -148,7 +148,7 @@ function AdminDashboard() {
           </div>
           <div className="filter-group">
             <label htmlFor="year" className="filter-label">
-              Filter by Year:
+              Year
             </label>
             <input
               type="number"
@@ -162,7 +162,7 @@ function AdminDashboard() {
           </div>
           <div className="filter-group">
             <label htmlFor="placementStatus" className="filter-label">
-              Filter by Placement Status:
+              Placement Status
             </label>
             <select
               id="placementStatus"
@@ -177,20 +177,18 @@ function AdminDashboard() {
             </select>
           </div>
 
-          <div className="filter-group">
-            <button
-              onClick={applyFilters}
-              className="filter-button button-spacing"
-            >
-              Apply Filters
-            </button>
-            <button onClick={resetFilters} className="filter-button" >
-              Reset Filters
-            </button>
-            <button onClick={handleDownload} className="download-button">
-              Download
-            </button>
-          </div>
+          <div className="filter-buttons">
+  <button onClick={applyFilters} className="filter-button">
+    Apply Filters
+  </button>
+  <button onClick={resetFilters} className="filter-button">
+    Reset Filters
+  </button>
+  <button onClick={handleDownload} className="download-button">
+    Download
+  </button>
+</div>
+
         </div>
         <table className="user-table">
           <thead>

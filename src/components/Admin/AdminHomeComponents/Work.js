@@ -17,18 +17,17 @@ const Work = () => {
     },
     {
       image: CheckInterviewScheduled,
-      title: "Check the Interview Reports",
-      text: "Effortlessly access and analyze interview reports to track student placement status, enabling informed decision-making and efficient placement management.",
+      title: "Check the Student Reports",
+      text: "Effortlessly access and analyze student reports to track student placement status, enabling informed decision-making and efficient placement management.",
     },
   ];
   return (
-    <div className="work-section-wrapper">
-      <div className="work-section-top">
-        <p className="primary-subheading" style={{color:"navy",fontSize:"50px"}}>Work</p>
-        <h1 className="primary-heading"style={{fontSize:"40px"}}>How It Works</h1>
-        <p className="primary-text">
+    <div className="work-section">
+      <div className="work-section-top" >
+        <h1 className="primary-heading"style={{color:"#333",fontSize:"30px"}}>How It Works</h1>
+        <p className="primary-text" style={{fontSize:"15px"}}>
         Our Placify platform enhances the job search process by facilitating seamless matching between students and pertinent job openings. 
-        We prioritize efficient navigation and foster effective communication channels between students and recruiters, 
+        We prioritize efficient navigation and foster effective communication channels between students and Placement Officers, 
         optimizing the placement experience for all stakeholders.
         </p>
       </div>
@@ -38,8 +37,8 @@ const Work = () => {
             <div className="info-boxes-img-container">
               <img src={data.image} alt="" style={{width:"150px",height:"150px"}} />
             </div>
-            <h2 style={{fontSize:"1.5rem"}}>{data.title}</h2>
-            <p>{data.text}</p>
+            <h2 style={{fontSize:"1.5rem", fontWeight:"bold"}}>{data.title}</h2>
+            <p style={{textAlign:"center",fontSize:"15px"}}>{data.text}</p>
           </div>
         ))}
       </div>

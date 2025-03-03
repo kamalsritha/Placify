@@ -73,6 +73,7 @@ function Track() {
           return company.doa && company.doa < new Date().toISOString().split("T")[0];
         case "interviewComplete":
           return company.doi && company.doi < new Date().toISOString().split("T")[0];
+
         default:
           return true;
       }
@@ -105,6 +106,7 @@ function Track() {
                     <option value="all">All</option>
                     <option value="assessmentComplete">Assessment Complete</option>
                     <option value="interviewComplete">Interview Complete</option>
+                    <option value="pass-out"Pass out Year></option>
                   </select>
                 </div>
               </div>

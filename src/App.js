@@ -31,6 +31,7 @@ import CompanyTimeline from "./components/Admin/AdminHomeComponents/CompanyTimel
 import CompanyTrack from "./components/Home/CompanyPages/Track.js";
 import UserTimeline from "./components/Home/CompanyPages/UserTimeline.js";
 import Location from "./components/Home/CompanyPages/Location.js";
+import PageNotFound from "./Notfound.js";
 
 function App() {
   return (
@@ -67,7 +68,7 @@ function App() {
           <Route path="/companytrack" element={<CompanyTrack/>}/>
            <Route path="/user/timeline/:id/:name" element={<UserTimeline />} />
            <Route path="/location/:loc" element={<Location/>}/>
-          <Route path="*" element={<h1>Page Not found</h1>}></Route>
+          <Route path="*" element={<PageNotFound/>}></Route>
         </Routes>
       </Router>
     </UserProvider>

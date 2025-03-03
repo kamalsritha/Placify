@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './CompanyTimeline.css';
+import AdminHome from "../AdminHome.js";
 
 function CompanyTimeline() {
   const { id, name } = useParams();
@@ -12,7 +13,7 @@ function CompanyTimeline() {
     isLabAllocated: false,
     isAssessmentExpired: false,
     isInterviewExpired: false,
-    asmt: true // Default to true
+    asmt: true 
   });
 
   const timelineStages = ['Expired', 'Lab Allocation', 'Assessment', 'Interview', 'Result'];
@@ -53,6 +54,8 @@ function CompanyTimeline() {
   if (!statusChecks.fintr) currentStageIndex = 5;
 
   return (
+    <div>
+      <AdminHome/>
     <div className="timeline-container">
       <h1 className="timeline-title">{name} - Recruitment Timeline</h1>
       <div className="timeline">
@@ -124,6 +127,7 @@ function CompanyTimeline() {
           );
         })}
       </div>
+    </div>
     </div>
   );
 }

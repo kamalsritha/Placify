@@ -12,7 +12,7 @@ const About = () => {
       <div className="about-section-image-container">
         <img src={AboutBackgroundImage} alt="" />
       </div>
-      <p className="primary-subheading" style={{ color: "navy", fontSize: "50px",marginTop:"-450px",marginRight:"-450px"}}>About</p>
+      <p className="primary-subheading" style={{ color: "#333", fontSize: "28px",marginTop:"-450px",marginRight:"-450px",fontFamily:"Poppins",fontWeight:"bold"}}>About</p>
       <div className="about-section-text-container">
         <div className="card-container" style={{marginTop:"150px",marginRight:"60px"}}>
           <div className="card" style={{height:"400px",width:"250px"}}>

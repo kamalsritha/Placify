@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, Tab } from "react-bootstrap";
 import * as XLSX from "xlsx";
 import { FaDownload, FaArrowLeft } from "react-icons/fa";
+import AdminHome from "../AdminHome.js";
 
 function ApplicantsPage() {
   const { id } = useParams();
@@ -46,7 +47,9 @@ function ApplicantsPage() {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100">
+    <>
+      <AdminHome/>
+    <div className="d-flex align-items-center justify-content-center vh-100 mt-5">
       <div className="card p-4 shadow-lg" style={{ width: "500px" }}>
         <h2 className="text-center mb-4">Applicants for Company</h2>
         
@@ -91,6 +94,7 @@ function ApplicantsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
