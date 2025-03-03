@@ -95,7 +95,7 @@ function AddCompanies() {
   return (
     <>
   <AdminHome/>
-  <h1 style={{marginTop:'90px',color: 'navy'}}>Add Companies</h1>
+  <h1 style={{marginTop:'90px',color: '#333',fontSize:"28px",fontFamily:"Poppins",fontWeight:"bold"}}>Add Companies</h1>
   <div className="container-fluid h-100">
   <div className="row h-100 justify-content-center align-items-start"> 
     <div className="col-lg-4 d-flex justify-content-center align-items-center" style={{ minHeight: '400px', marginTop:'120px'}}> {/* Change height to fit-content */}

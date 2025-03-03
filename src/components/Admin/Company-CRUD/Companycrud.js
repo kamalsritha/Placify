@@ -88,7 +88,7 @@ function Companycrud() {
   return (
     <>
       <AdminHome />
-      <h2 className="header-title text-center mb-5">Companies</h2>
+      <h2 className="header-title text-center mb-5" style={{fontSize:"28px",fontFamily:"Poppins",fontWeight:"bold"}}>Companies</h2>
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
         <div className="row w-100 justify-content-center">
           <div className="col-lg-4 d-flex justify-content-center align-items-center mb-4">
@@ -107,7 +107,7 @@ function Companycrud() {
 
           <div className="col-lg-8 d-flex flex-column justify-content-center">
             <div className="mb-4">
-              <Link to="/add-companies" className="btn btn-success btn-sm">
+              <Link to="/add-companies" className="btn btn-success btn-sm" style={{background:"black", borderRadius:"15px"}}>
                 Add +
               </Link>
             </div>
@@ -139,7 +139,7 @@ function Companycrud() {
                   />
 
                   <div style={{ flexGrow: 1 }}>
-                    <h5 className="mb-0">{company.companyname}</h5>
+                    <h5 className="mb-0" style={{fontWeight:"bold"}}>{company.companyname} </h5>
                   </div>
 
                   <button
@@ -147,7 +147,7 @@ function Companycrud() {
                       e.stopPropagation();
                       handleDelete(company.id);
                     }}
-                    className="btn btn-sm btn-danger"
+                    className="btn btn-sm btn-danger" style={{background:"black", borderRadius:"25px"}}
                   >
                     Delete
                   </button>
@@ -200,27 +200,27 @@ function Companycrud() {
                 <p><strong>Passout Year : </strong>{selectedCompany.pass}</p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-success" onClick={handleApplicants}>
+                <button type="button" className="btn btn-success" onClick={handleApplicants} style={{background:"black",borderRadius:"25px"}}>
                   Applicants
                 </button>
               
                 <Link
                   to={`/updatecompany/${selectedCompany.id}`}
-                  className="btn btn-danger"
+                  className="btn btn-danger" style={{background:"black",borderRadius:"25px"}}
                 >
                   Update
                 </Link>
                 <button
                   type="button"
                   className="btn btn-danger"
-                  onClick={() => handleDelete(selectedCompany.id)}
+                  onClick={() => handleDelete(selectedCompany.id)} style={{background:"black",borderRadius:"25px"}}
                 >
                   Delete
                 </button>
                 <button
                   type="button"
                   className="btn btn-success"
-                  onClick={handleDownloadShortlist}
+                  onClick={handleDownloadShortlist} style={{background:"black", borderRadius:"25px"}}
                 >
                   Download Shortlist
                 </button>
