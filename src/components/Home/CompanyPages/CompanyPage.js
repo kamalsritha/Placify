@@ -421,7 +421,7 @@ function CompanyPage() {
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
   }}>
     <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>
-     ATS Score Analysis
+     Resume Score Analysis
     </h3>
     <div style={{ width: '100px', margin: '0 190px 20px' }}>
       <CircularProgress
