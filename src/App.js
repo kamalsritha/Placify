@@ -62,7 +62,7 @@ function App() {
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/list" element={<List/>}/>
           <Route path="/track" element={<Track/>}/>
-          <Route path="admin/allocation/:id/:name" element={<Allocation/>}></Route>
+          <Route path="/admin/allocation/:id/:name/:roundName" element={<Allocation/>}></Route>
           <Route path="/applicants/:id" element={<ApplicantsPage />} />
           <Route path="/timeline/:id/:name" element={<CompanyTimeline />}/>
           <Route path="/companytrack" element={<CompanyTrack/>}/>

@@ -12,7 +12,7 @@ function Allocation() {
   const [studentList, setStudentList] = useState([]);
   const [doa, setDoa] = useState("");
   const [loading, setLoading] = useState(false);
-  const { id, name } = useParams();
+  const { id, name,roundName } = useParams();
   const companyName = decodeURIComponent(name)
 
   useEffect(() => {
@@ -74,7 +74,7 @@ function Allocation() {
       XLSX.utils.book_append_sheet(wb, ws, "Lab Venues");
       XLSX.writeFile(wb, `${companyName}_Lab_Venues.xlsx`);
       
-      await axios.put(`http://localhost:3001/auth/labAllocation/${id}`);
+      await axios.put(`http://localhost:3001/auth/labAllocation/${id}/${roundName}`);
       await axios.post('http://localhost:3001/auth/sendLabEmails', { studentsWithVenues, companyName, doa});
 
       toast.success('Venue allocation completed and downloaded');

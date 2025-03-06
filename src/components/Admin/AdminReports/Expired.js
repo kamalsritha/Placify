@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Applicant.css";
 import AdminHome from "../AdminHome.js";
+import Footer from "../AdminReusableComponents/AdminFooter.js";
 
 function Track() {
     const [companies, setCompanies] = useState([]);
@@ -10,6 +11,7 @@ function Track() {
     const [filterOption, setFilterOption] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
+    const [yearFilter,setYearFilter]=useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,10 +66,13 @@ function Track() {
   };
 
   const filteredCompanies = companies
-    .filter((company) =>
-      company.companyname.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter((company) => {
+  .filter((company) =>
+    company.companyname.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  .filter((company) => {
+    if (yearFilter && company.pass !== yearFilter) {
+      return false;
+    }
       switch (filterOption) {
         case "assessmentComplete":
           return company.doa && company.doa < new Date().toISOString().split("T")[0];
@@ -101,14 +106,14 @@ function Track() {
                     <option value="recent">Most Recent</option>
                     <option value="alphabetical">Alphabetical Order</option>
                   </select>
-      
-                  <select className="filter-select" value={filterOption} onChange={handleFilterChange}>
-                    <option value="all">All</option>
-                    <option value="assessmentComplete">Assessment Complete</option>
-                    <option value="interviewComplete">Interview Complete</option>
-                    <option value="pass-out"Pass out Year></option>
-                  </select>
                 </div>
+                <input
+              type="number"
+              className="year-input"
+              placeholder="Enter Pass-out Year"
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+            />
               </div>
       
               {loading ? (
@@ -129,10 +134,13 @@ function Track() {
                         Ctc: <span className={(company.ctc)}>{company.ctc || "N/A"}</span>
                       </p>
                       <p className="date-text">
-                        Assessment Date: <span className={getDateClass(company.doa)}>{company.doa || "N/A"}</span>
+                        Pass Year: <span className={getDateClass(company.pass)}>{company.pass || "N/A"}</span>
                       </p>
                       <p className="date-text">
-                        Interview Date: <span className={getDateClass(company.doi)}>{company.doi || "N/A"}</span>
+                        Rounds: <span className={getDateClass(company.assessmentRounds.length)}>{company.assessmentRounds.length || "N/A"}</span>
+                      </p>
+                      <p className="date-text">
+                        Interview location: <span className={getDateClass(company.loc)}>{company.loc===null ? "On-campus":"Off-campus"}</span>
                       </p>
                       <p className="date-text">
         Posted on: <span className="company-date">
@@ -154,6 +162,7 @@ function Track() {
                 </div>
               )}
             </div>
+            <Footer/>
           </>
   );
 }

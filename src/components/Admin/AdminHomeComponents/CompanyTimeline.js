@@ -3,20 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './CompanyTimeline.css';
 import AdminHome from "../AdminHome.js";
+import Footer from '../AdminReusableComponents/AdminFooter.js';
 
 function CompanyTimeline() {
   const { id, name } = useParams();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [statusChecks, setStatusChecks] = useState({
-    isPresent: false,
-    isLabAllocated: false,
-    isAssessmentExpired: false,
-    isInterviewExpired: false,
-    asmt: true 
-  });
-
-  const timelineStages = ['Expired', 'Lab Allocation', 'Assessment', 'Interview', 'Result'];
+  const [assessmentRounds, setAssessmentRounds] = useState([]);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -31,7 +24,7 @@ function CompanyTimeline() {
     const checkCompanyStatus = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/auth/companies/${id}/status-check`);
-        setStatusChecks(response.data);
+        setAssessmentRounds(response.data.assessmentRounds);
       } catch (error) {
         console.error('Error checking company status:', error);
       } finally {
@@ -46,88 +39,61 @@ function CompanyTimeline() {
   if (loading) return <p>Loading...</p>;
   if (!company) return <p>Company not found.</p>;
 
-  let currentStageIndex = 0;
-  if (statusChecks.isPresent) currentStageIndex = 1;
-  if (statusChecks.isLabAllocated) currentStageIndex = 2;
-  if (statusChecks.isAssessmentExpired) currentStageIndex = 3;
-  if (statusChecks.isInterviewExpired) currentStageIndex = 4;
-  if (!statusChecks.fintr) currentStageIndex = 5;
-
   return (
     <div>
-      <AdminHome/>
-    <div className="timeline-container">
-      <h1 className="timeline-title">{name} - Recruitment Timeline</h1>
-      <div className="timeline">
-        {timelineStages.map((stage, index) => {
-          let dateInfo = '';
+      <AdminHome />
+      <div className="timeline-container">
+        <h1 className="timeline-title">{name} - Recruitment Timeline</h1>
+        <div className="timeline">
+          {assessmentRounds.map((round, index) => {
+            const roundDate = new Date(round.date).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: '2-digit'
+            });
 
-          if (stage === 'Assessment' && company?.doa) {
-            dateInfo = `(${new Date(company.doa).toLocaleDateString()})`;
-          }
-          if (stage === 'Interview' && company?.doi) {
-            dateInfo = `(${new Date(company.doi).toLocaleDateString()})`;
-          }
+          
+            const previousRoundCompleted = index === 0 || assessmentRounds[index - 1].completed;
 
-          return (
-            <div key={index} className="timeline-item">
-              <div className="timeline-dot-container">
-                <div className={`timeline-dot ${index <= currentStageIndex - 1 ? 'completed' : ''}`} />
-                {index !== timelineStages.length - 1 && <div className="timeline-line" />}
-              </div>
-              <div className="timeline-content">
-                <div className="timeline-stage">
-                  <div className="timeline-stage-row">
-                    <p className={`timeline-text ${index <= currentStageIndex - 1 ? 'completed-text' : ''}`}>
-                      {stage} {dateInfo}
-                    </p>
+            return (
+              <div key={index} className="timeline-item">
+                <div className="timeline-dot-container">
+                  <div className={`timeline-dot ${round.completed ? 'completed' : ''}`} />
+                  {index !== assessmentRounds.length - 1 && <div className="timeline-line" />}
+                </div>
+                <div className="timeline-content">
+                  <div className="timeline-stage">
+                    <div className="timeline-stage-row">
+                      <p className={`timeline-text ${round.completed ? 'completed-text' : ''}`}>
+                        {round.roundName} ({roundDate})
+                      </p>
 
-                    {statusChecks.isPresent && stage === 'Lab Allocation' && (
-                      statusChecks.isLabAllocated ? (
-                        <div className="stage-button disabled-link">Allocated</div>
-                      ) : (
-                        <Link to={`/admin/allocation/${id}/${name}`} className="stage-button">
-                          Allocate
+                      {round.lab === true && previousRoundCompleted ? (
+                        <Link to={`/admin/allocation/${id}/${name}/${round.roundName}`} className="stage-button">
+                          Allocate Lab
                         </Link>
-                      )
-                    )}
-
-                    {stage === 'Assessment' && statusChecks.isLabAllocated && statusChecks.isAssessmentExpired && (
-                      statusChecks.asmt ? (
-                        <Link to={`/scheduledInterviewData/${id}/${name}/assesment`} className="stage-button">
-                          Details
+                      ) : round.lab === false && round.completed && !round.done ? (
+                        <Link to={`/scheduledInterviewData/${id}/${name}/${round.roundName}`} className="stage-button">
+                          Announce Selects
                         </Link>
-                      ) : (
-                        <div className="stage-button disabled-link">Announce Selects</div>
-                      )
-                    )}
-
-                    
-                    {stage === 'Interview' && statusChecks.isAssessmentExpired && statusChecks.isInterviewExpired && (
-                      statusChecks.intr1 ? (
-                        <Link to={`/scheduledInterviewData/${id}/${name}/interview`} className="stage-button">
-                        Announce Selects
+                      ) : round.lab === null && round.completed && !round.done ? (
+                        <Link to={`/scheduledInterviewData/${id}/${name}/${round.roundName}`} className="stage-button">
+                          Announce Selects
                         </Link>
-                      ) : (
-                        <div className="stage-button disabled-link">Announce Selects</div>
-                      )
-                    )}
-
-                    {stage === 'Result' && statusChecks.isInterviewExpired && (statusChecks.fintr ? (
-                      <Link to={`/scheduledInterviewData/${id}/${name}/final`} className="stage-button">
-                        Announce Selects
-                      </Link>
-                    ) : (
-                      <div className="stage-button disabled-link">Announce Selects</div>
-                    ))}
+                      ) : round.done === true ? (
+                        <p><b>Results Announced</b></p>
+                      ) : round.lab === false ? (
+                        <h6><b>Lab Allocated</b></h6>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+      <Footer/>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import Feedback from "./HomeComponents/Feedback.js";
 import JobNotifications from "./HomeComponents/JobNotifications.js";
 import { toast, ToastContainer } from 'react-toastify';
 import "./Home-CSS/Application.css";
+import Footer from "./HomeComponents/Footer.js";
 
 
 function Home() {
@@ -83,6 +84,7 @@ function Home() {
       <JobNotifications />
       <Work />
       <Feedback />
+      <Footer/>
     </div>
   );
 }

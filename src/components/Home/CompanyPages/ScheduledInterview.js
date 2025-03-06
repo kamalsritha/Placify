@@ -13,21 +13,26 @@ function ScheduledInterview() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
-      if (!res.data.status) {
+    axios.get("http://localhost:3001/auth/verify")
+      .then((res) => {
+        if (!res.data.status) {
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        console.error("Error verifying user:", err);
         navigate("/");
-      }
-    });
+      });
 
-    axios
-      .get("http://localhost:3001/auth/currentUser")
+    axios.get("http://localhost:3001/auth/currentUser")
       .then((res) => {
         setCurrentUser(res.data.user);
       })
       .catch((err) => {
         console.error("Error fetching current user:", err);
+        setLoading(false);
       });
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     if (currentUser) {
@@ -39,7 +44,7 @@ function ScheduledInterview() {
           );
           setScheduledInterviews(response.data.scheduledInterviews);
         } catch (error) {
-          console.error(error);
+          console.error("Error fetching scheduled interviews:", error);
         } finally {
           setLoading(false);
         }
@@ -47,6 +52,11 @@ function ScheduledInterview() {
       fetchScheduledInterviews();
     }
   }, [currentUser]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return dateString.split("T")[0];
+  };
 
   return (
     <>
@@ -64,17 +74,16 @@ function ScheduledInterview() {
             className="text-center mb-4"
             style={{ fontSize: "28px", color: "#333", fontFamily: "Poppins", fontWeight: "bold" }}
           >
-            Scheduled Assessments
+            Schedule
           </h1>
           <br />
           <div className="row w-100 justify-content-center">
-            {/* Left Part with Image */}
             <div className="col-12 col-md-6 d-flex justify-content-center align-items-center mb-4">
               <img
                 src={scheduleimage}
                 alt="Scheduled Interviews"
                 style={{
-                  maxWidth: "50%", 
+                  maxWidth: "50%",
                   height: "auto",
                   borderRadius: "15px",
                   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
@@ -82,7 +91,6 @@ function ScheduledInterview() {
               />
             </div>
 
-            {/* Right Part with List of Interviews */}
             <div className="col-12 col-md-6">
               <div className="list-group">
                 {scheduledInterviews.length > 0 ? (
@@ -102,14 +110,35 @@ function ScheduledInterview() {
                       <h5 className="mb-2" style={{ color: "black", fontFamily: "Poppins", fontWeight: "Bold" }}>
                         {interview.companyName}
                       </h5>
-                      <p className="mb-1" style={{ fontSize: "1.1rem", color: "#555" }}>
-                        <strong style={{ color: "black" }}>Assessment Date:</strong> {interview.interviewDate}
-                      </p>
+                      
+                      {interview.interviewRounds && interview.interviewRounds.length > 0 ? (
+                        interview.interviewRounds.map((round, roundIndex) => (
+                          <p
+                            key={roundIndex}
+                            className="mb-1"
+                            style={{ fontSize: "1.1rem", color: "#555" }}
+                          >
+                            <strong style={{ color: "black" }}>{round.name}:</strong> {formatDate(round.date)}
+                          </p>
+                        ))
+                      ) : (
+                        <p style={{ fontSize: "1.1rem", color: "#888" }}>
+                          No upcoming rounds scheduled.
+                        </p>
+                      )}
                     </div>
                   ))
                 ) : (
-                  <p className="text-center" style={{ fontSize: "1.2rem", color: "#888", fontFamily:"Poppins",fontWeight:"bold"}}>
-                    You have no scheduled Assessments.
+                  <p
+                    className="text-center"
+                    style={{
+                      fontSize: "1.2rem",
+                      color: "#888",
+                      fontFamily: "Poppins",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    You have no scheduled assessments.
                   </p>
                 )}
               </div>

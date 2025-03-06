@@ -10,16 +10,16 @@ import "../Admin-CSS/ScheduledInterviewData.css";
 
 function ScheduledInterviewData() {
   const [uploadedData, setUploadedData] = useState([]); 
-  const { id, name, activity } = useParams();  // Get activity from URL
+  const { id, name, activity } = useParams();  
 
-  // Define activity-based configurations
+
   const activityConfig = {
     assessment: "Assessment Selects",
     interview: "Interview Selects",
     final: "Final Selects"
   };
 
-  const activityTitle = activityConfig[activity] || "Assessment Selects"; // Default to assessment
+  const activityTitle = activityConfig[activity] || "Assessment Selects"; 
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -43,11 +43,14 @@ function ScheduledInterviewData() {
       return;
     }
   
-    const rollNumbers = uploadedData.map((data) => data.rollNo.toString()).join(",");
-    const rolls = uploadedData.map((data) => data.rollNo.toString());
+    const rollNumbers = uploadedData.map((data) => (data.rollNo || data.RollNo).toString()).join(",");
+    const rolls = uploadedData.map((data) => (data.rollNo || data.RollNo).toString());
+  
+
   
     try {
-      if (activity === "final") {
+      const response = await axios.post(`http://localhost:3001/auth/checklastround/${id}/${activity}`)
+      if (response.data===true) {
         
           await axios.post("http://localhost:3001/auth/updatePlacementStatus", {
             userIds: rolls,
@@ -73,7 +76,7 @@ function ScheduledInterviewData() {
     <>
       <AdminHome />
       <h1 className="page-heading" style={{ marginTop: "150px" }}>
-        {name} {activityTitle}
+        {name} {activity} selects
       </h1>
       <div className="split">
         <div className="file-upload-wrapper">

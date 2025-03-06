@@ -21,15 +21,15 @@ function AddCompanies() {
   const [jobdescription, setJobDescription] = useState("");
   const [website, setWebsite] = useState("");
   const [ctc, setCtc] = useState("");
-  const [doa,setDoa]=useState("");
-  const [doi, setDoi] = useState("");
+
   const [tenthPercentage, setTenthPercentage] = useState("");
   const [twelfthPercentage, setTwelfthPercentage] = useState("");
   const [graduationCGPA, setGraduationCGPA] = useState("");
   const [branches, setBranches] = useState([]);
   const [expire,setExpire]=useState([]);
   const [pass,setPass]=useState([]);
-  const [loc,setLoc]=useState([]);
+  const [loc,setLoc]=useState("");
+  const [rounds, setRounds] = useState([]);
 
   const navigate = useNavigate();
   const handleBranchChange = (e) => {
@@ -42,6 +42,19 @@ function AddCompanies() {
       );
     }
   };
+  const handleAddRound = () => {
+    setRounds([...rounds, { name: "", date: "" }]);
+  };
+
+  const handleRemoveRound = (index) => {
+    setRounds(rounds.filter((_, i) => i !== index));
+  };
+
+  const handleRoundChange = (index, field, value) => {
+    const updatedRounds = [...rounds];
+    updatedRounds[index][field] = value;
+    setRounds(updatedRounds);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,8 +64,6 @@ function AddCompanies() {
       !jobprofile ||
       !jobdescription ||
       !website ||
-      !doa ||
-      !doi ||
       !tenthPercentage ||
       !ctc ||
       !twelfthPercentage||
@@ -69,15 +80,14 @@ function AddCompanies() {
       jobdescription,
       website,
       ctc,
-      doa,
-      doi,
       eligibilityCriteria: branches,
       tenthPercentage,
       twelfthPercentage,
       graduationCGPA,
       pass,
       loc,
-      expire
+      expire,
+      assessmentRounds: rounds,
     };
 
     axios
@@ -95,15 +105,34 @@ function AddCompanies() {
   return (
     <>
   <AdminHome/>
-  <h1 style={{marginTop:'90px',color: '#333',fontSize:"28px",fontFamily:"Poppins",fontWeight:"bold"}}>Add Companies</h1>
-  <div className="container-fluid h-100">
-  <div className="row h-100 justify-content-center align-items-start"> 
-    <div className="col-lg-4 d-flex justify-content-center align-items-center" style={{ minHeight: '400px', marginTop:'120px'}}> {/* Change height to fit-content */}
-      <img src={AddCompany} alt="Add Company Image" className="img-fluid" style={{ maxWidth: '120%', maxHeight: '120%',marginLeft:'100px' }} />
+  <h1 style={{
+  marginTop:'150px', 
+  color: '#333', 
+  fontSize:"28px", 
+  fontFamily:"Poppins", 
+  fontWeight:"bold", 
+  textAlign: 'center'
+}}>
+  Add Companies
+</h1>
+<div className="container-fluid d-flex justify-content-center align-items-center" style={{minHeight: '100vh', padding: '0 50px', marginLeft:"0px"}}>
+  <div className="row justify-content-center align-items-center" style={{maxWidth: '1200px', width: '100%'}}> 
+    <div className="col-lg-4 text-center"> 
+      <img 
+        src={AddCompany} 
+        alt="Add Company" 
+        className="img-fluid" 
+        style={{ 
+          maxWidth: '100%', 
+          maxHeight: '400px', 
+          objectFit: 'contain' 
+        }} 
+      />
     </div>
 
-    <div className="col-lg-8 d-flex justify-content-center align-items-center custom-border"> 
-  <div className="form-container">
+    <div className="col-lg-8 d-flex justify-content-center align-items-center"> 
+      <div className="form-container w-100">
+        
   <div className="card" style={{maxWidth:"100vh",width:"900%"}}>
     <form onSubmit={handleSubmit}>
     <div className="row">
@@ -178,24 +207,6 @@ function AddCompanies() {
                   className="form-control"
                   placeholder="Passout Year"
                   onChange={(e) => setPass(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="assessment">Assessment Date</label>
-                <input
-                  type="date"
-                  id="assessment"
-                  className="form-control"
-                  onChange={(e) => setDoa(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="interviewdate">Interview Date</label>
-                <input
-                  type="date"
-                  id="interviewdate"
-                  className="form-control"
-                  onChange={(e) => setDoi(e.target.value)}
                 />
               </div>
               <div className="form-group">
@@ -359,6 +370,72 @@ function AddCompanies() {
             </td>
           </tr>
           <tr>
+  <td>
+    <h4 className="mb-3">Assessment Rounds</h4>
+    {rounds.map((round, index) => (
+      <div key={index} className="form-group d-flex align-items-center mb-2">
+        <input 
+          type="text" 
+          className="form-control mr-2" 
+          placeholder="Round Name" 
+          value={round.name} 
+          onChange={(e) => handleRoundChange(index, "name", e.target.value)} 
+          style={{
+            width: '150px', 
+            marginRight: '10px'
+          }}
+        />
+        <input 
+          type="date" 
+          className="form-control mr-2" 
+          value={round.date} 
+          onChange={(e) => handleRoundChange(index, "date", e.target.value)} 
+          style={{
+            width: '120px', 
+            marginRight: '10px'
+          }}
+        />
+
+        <label className="d-flex align-items-center">
+          <input 
+            type="checkbox" 
+            checked={round.lab} 
+            onChange={(e) => handleRoundChange(index, "lab", e.target.checked)} 
+            className="mr-1 m-2"
+          /> 
+          Lab Required
+        </label>
+        <button 
+          type="button" 
+          className="btn btn-danger mr-2 m-" 
+          style={{marginLeft: '10px' ,background:"black", borderRadius:"20px"}}
+          onClick={() => handleRemoveRound(index)}
+        >
+          Remove
+        </button>
+      </div>
+    ))}
+    <div className="mt-3">
+      <button 
+        type="button" 
+        className="btn btn-primary"     
+        style={{
+          minWidth: '80px',
+          padding: '4px 8px',
+          fontSize: '12px',
+          background:"black",
+          height:"30px",
+          borderRadius:"20px",
+          color:"white"
+        }} 
+        onClick={handleAddRound}
+      >
+        Add Round
+      </button>
+    </div>
+  </td>
+</tr>
+          <tr>
             <td> <div className="form-group">
                 <label htmlFor="expire">Last Date to Apply</label>
                 <input
@@ -373,9 +450,24 @@ function AddCompanies() {
         </tbody>
       </table>
       </div>
-      <div className="text-center">
-        <input type="submit" value="Submit" className="btn btn-primary" />
-      </div>
+      <div className="text-center mt-3">
+  <input 
+    type="submit" 
+    value="Submit" 
+    className="btn" 
+    style={{
+      minWidth: '80px',
+      padding: '4px 8px',
+      fontSize: '12px',
+      background:"black",
+      height:"30px",
+      borderRadius:"20px",
+      color:"white",
+      fontWeight:"bold"
+
+    }} 
+  />
+</div>
     </form>
   </div>
 </div>

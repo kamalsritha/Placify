@@ -81,32 +81,28 @@ function UpdateCompany() {
   return (
     <>
       <AdminHome />
-      <h1 style={{ marginTop: "90px", color: "navy" }}>
-        Update Companies Data
+      <h1 style={{ marginTop: "100px", color: "#333",fontSize:"28px",fontWeight:"bold" }}>
+        Update Company
       </h1>
-      <div className="container-fluid h-100">
-        <div className="row h-100 justify-content-center align-items-start">
-          {/* Image column */}
-          <div
-            className="col-lg-4 d-flex justify-content-center align-items-center"
-            style={{ minHeight: "400px", marginTop: "90px" }}
-          >
-            <img
-              src={exampleImage}
-              alt="Add Company Image"
-              className="img-fluid"
-              style={{
-                maxWidth: "120%",
-                maxHeight: "120%",
-                marginLeft: "100px",
-              }}
-            />
-          </div>
+<div className="container-fluid d-flex justify-content-center align-items-center" style={{minHeight: '100vh', padding: '0 50px', marginLeft:"40px"}}>
+  <div className="row justify-content-center align-items-center" style={{maxWidth: '1200px', width: '100%'}}> 
+    <div className="col-lg-4 text-center"> 
+      <img 
+        src={exampleImage} 
+        alt="Add Company" 
+        className="img-fluid" 
+        style={{ 
+          maxWidth: '100%', 
+          maxHeight: '400px', 
+          objectFit: 'contain' 
+        }} 
+      />
+    </div>
 
-          {/* Form column */}
-          <div className="col-lg-8 d-flex justify-content-center align-items-center custom-border">
-            <div className="form-container">
-              <div className="card" style={{maxWidth:"100vh",width:"900%"}}>
+    <div className="col-lg-8 d-flex justify-content-center align-items-center"> 
+      <div className="form-container w-100">
+        
+  <div className="card" style={{maxWidth:"100vh",width:"900%"}}>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label htmlFor="name">Company Name</label>
@@ -162,7 +158,7 @@ function UpdateCompany() {
                       onChange={(e) => setDoi(e.target.value)}
                     />
                   </div>
-                  <h1>Eligibility Criteria</h1>
+                  <h1 style={{fontSize:"28px",fontWeight:"bold"}}>Eligibility Criteria</h1>
 
                   <div className="form-group">
                     <label htmlFor="tenthPercentage">10th Percentage</label>
@@ -206,7 +202,8 @@ function UpdateCompany() {
                   <input
                     type="submit"
                     value="Update"
-                    className="btn btn-primary"
+                    className="btn"
+                    style={{color:"white", fontWeight:"bold", background:"black" ,borderRadius:"20px"}}
                   />
                 </form>
               </div>

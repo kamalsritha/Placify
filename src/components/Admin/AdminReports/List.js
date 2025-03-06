@@ -3,6 +3,7 @@ import AdminHome from "../AdminHome.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Footer from "../AdminReusableComponents/AdminFooter.js";
 
 const List = () => {
   const [companies, setCompanies] = useState([]);
@@ -76,6 +77,7 @@ const List = () => {
           </p>
         )}
       </div>
+      <Footer/>
     </>
   );
 };

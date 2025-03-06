@@ -10,12 +10,71 @@ import nodemailer from "nodemailer";
 import fileUpload from 'express-fileupload';
 import ExcelJS from 'exceljs';
 import mongoose from "mongoose";
-
-import { parseResume, calculateATSScore } from '../utils/atsScoring.js';
-import stringSimilarity from 'string-similarity';
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const router = express.Router();
 router.use(fileUpload());
+
+
+router.post('/atsScore', async (req, res) => {
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
+    const { parsedResumeText, jobDescription } = req.body;
+    
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro"});
+
+    const prompt = `
+    Provide an ATS analysis in STRICTLY FORMATTED JSON. 
+    Analyze the resume against the job description and generate:
+    - A score between 0-100
+    - 3-5 specific recommendations for improvement
+    - Missing keywords that would strengthen the resume
+
+    IMPORTANT: Respond ONLY with a JSON object. No explanatory text before or after.
+    Use this EXACT format:
+    {
+      "score": number,
+      "recommendations": string[],
+      "missingKeywords": string[]
+    }
+
+    Resume:
+    ${parsedResumeText}
+
+    Job Description:
+    ${jobDescription}
+
+    Response Format (JSON):
+    {
+      "score": number (0-100),
+      "recommendations": string[],
+      "missingKeywords": string[]
+    }
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    const rel = text
+      .replace(/^```json\s*/, '')  
+      .replace(/```\s*$/, '')      
+      .trim();
+    const jsonObject = JSON.parse(rel);
+
+    res.json({
+      success: true,
+      analysis: jsonObject
+    });
+
+  } catch (error) {
+    console.error('ATS Score Analysis Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 
 
 router.post("/register", async (req, res) => {
@@ -293,6 +352,63 @@ router.post("/forgotpassword", async (req, res) => {
   }
 });
 
+router.get("/timeline/:companyId/:rollNo", async (req, res) => {
+  try {
+    const { companyId, rollNo } = req.params;
+
+    const company = await CompanyData.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    const today = new Date();
+    const timelineData = company.assessmentRounds.map(round => ({
+      name: round.name,
+      completed: round.date ? new Date(round.date) < today : false,
+      lab: round.lab !== undefined ? round.lab : null,
+      selected: round.selects?.includes(rollNo) ? "Selected" :
+                round.selects?.length === 0 ? "Waiting for Results" : "Not Selected",
+      date: round.date || null
+    }));
+
+    res.status(200).json(timelineData);
+  } catch (error) {
+    console.error("Error fetching timeline data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+router.post('/checklastround/:id/:activity', async (req, res) => {
+  try {
+      const { id, activity } = req.params;
+
+      const company = await CompanyData.findById(id);
+
+      if (!company) {
+          return res.status(404).json({ error: "Company not found" });
+      }
+
+      const assessmentRounds = company.assessmentRounds;
+
+      if (!assessmentRounds || assessmentRounds.length === 0) {
+          return res.json({ isLast: false });
+      }
+
+      const lastActivity = assessmentRounds[assessmentRounds.length - 1].name;
+
+      const isLast = lastActivity === activity;
+
+      console.log("Last round.................."+isLast);
+
+      res.json({ isLast });
+  } catch (error) {
+      console.error("Error checking last activity:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 
 router.post("/resetPassword/:token", async (req, res) => {
   const { token } = req.params;
@@ -351,24 +467,21 @@ router.get('/companies/:id/status-check', async (req, res) => {
   try {
     const { id } = req.params;
     const company = await CompanyData.findById(id);
-    const present = await Company.findById(id);
-    
+
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
     }
 
     const today = new Date();
-    const assessmentDate = new Date(company.doa);
-    const interviewDate = new Date(company.doi);
 
     const statusCheck = {
-      isPresent: !present, 
-      isLabAllocated: company.labs === true,
-      isAssessmentExpired: assessmentDate < today,
-      isInterviewExpired: interviewDate < today,
-      asmt: company.assesmentSelects.length === 0 ,
-      intr1 : company.interviewSelects.length===0,
-      fintr : company.finalSelects.length===0,
+      assessmentRounds: company.assessmentRounds.map(round => ({
+        roundName: round.name,
+        completed: new Date(round.date) < today &&  company.expire< round.data,
+        lab: round.lab,
+        date:round.date,
+        done:round.selects.length>0
+      }))
     };
 
     console.log(statusCheck);
@@ -377,6 +490,7 @@ router.get('/companies/:id/status-check', async (req, res) => {
     res.status(500).json({ message: "Error checking company status", error });
   }
 });
+
 
 router.get('/company-status/:companyId/:rollNo', async (req, res) => {
   try {
@@ -462,20 +576,21 @@ router.get('/applicant/:id', async (req, res) => {
   }
 });
 
-router.put('/labAllocation/:id', async (req, res) => {
+router.put('/labAllocation/:id/:roundName', async (req, res) => {
   console.log("lab...........")
   try {
-    const { id } = req.params;
+    const { id,roundName } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid ID format' });
     }
 
-    const updatedCompany = await CompanyData.findByIdAndUpdate(
-      id,
-      { labs: true },
+    const updatedCompany = await CompanyData.findOneAndUpdate(
+      { _id: id, "assessmentRounds.name": roundName },
+      { $set: { "assessmentRounds.$.lab": false } },
       { new: true }
     );
+    
 
     console.log("Updated company:", updatedCompany);
 
@@ -540,28 +655,49 @@ router.get("/scheduledInterviews/:userId", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const appliedCompanyIds = user.appliedCompanies;
-    const today = new Date(); 
+    const appliedCompanyIds = user.appliedCompanies.map(id => 
+      typeof id === 'string' ? mongoose.Types.ObjectId(id) : id
+    );
 
-    const companies = await CompanyData.find({
-      _id: { $in: appliedCompanyIds },
-      doa: { $gt: today.toISOString().split('T')[0] }
-    });
-    
+    const companies = await CompanyData.aggregate([
+      {
+        $match: { _id: { $in: appliedCompanyIds } }
+      },
+      {
+        $project: {
+          _id: 1,
+          companyname: 1,
+          interviewRounds: {
+            $filter: {
+              input: "$assessmentRounds",
+              as: "round",
+              cond: { 
+                $and: [
+                  { $ne: ["$$round.date", null] },
+                  { $gt: ["$$round.date", new Date()] }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]);
 
-    const scheduledInterviews = companies.map((company) => ({
+    const scheduledInterviews = companies.map(company => ({
       companyName: company.companyname,
-      interviewDate: company.doa,
-    }));
-
-    console.log("data......"+scheduledInterviews);
+      interviewRounds: company.interviewRounds ? company.interviewRounds.map(round => ({
+        name: round.name,
+        date: round.date
+      })) : []
+    })).filter(interview => interview.interviewRounds.length > 0);
 
     return res.json({ scheduledInterviews });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching scheduled interviews:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 //API to post interview experience
 router.post("/add-interview", async (req, res) => {
@@ -796,56 +932,56 @@ router.post("/atsScore1", async (req, res) => {
 });
 
 
-router.post("/atsScore", async (req, res) => {
-  try {
-    if (!req.files || !req.files.resume) {
-      return res.status(400).json({ message: "No resume uploaded" });
-    }
+// router.post("/atsScore", async (req, res) => {
+//   try {
+//     if (!req.files || !req.files.resume) {
+//       return res.status(400).json({ message: "No resume uploaded" });
+//     }
 
-    const resumeFile = req.files.resume;
-    const jobDescription = req.body.jobDescription;
+//     const resumeFile = req.files.resume;
+//     const jobDescription = req.body.jobDescription;
 
-    // Validate file size (2MB limit)
-    if (resumeFile.size > 2 * 1024 * 1024) {
-      return res.status(400).json({ message: "File size should be less than 2MB" });
-    }
+//     // Validate file size (2MB limit)
+//     if (resumeFile.size > 2 * 1024 * 1024) {
+//       return res.status(400).json({ message: "File size should be less than 2MB" });
+//     }
 
-    // Validate file type
-    const validTypes = [
-      'application/pdf',
-      'text/plain',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
+//     // Validate file type
+//     const validTypes = [
+//       'application/pdf',
+//       'text/plain',
+//       'application/msword',
+//       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+//     ];
     
-    if (!validTypes.includes(resumeFile.mimetype)) {
-      return res.status(400).json({ message: "Please upload a PDF, DOC, DOCX, or TXT file" });
-    }
+//     if (!validTypes.includes(resumeFile.mimetype)) {
+//       return res.status(400).json({ message: "Please upload a PDF, DOC, DOCX, or TXT file" });
+//     }
 
-    try {
-      // Parse the resume
-      const resumeText = await parseResume(resumeFile);
+//     try {
+//       // Parse the resume
+//       const resumeText = await parseResume(resumeFile);
       
-      // Calculate ATS score
-      const analysis = await calculateATSScore(resumeText, jobDescription);
+//       // Calculate ATS score
+//       const analysis = await calculateATSScore(resumeText, jobDescription);
 
-      res.json(analysis);
-    } catch (error) {
-      console.error("Error processing resume:", error);
-      res.status(500).json({ 
-        message: "Error processing resume",
-        error: error.message 
-      });
-    }
+//       res.json(analysis);
+//     } catch (error) {
+//       console.error("Error processing resume:", error);
+//       res.status(500).json({ 
+//         message: "Error processing resume",
+//         error: error.message 
+//       });
+//     }
 
-  } catch (error) {
-    console.error("Error analyzing resume:", error);
-    res.status(500).json({ 
-      message: "Error analyzing resume",
-      error: error.message 
-    });
-  }
-});
+//   } catch (error) {
+//     console.error("Error analyzing resume:", error);
+//     res.status(500).json({ 
+//       message: "Error analyzing resume",
+//       error: error.message 
+//     });
+//   }
+// });
 
 export default router;
 
@@ -922,6 +1058,7 @@ router.get('/download-shortlist', async (req, res) => {
 
 
 router.post("/add-companies", async (req, res) => {
+console.log(req.body);
 
   const {
     companyname,
@@ -937,7 +1074,8 @@ router.post("/add-companies", async (req, res) => {
     graduationCGPA,
     pass,
     loc,
-    expire
+    expire,
+    assessmentRounds
   } = req.body;
   
   try {
@@ -956,7 +1094,8 @@ router.post("/add-companies", async (req, res) => {
       graduationCGPA,
       pass,
       loc,
-      expire
+      expire,
+      assessmentRounds
     });
   
     await newCompany.save();
@@ -988,6 +1127,7 @@ router.post("/add-companies", async (req, res) => {
       expire,
       eligible: eligibleStudents,
       applicants:[],
+      assessmentRounds
     });
   
     await Comp.save();
@@ -1172,8 +1312,7 @@ router.get("/getUsers", async (req, res) => {
   }
 });
 
-// Route to fetch all companies.
-// It retrieves all companies from the database and sends them as a response.
+
 router.get("/getCompanies", async (req, res) => {
   try {
     const allCompanies = await Company.find({});
@@ -1183,8 +1322,7 @@ router.get("/getCompanies", async (req, res) => {
   }
 });
 
-// Route to update company data.
-// It updates the company details based on the provided ID.
+
 router.put("/updatecompany/:id", (req, res) => {
   const id = req.params.id;
   Company.findByIdAndUpdate(id, {
@@ -1271,41 +1409,37 @@ router.post("/updateShortlisting/:id/:activity/:rollNumbers", async (req, res) =
   try {
     const { id, activity, rollNumbers } = req.params;
 
+
     if (!id || !rollNumbers || !activity) {
       return res.status(400).json({ message: "Invalid request data" });
     }
 
-    // Map activity to the correct field in the database
-    const validActivities = {
-      assessment: "assesmentSelects",
-      interview: "interviewSelects",
-      final: "finalSelects",
-    };
-
-    const fieldName = validActivities[activity];
-
-    if (!fieldName) {
-      return res.status(400).json({ message: "Invalid activity type" });
-    }
-
     const studentIdArray = rollNumbers.split(",");
-
     const company = await CompanyData.findOne({ _id: id });
 
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
     }
 
-    const updatedStudents = [...new Set([...company[fieldName], ...studentIdArray])];
+    const roundIndex = company.assessmentRounds.findIndex(round => round.name === activity);
 
-    await CompanyData.updateOne(
-      { _id: id },
-      { $set: { [fieldName]: updatedStudents } }
-    );
+    if (roundIndex === -1) {
+      return res.status(404).json({ message: "Assessment round not found" });
+    }
+
+    if (!company.assessmentRounds[roundIndex].selects) {
+      company.assessmentRounds[roundIndex].selects = [];
+    }
+
+    company.assessmentRounds[roundIndex].selects = [
+      ...new Set([...company.assessmentRounds[roundIndex].selects, ...studentIdArray])
+    ];
+
+    await company.save();
 
     res.status(200).json({ message: `${activity} shortlisting updated successfully!` });
   } catch (error) {
-    console.error("Error updating shortlisting:", error);
+    console.log("api end pioint erorr.............")
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

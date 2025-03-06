@@ -23,9 +23,12 @@ const companySlice = createSlice({
           pass: company.pass,
           loc:company.loc,
           expire:company.expire,
+          created:company.created,
+          assessmentRounds:company.assessmentRounds,
+
         }));
       } else if (typeof action.payload.data === 'object') {
-        // Assuming you only have one company object instead of an array
+      
         const company = action.payload.data;
         state.companies = [{
           id: company._id,
@@ -42,6 +45,8 @@ const companySlice = createSlice({
           pass: company.pass,
           loc:company.loc,
           expire:company.expire,
+          created:company.created,
+          assessmentRounds:company.assessmentRounds,
           
         }];
       } else {

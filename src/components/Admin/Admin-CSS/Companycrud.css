@@ -1,69 +1,171 @@
-.header-title {
-    margin-top: 150px; /* Apply margin-top to h2 */
-    text-align: center;
-    font-size: 60px;
-    font-family: 'Roboto', sans-serif; /* Example font family */
-  }
+.companycrud-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  margin-top : 70px;
+  text-align: left;
+}
+
+.companies-main-container {
+  background-color: #f5f5f5;
+  padding: 40px;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-heading {
+  color: #333;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.company-divider {
+  border: 1px solid #ccc; 
+  width: 100%;
+}
+
+
+.controls {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.dropdowns {
+  display: flex;
+  gap: 15px;
+}
+
+
+
+.sort-select,
+.filter-select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  font-size: 14px;
+}
+
+.add-button-container {
+  width: 15%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.add-button {
+  background-color:black ;
+  color: white;
+  border-radius: 25px !important;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+
+.add-button:hover {
+  background-color: #333 !important;
+  transform: translateY(-2px);
+  color:white
+}
+
+.year-input
+{
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+}
+
+.company-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.company-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  text-align: left;
+}
+
+.company-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.company-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px;
+  text-align: left;
+}
+
+.company-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #f0f0f0;
+}
+
+
+.company-name {
+  color: #333;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: left;
+  padding-bottom: 15px;
   
-  /* Add border to the Add + button */
-  .btn-add {
-    border: 2px solid #007bff; /* Example border color */
-  }
-  
-  /* Add border to the table */
-  .table-bordered {
-    border: 2px solid #dee2e6; /* Example border color */
-  }
-  
-  /* Animation for images */
-  @keyframes fadeInImage {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Animation for table */
-  @keyframes fadeInTable {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  /* Animation for buttons */
-  @keyframes fadeInButton {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  /* Apply image animation */
-  .img-fluid {
-    animation: fadeInImage 1s ease-in-out forwards;
-  }
-  
-  /* Apply table animation */
-  .table {
-    animation: fadeInTable 1s ease-in-out forwards;
-  }
-  
-  /* Apply button animation */
-  .btn {
-    animation: fadeInButton 1s ease-in-out forwards;
-    background-color: #00004d;
-  }
-  
+}
+
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}

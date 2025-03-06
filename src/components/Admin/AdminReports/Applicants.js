@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getCompanies } from "../../../redux/companySlice.jsx";
 import './Applicant.css';
 import AdminHome from '../AdminHome.js';
+import Footer from '../AdminReusableComponents/AdminFooter.js';
 
 function Applicants() {
     const dispatch = useDispatch();
@@ -32,7 +33,7 @@ function Applicants() {
                 {companies.map((company, index) => (
                     <Link
                         key={index}
-                        to={`/scheduledInterviewData/${company.id}`} // Navigate to the new route
+                        to={`/scheduledInterviewData/${company.id}`} 
                         className="company-box"
                     >
                         {company.companyname}
@@ -40,6 +41,7 @@ function Applicants() {
                 ))}
             </div>
         </div>
+        <Footer/>
         </>
     );
 }

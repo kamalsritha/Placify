@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx';
 import './LabAllocation.css';
 import AdminHome from "../AdminHome.js";
+import Footer from '../AdminReusableComponents/AdminFooter.js';
 
 function LabAllocation() {
   const [selectedLabs, setSelectedLabs] = useState([]);
@@ -234,6 +235,7 @@ function LabAllocation() {
           </div>
         )}
       </div>
+      <Footer/>
     </>
   );
 }

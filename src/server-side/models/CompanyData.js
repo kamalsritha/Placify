@@ -6,8 +6,6 @@ const CompanyDataSchema = new mongoose.Schema({
   jobdescription: { type: String, required: true },
   website: { type: String, required: true},
   ctc: { type: Number, required: true },
-  doa: { type: String,required: true},
-  doi: { type: String,required: true},
   eligibilityCriteria: [{ type: String }],
   tenthPercentage: { type: Number, required: true },
   twelfthPercentage: { type: Number, required: true },
@@ -18,9 +16,14 @@ const CompanyDataSchema = new mongoose.Schema({
   created:{ type: Date, default: Date.now },
   eligible:{type:Array,default:[]},
   applicants:{type:Array,default:[]},
-  assesmentSelects:{type: Array, default:[]},
-  interviewSelects:{type:Array,default:[]},
-  finalSelects:{type:Array,default:[]},
+  assessmentRounds: [
+    {
+        name: { type: String, required: true },
+        date: { type: Date, required: true },       
+        selects:{type:Array,default:[]},
+        lab: { type: Boolean, default : null },
+    }
+],
   labs:{type:Boolean,default:false},
 });
 

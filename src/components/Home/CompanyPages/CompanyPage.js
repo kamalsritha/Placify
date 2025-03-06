@@ -7,8 +7,12 @@ import Footer from "../HomeComponents/Footer.js";
 import Navbar from "../HomeComponents/Navbar.js";
 import ApplyJobs from "../Assets/applyjobs.png";
 import { toast, ToastContainer } from "react-toastify";
+import mammoth from 'mammoth';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
+import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry.js';
 
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 const CircularProgress = ({ value }) => {
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
@@ -62,17 +66,96 @@ function CompanyPage() {
   const [isResumeUploaded, setIsResumeUploaded] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [atsScore, setAtsScore] = useState(null);
+  const [parsedResumeText, setParsedResumeText] = useState("");
   
   const companies = useSelector((state) => state.companies.companies);
 
-  const handleResumeUpload = (event) => {
+  const parsePdfText = async (file) => {
+    try {
+
+      if (file.size > 10 * 1024 * 1024) {  
+        toast.error("PDF file is too large");
+        return null;
+      }
+  
+      const arrayBuffer = await file.arrayBuffer();
+      
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      const textPages = [];
+     
+      const maxPages = Math.min(pdf.numPages, 50);
+      
+      for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        
+        const pageText = textContent.items
+          .map(item => item.str)
+          .join(' ');
+        
+        textPages.push(pageText);
+      }
+      
+      const combinedText = textPages.join(' ')
+        .replace(/\n+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      return combinedText;
+    } catch (error) {
+      console.error("Error parsing PDF:", error);
+      
+      if (error.name === 'InvalidPDFException') {
+        toast.error("Invalid PDF file");
+      } else if (error.name === 'MissingPDFException') {
+        toast.error("PDF file is corrupted");
+      } else {
+        toast.error("Failed to parse PDF");
+      }
+      
+      return null;
+    }
+  };
+
+  const parseResumeText = async (file) => {
+    try {
+      switch (file.type) {
+        case 'application/pdf':
+          return await parsePdfText(file);
+        
+        case 'application/msword':
+        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        case 'text/plain':
+          const arrayBuffer = await file.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          
+          const cleanedText = result.value
+            .replace(/\n+/g, ' ')  
+            .replace(/\s+/g, ' ')  
+            .trim();
+            toast.success("Resume uploaded successfully!");
+          
+          return cleanedText;
+        
+        default:
+          throw new Error('Unsupported file type');
+      }
+    } catch (error) {
+      console.error("Error parsing resume:", error);
+      toast.error("Failed to parse resume");
+      return null;
+    }
+  };
+
+  const handleResumeUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
         toast.error("File size should be less than 2MB");
         return;
       }
-
+  
       const validTypes = [
         'application/pdf',
         'text/plain',
@@ -87,7 +170,13 @@ function CompanyPage() {
   
       setResumeFile(file);
       setIsResumeUploaded(true);
-      toast.success("Resume uploaded successfully!");
+      
+      const parsedText = await parseResumeText(file);
+      if (parsedText) {
+        setParsedResumeText(parsedText);
+        console.log("Parsed Resume Text:", parsedText);
+        toast.success("Resume uploaded and parsed successfully!");
+      }
     }
   };
 
@@ -96,23 +185,23 @@ function CompanyPage() {
       toast.error("Please upload a resume first!");
       return;
     }
-
-    const formData = new FormData();
-    formData.append("resume", resumeFile);
-    formData.append("jobDescription", companies[0].jobdescription);
-
+  
     try {
       const response = await axios.post(
         "http://localhost:3001/auth/atsScore",
-        formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          parsedResumeText,
+          jobDescription: companies[0].jobdescription
+        },
+        {
+          headers: { "Content-Type": "application/json" },
         }
       );
-
-      if (response.data) {
-        setAtsScore(response.data);
-        toast.success(`Resume match score: ${response.data.score}%`);
+  
+     
+      if (response.data && response.data.analysis) {
+        setAtsScore(response.data.analysis);
+        toast.success(`Resume match score: ${response.data.analysis.score}%`);
       } else {
         toast.error("Failed to analyze resume");
       }
@@ -192,192 +281,193 @@ function CompanyPage() {
     checkIfApplied();
   }, [currentUser, companies, id]);
 
-return (
-  <>
-    <Navbar />
-    <ToastContainer />
-    <div
-      style={{
-        marginTop: "100px",
-        textAlign: "center",
-        fontFamily: "Arial, sans-serif",
-        color: "#2c3e50",
-      }}
-    >
-      <h1 style={{ fontSize: "28px", fontWeight: "bold" , color:"#333" }}>Apply for Jobs</h1>
-      <p style={{ fontSize: "1rem", color: "#7f8c8d" }}>
-        Find the right opportunities for you
-      </p>
-    </div>
-
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        gap: "20px",
-        padding: "40px",
-      }}
-    >
-      <div style={{ flex: "1", textAlign: "center" }}>
-        <img
-          src={ApplyJobs}
-          alt="Apply for Jobs"
-          style={{
-            maxWidth: "100%",
-            height: "auto",
-            borderRadius: "10px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        />
+  return (
+    <>
+      <Navbar />
+      <ToastContainer />
+      <div
+        style={{
+          marginTop: "100px",
+          textAlign: "center",
+          fontFamily: "Arial, sans-serif",
+          color: "#2c3e50",
+        }}
+      >
+        <h1 style={{ fontSize: "28px", fontWeight: "bold" , color:"#333" }}>Apply for Jobs</h1>
+        <p style={{ fontSize: "1rem", color: "#7f8c8d" }}>
+          Find the right opportunities for you
+        </p>
       </div>
 
-      <div style={{ flex: "1", maxWidth: "600px" }}>
-        {companies.map((company) => (
-          <div
-            key={company.id}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          gap: "20px",
+          padding: "40px",
+        }}
+      >
+        <div style={{ flex: "1", textAlign: "center" }}>
+          <img
+            src={ApplyJobs}
+            alt="Apply for Jobs"
             style={{
-              marginBottom: "20px",
-              padding: "20px",
+              maxWidth: "100%",
+              height: "auto",
               borderRadius: "10px",
-              backgroundColor: "#f5f5f5",
-              color: "#2c3e50",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
             }}
-          >
-            <h2
+          />
+        </div>
+
+        <div style={{ flex: "1", maxWidth: "600px" }}>
+          {companies.map((company) => (
+            <div
+              key={company.id}
               style={{
-                color: "black",
-                fontSize: "1.8rem",
-                marginBottom: "10px",
-                fontFamily:"Poppins",
-                fontWeight:"bold"
+                marginBottom: "20px",
+                padding: "20px",
+                borderRadius: "10px",
+                backgroundColor: "#f5f5f5",
+                color: "#2c3e50",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
               }}
             >
-              {company.companyname}
-            </h2>
-
-            <p><strong>CTC:</strong> {company.ctc} LPA</p>
-            <p><strong>Assessment Date:</strong> {company.doa}</p>
-            <p><strong>Interview Date:</strong> {company.doi}</p>
-            <p><strong>Expires On:</strong> {company.expire?.slice(0,10) || "N/A"}</p>
-            <p><strong>Job Description:</strong> {company.jobdescription}</p>
-            <p>
-              <strong>Eligibility:</strong> <br />
-              <strong>10th:</strong> {company.tenthPercentage}% <br />
-              <strong>12th:</strong> {company.twelfthPercentage}% <br />
-              <strong>Graduation:</strong> {company.graduationCGPA}
-            </p>
-
-            {hasApplied ? (
-              <button
-                disabled
+              <h2
                 style={{
-                  marginTop: "15px",
-                  backgroundColor: "#bdc3c7",
-                  color: "#ffffff",
-                  padding: "10px 20px",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "not-allowed",
+                  color: "black",
+                  fontSize: "1.8rem",
+                  marginBottom: "10px",
+                  fontFamily:"Poppins",
+                  fontWeight:"bold"
                 }}
               >
-                Already Applied
-              </button>
-            ) : Array.isArray(ids) && ids.includes(company.id) ? (
-              <div style={{ marginTop: "15px" }}>
-                <div style={{ marginBottom: "15px" }}>
-                  <input
-                    type="file"
-                    accept=".pdf,.txt,.doc,.docx"
-                    onChange={handleResumeUpload}
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #bdc3c7",
-                      borderRadius: "4px",
-                      width: "100%"
-                    }}
-                  />
-                </div>
+                {company.companyname}
+              </h2>
 
+              <p><strong>CTC:</strong> {company.ctc} LPA</p>
+              <p><strong>Expires On:</strong> {company.expire?.slice(0,10) || "N/A"}</p>
+              <p><strong>Job Description:</strong> {company.jobdescription}</p>
+              <p>
+                <strong>Eligibility:</strong> <br />
+                <strong>10th:</strong> {company.tenthPercentage}% <br />
+                <strong>12th:</strong> {company.twelfthPercentage}% <br />
+                <strong>Graduation:</strong> {company.graduationCGPA}
+              </p>
+              <p><strong>Interview Location : </strong>{company.loc===null?"On-campus" : "Off-campus"}</p>
+              <p><strong>Rounds:</strong></p>
+<ul>
+  {company.assessmentRounds?.length
+    ? company.assessmentRounds.map((round, index) => <li key={index}>{round.name} {round.date ? `(${round.date.split("T")[0]})` : "(N/A)"}
+</li>)
+    : <li>N/A</li>}
+</ul>
+
+
+              {hasApplied ? (
                 <button
-                  onClick={handleCheckScore}
-                  disabled={!isResumeUploaded}
+                  disabled
                   style={{
-                    backgroundColor: isResumeUploaded ? "#333" : "#bdc3c7",
+                    marginTop: "15px",
+                    backgroundColor: "#bdc3c7",
                     color: "#ffffff",
                     padding: "10px 20px",
                     border: "none",
                     borderRadius: "4px",
-                    cursor: isResumeUploaded ? "pointer" : "not-allowed",
-                    marginRight: "10px",
+                    cursor: "not-allowed",
                   }}
                 >
-                  Check Score
+                  Already Applied
                 </button>
-
-                {atsScore && (
-                  <div style={{ 
-                    marginTop: '20px', 
-                    padding: '20px', 
-                    backgroundColor: '#fff', 
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                  }}>
-                    <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>
-                     ATS Score Analysis
-                    </h3>
-                    <div>
-                    </div>
-                    <div style={{ width: '100px', margin: '0 190px 20px' }}>
-                      <CircularProgress
-                        value={atsScore.score} 
-                        text={`${atsScore.score}%`}
-                        // styles={buildStyles({
-                        //   pathColor: atsScore.score >= 70 ? '#2ecc71' : '#e74c3c',
-                        //   textColor: '#2c3e50',
-                        // })}
-                      />
-
-                    </div>
-                    {atsScore.recommendations?.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">Recommendations</h4>
-                      <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                        {atsScore.recommendations.map((rec, index) => (
-                          <li key={index}>{rec}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-
-                    {atsScore.missingKeywords?.length > 0 && (
-                      <div style={{ marginTop: '15px' }}>
-                        <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>
-                          Suggested Keywords to Add
-                        </h4>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                          {atsScore.missingKeywords.map((keyword, index) => (
-                            <span
-                              key={index}
-                              style={{
-                                backgroundColor: '#e74c3c',
-                                color: 'white',
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                fontSize: '0.9em'
-                              }}
-                            >
-                              {keyword}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+              ) : Array.isArray(ids) && ids.includes(company.id) ? (
+                <div style={{ marginTop: "15px" }}>
+                  <div style={{ marginBottom: "15px" }}>
+                    <input
+                      type="file"
+                      accept=".pdf,.txt,.doc,.docx"
+                      onChange={handleResumeUpload}
+                      style={{
+                        padding: "8px",
+                        border: "1px solid #bdc3c7",
+                        borderRadius: "4px",
+                        width: "100%"
+                      }}
+                    />
                   </div>
-                  
-                )}
+
+                  <button
+                    onClick={handleCheckScore}
+                    disabled={!isResumeUploaded}
+                    style={{
+                      backgroundColor: isResumeUploaded ? "#333" : "#bdc3c7",
+                      color: "#ffffff",
+                      padding: "10px 20px",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: isResumeUploaded ? "pointer" : "not-allowed",
+                      marginRight: "10px",
+                    }}
+                  >
+                    Check Score
+                  </button>
+
+                  {atsScore && (
+  <div style={{ 
+    marginTop: '20px', 
+    padding: '20px', 
+    backgroundColor: '#fff', 
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  }}>
+    <h3 style={{ marginBottom: '15px', color: '#2c3e50' }}>
+     ATS Score Analysis
+    </h3>
+    <div style={{ width: '100px', margin: '0 190px 20px' }}>
+      <CircularProgress
+        value={atsScore.score} 
+      />
+    </div>
+    {atsScore.recommendations && atsScore.recommendations.length > 0 && (
+      <div>
+        <h4 style={{ fontWeight: 'semibold', marginBottom: '12px' }}>Recommendations</h4>
+        <ul style={{ 
+          listStyleType: 'disc', 
+          paddingLeft: '20px', 
+          color: '#718096' 
+        }}>
+          {atsScore.recommendations.map((rec, index) => (
+            <li key={index}>{rec}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {atsScore.missingKeywords && atsScore.missingKeywords.length > 0 && (
+      <div style={{ marginTop: '15px' }}>
+        <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>
+          Suggested Keywords to Add
+        </h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+          {atsScore.missingKeywords.map((keyword, index) => (
+            <span
+              key={index}
+              style={{
+                backgroundColor: '#e74c3c',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '0.9em'
+              }}
+            >
+              {keyword}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+)}
 
                 <button
                   onClick={() => handleApply(company._id, currentUser._id)}

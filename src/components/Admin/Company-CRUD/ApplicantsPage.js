@@ -5,6 +5,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import * as XLSX from "xlsx";
 import { FaDownload, FaArrowLeft } from "react-icons/fa";
 import AdminHome from "../AdminHome.js";
+import Footer from "../AdminReusableComponents/AdminFooter.js";
 
 function ApplicantsPage() {
   const { id } = useParams();
@@ -85,15 +86,16 @@ function ApplicantsPage() {
         </Tabs>
 
         <div className="d-flex justify-content-between mt-4">
-          <button className="btn btn-success" onClick={downloadExcel}>
+          <button className="btn btn-dark" onClick={downloadExcel}>
             <FaDownload className="me-2" /> Download
           </button>
-          <button className="btn btn-danger" onClick={() => navigate(-1)}>
+          <button className="btn btn-dark" onClick={() => navigate(-1)}>
             <FaArrowLeft className="me-2" /> Back
           </button>
         </div>
       </div>
     </div>
+    <Footer/>
     </>
   );
 }

@@ -14,6 +14,7 @@ function CompanyListing() {
   const companies = useSelector((state) => state.companies.companies);
   const [ids, setIds] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [filterOption, setFilterOption] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); // Holds actual search term on button click
   const [sortOption, setSortOption] = useState("none");
@@ -49,6 +50,7 @@ function CompanyListing() {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:3001/auth/getCompanies");
+        console.log(response.data)
         dispatch(getCompanies(response.data));
       } catch (err) {
         console.error(err);
@@ -64,15 +66,39 @@ function CompanyListing() {
     setSearchTerm(searchQuery);
   };
 
+  const handleFilterChange = (e) => {
+    setFilterOption(e.target.value);
+  };
+
   const filteredCompanies = companies
     .filter((company) =>
       company.companyname.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => {
-      if (sortOption === "alphabetical") return a.companyname.localeCompare(b.companyname);
-      if (sortOption === "expiry") return new Date(b.expire) - new Date(a.expire);
-      return 0;
+    .filter((company) => {
+      switch (filterOption) {
+        case "My Year":
+          return company.pass===currentUser.pass
+        default:
+          return true;
+      }
     });
+
+
+
+    const sortCompanies = (companies) => {
+      switch (sortOption) {
+        case "recent":
+          return companies.sort((a, b) => new Date(a.created) - new Date(b.created));
+        case "alphabetical":
+          return companies.sort((a, b) => a.companyname.localeCompare(b.companyname));
+        default:
+          return companies;
+      }
+    };
+
+    const sortedCompanies = sortCompanies(filteredCompanies);
+
+
 
   return (
     <>
@@ -88,7 +114,6 @@ function CompanyListing() {
           </div>
         ) : (
           <div className="company-container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {/* Search and Filter Container */}
             <div className="search-filter-container" style={{ marginBottom: "30px" }}>
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
                 <input
@@ -138,12 +163,17 @@ function CompanyListing() {
                 >
                   <option value="none">Most Recent</option>
                   <option value="alphabetical">Alphabetical Order</option>
-                  <option value="expiry">Expiry Soon</option>
+                  <option value="recent">Expiry Soon</option>
+                  
                 </select>
+                <select className="filter-select" value={filterOption} onChange={handleFilterChange} style={{margin:"5px"}}>
+              <option value="all">All</option>
+              <option value="My Year">My Year</option>
+            </select>
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start", flexWrap: "wrap", gap: "30px" }}>
-              {filteredCompanies.map((company) => (
+              {sortedCompanies.map((company) => (
                 <div
                   key={company.id}
                   style={{
@@ -170,8 +200,8 @@ function CompanyListing() {
                     <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
                     <p>Profile: {company.jobprofile}</p>
                     <p>CTC: {company.ctc} LPA</p>
-                    <p>Assessment Date: {company.doa}</p>
-                    <p>Interview Date: {company.doi}</p>
+                    <p>Rounds: {company.assessmentRounds?.length ? company.assessmentRounds.length : "N/A"}</p>
+                    <p>Pass Year: {company.pass}</p>
                   </div>
                   <div style={{ textAlign: "center", paddingBottom: "25px" }}>
                     <Link

@@ -1,32 +1,41 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Applicant.css"; 
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../HomeComponents/Navbar.js";
+import { User } from "../../../server-side/models/user.js";
+import Footer from "../HomeComponents/Footer.js";
+import { getCompanies } from "../../../redux/companySlice.jsx";
 
 function CompanyTrack() {
-  const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return location.state?.user || (storedUser ? JSON.parse(storedUser) : null);
-  });
-  const [companies, setCompanies] = useState([]);
+  const [user, setUser] = useState()
+  const dispatch = useDispatch();
+  const [companies,setCompanies] = useState([])
   const [sortOption, setSortOption] = useState("recent");
   const [filterOption, setFilterOption] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
 
+    axios.get("http://localhost:3001/auth/verify").then((res) => {
+      if (!res.data.status) {
+        navigate("/");
+      }
+    });
+
+    axios
+      .get("http://localhost:3001/auth/currentUser")
+      .then((res) => setUser(res.data.user))
+      .catch((err) => console.error("Error fetching current user:", err));
+        
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const userResponse = await axios.get("http://localhost:3001/auth/currentUser");
-        setUser(userResponse.data.user);
         const response = await axios.get(`http://localhost:3001/auth/track/companies/${user._id}`);
         setCompanies(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
@@ -38,7 +47,9 @@ function CompanyTrack() {
     };
 
     fetchData();
-  }, [user, navigate]);
+  }, [companies]);
+
+  
 
   const getDateClass = (date) => {
     if (!date) return "company-date";
@@ -75,10 +86,10 @@ function CompanyTrack() {
     )
     .filter((company) => {
       switch (filterOption) {
-        case "assessmentComplete":
-          return company.doa && company.doa < new Date().toISOString().split("T")[0];
-        case "interviewComplete":
-          return company.doi && company.doi < new Date().toISOString().split("T")[0];
+        case "On-campus":
+          return company.loc==null
+        case "Off-campus":
+          return company.loc!=null
         default:
           return true;
       }
@@ -91,6 +102,7 @@ function CompanyTrack() {
       <Navbar />
       <div className="companytrack-container">
         <h1 className="page-heading">Track Your Applications</h1>
+        <h1>{User._id}</h1>
 
         <div className="controls">
           <input
@@ -109,8 +121,8 @@ function CompanyTrack() {
 
             <select className="filter-select" value={filterOption} onChange={handleFilterChange}>
               <option value="all">All</option>
-              <option value="assessmentComplete">Assessment Complete</option>
-              <option value="interviewComplete">Interview Complete</option>
+              <option value="On-campus">On-campus</option>
+              <option value="Off-campus">Off-campus</option>
             </select>
           </div>
         </div>
@@ -133,11 +145,14 @@ function CompanyTrack() {
                   Ctc: <span className={(company.ctc)}>{company.ctc || "N/A"}</span>
                 </p>
                 <p className="date-text">
-                  Assessment Date: <span className={getDateClass(company.doa)}>{company.doa || "N/A"}</span>
+                  Interview Location: <span className={getDateClass(company.loc)}>{company.loc===null?"On-campus":"Off-campus"}</span>
                 </p>
                 <p className="date-text">
-                  Interview Date: <span className={getDateClass(company.doi)}>{company.doi || "N/A"}</span>
+                  Passout year: <span className={getDateClass(company.pass)}>{company.pass || "N/A"}</span>
                 </p>
+                <p className="date-text">
+                        Rounds: <span className={getDateClass(company.assessmentRounds.length)}>{company.assessmentRounds.length || "N/A"}</span>
+                  </p>
                 <p className="date-text">
   Posted on: <span className="company-date">
     {company.created ? company.created.split("T")[0] : "N/A"}
@@ -157,6 +172,7 @@ function CompanyTrack() {
           </div>
         )}
       </div>
+      <Footer/>
     </>
   );
 }

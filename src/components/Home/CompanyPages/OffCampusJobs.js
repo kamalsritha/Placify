@@ -4,7 +4,7 @@ import Navbar from '../HomeComponents/Navbar.js';
 import Footer from '../HomeComponents/Footer.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './OffCampusJobs.css'; // Import the updated CSS
+import './OffCampusJobs.css'; 
 
 function OffCampusJobs() {
   const [jobs, setJobs] = useState([]);

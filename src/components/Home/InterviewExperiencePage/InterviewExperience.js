@@ -4,6 +4,7 @@ import axios from 'axios';
 import sanitizeHtml from 'sanitize-html';
 import { Oval } from 'react-loader-spinner';
 import Navbar from "../HomeComponents/Navbar.js";
+import Footer from '../HomeComponents/Footer.js';
 
 function InterviewExperience() {
   const [interviews, setInterviews] = useState([]);
@@ -55,6 +56,7 @@ function InterviewExperience() {
   };
 
   return (
+    <>
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '20px', backgroundColor: '#f5f5f5', fontFamily: '"Poppins", sans-serif' }}>
       <Navbar />
       <div style={{ maxWidth: '900px', width: '100%', textAlign: 'center' }}>
@@ -112,6 +114,8 @@ function InterviewExperience() {
         )}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 }
 

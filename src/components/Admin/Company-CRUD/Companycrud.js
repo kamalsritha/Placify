@@ -6,14 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCompanies, deleteCompany } from "../../../redux/companySlice.jsx";
 import AdminHome from "../AdminHome.js";
 import Footer from "../AdminReusableComponents/AdminFooter.js";
-import interviewimg from "../Assets/company.png";
 import "../Admin-CSS/Companycrud.css";
 
 function Companycrud() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const companies = useSelector((state) => state.companies.companies);
+  const companiesFromStore = useSelector((state) => state.companies.companies);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("recent");
+  const [filterOption, setFilterOption] = useState("all");
+  const [yearFilter,setYearFilter]=useState("");
 
   useEffect(() => {
     axios.get("http://localhost:3001/auth/verify").then((res) => {
@@ -29,7 +32,7 @@ function Companycrud() {
         const response = await axios.get(
           "http://localhost:3001/auth/getCompanies"
         );
-        console.log(response.data);
+
         dispatch(getCompanies(response.data));
       } catch (err) {
         console.log(err);
@@ -38,8 +41,40 @@ function Companycrud() {
     fetchData();
   }, []);
 
+  const filteredCompanies = companiesFromStore
+    .filter((company) =>
+      company.companyname.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((company) => {
+      if (yearFilter && company.pass !== yearFilter) {
+        return false;
+      }
+      switch (filterOption) {
+        case "recentlyAdded":
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          return new Date(company.created) >= thirtyDaysAgo;
+        case "highCTC":
+          return parseFloat(company.ctc) > 10;
+        default:
+          return true;
+      }
+    });
+
+  const sortedCompanies = filteredCompanies.sort((a, b) => {
+    switch (sortOption) {
+      case "recent":
+        return new Date(b.created) - new Date(a.created);
+      case "alphabetical":
+        return a.companyname.localeCompare(b.companyname);
+      case "ctc":
+        return parseFloat(b.ctc) - parseFloat(a.ctc);
+      default:
+        return 0;
+    }
+  });
+
   const toggleDetails = (company) => {
-    console.log(company);
     setSelectedCompany(
       selectedCompany?.id === company.id ? null : company
     );
@@ -64,15 +99,13 @@ function Companycrud() {
       const tenthPercentage = selectedCompany.tenthPercentage;
       const twelfthPercentage = selectedCompany.twelfthPercentage;
       const graduationCGPA = selectedCompany.graduationCGPA;
-      const pass=selectedCompany.pass
-      const eligibilityCriteria=selectedCompany.eligibilityCriteria;
+      const pass = selectedCompany.pass;
+      const eligibilityCriteria = selectedCompany.eligibilityCriteria;
 
       const response = await axios.get(
         `http://localhost:3001/auth/download-shortlist?companyName=${companyName}&tenthPercentage=${tenthPercentage}&twelfthPercentage=${twelfthPercentage}&graduationCGPA=${graduationCGPA}&pass=${pass}&eligibilityCriteria=${eligibilityCriteria}`,
         { responseType: "blob" }
       );
-
-      console.log(response);
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -85,75 +118,91 @@ function Companycrud() {
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterOption(e.target.value);
+  };
+
   return (
     <>
       <AdminHome />
-      <h2 className="header-title text-center mb-5" style={{fontSize:"28px",fontFamily:"Poppins",fontWeight:"bold"}}>Companies</h2>
-      <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
-        <div className="row w-100 justify-content-center">
-          <div className="col-lg-4 d-flex justify-content-center align-items-center mb-4">
-            <img
-              src={interviewimg}
-              alt="Company"
-              className="img-fluid"
-              style={{
-                width: "100%",
-                height: "auto",
-                borderRadius: "10px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              }}
+      <div className="companycrud-container">
+        <div className="companies-main-container">
+          <h1 className="page-heading">Company Management</h1>
+          
+          <div className="controls">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search for a company..."
+              value={searchTerm}
+              onChange={handleSearchChange}
             />
+              <input
+              type="number"
+              className="year-input"
+              placeholder="Enter Pass-out Year"
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              style={{borderRadius:"5px"}}
+            />
+            
+            <div className="dropdowns">
+              <select 
+                className="sort-select" 
+                value={sortOption} 
+                onChange={handleSortChange}
+              >
+                <option value="recent">Most Recent</option>
+                <option value="alphabetical">Alphabetical Order</option>
+                <option value="ctc">Highest CTC</option>
+              </select>
+              
+              <select 
+                className="filter-select" 
+                value={filterOption} 
+                onChange={handleFilterChange}
+              >
+                <option value="all">All Companies</option>
+                <option value="recentlyAdded">Recently Added</option>
+                <option value="highCTC">High CTC</option>
+              </select>
+            </div>
           </div>
 
-          <div className="col-lg-8 d-flex flex-column justify-content-center">
-            <div className="mb-4">
-              <Link to="/add-companies" className="btn btn-success btn-sm" style={{background:"black", borderRadius:"15px"}}>
-                Add +
-              </Link>
-            </div>
+          <div className="add-button-container">
+            <Link 
+              to="/add-companies" 
+              className="btn add-button"
+            >
+              Add New Company +
+            </Link>
+          </div>
 
-            <div className="d-flex flex-wrap justify-content-center">
-              {companies.map((company) => (
-                <div
-                  key={company.id}
-                  className="company-card capsule m-3 p-3 d-flex align-items-center justify-content-between"
-                  onClick={() => toggleDetails(company)}
-                  style={{
-                    cursor: "pointer",
-                    border: selectedCompany?.id === company.id ? "2px solid #007bff" : "1px solid #ddd",
-                    borderRadius: "50px",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                    width: "350px",
-                    background: "#f9f9f9",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    padding: "10px 20px",
-                  }}
-                >
-                  <img
-                    src={company.logo || interviewimg}
-                    alt={company.companyname}
-                    className="img-fluid rounded-circle"
-                    style={{ width: "50px", height: "50px", marginRight: "20px" }}
-                  />
-
-                  <div style={{ flexGrow: 1 }}>
-                    <h5 className="mb-0" style={{fontWeight:"bold"}}>{company.companyname} </h5>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(company.id);
-                    }}
-                    className="btn btn-sm btn-danger" style={{background:"black", borderRadius:"25px"}}
-                  >
-                    Delete
-                  </button>
+          <div className="company-list">
+            {sortedCompanies.map((company) => (
+              <div
+                key={company.id}
+                className="company-card"
+                onClick={() => toggleDetails(company)}
+              >
+                <div className="company-card-content">
+                  <h5 className="company-name">{company.companyname}</h5>
+                  <hr className="company-divider" />
+                  <p>Ctc : {company.ctc} LPA</p>
+                  <p>Pass year : {company.pass}</p>
+                  <p>Rounds : {company.assessmentRounds.length}</p>
+                  <p>Posted on : {company.created ? company.created.split("T")[0] : "N/A"}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -182,45 +231,38 @@ function Companycrud() {
               </div>
               <div className="modal-body">
                 <div className="text-center mb-3">
-                  <img
-                    src={selectedCompany.logo || interviewimg}
-                    alt={selectedCompany.companyname}
-                    className="img-fluid rounded-circle"
-                    style={{ width: "100px", height: "100px" }}
-                  />
                 </div>
                 <p><strong>Job Role:</strong> {selectedCompany.jobprofile}</p>
                 <p><strong>CTC:</strong> {selectedCompany.ctc}</p>
-                <p><strong>Assessment Date:</strong> {selectedCompany.doa}</p>
-                <p><strong>Interview Date:</strong> {selectedCompany.doi}</p>
                 <p><strong>Eligibility Criteria:</strong> {selectedCompany.eligibilityCriteria?.join(", ")}</p>
                 <p><strong>10th %:</strong> {selectedCompany.tenthPercentage}</p>
                 <p><strong>12th %:</strong> {selectedCompany.twelfthPercentage}</p>
                 <p><strong>Graduation CGPA:</strong> {selectedCompany.graduationCGPA}</p>
                 <p><strong>Passout Year : </strong>{selectedCompany.pass}</p>
+                <p><strong>Interview location:</strong>{selectedCompany.loc==null?" On-campus":" Off-campus"}</p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-success" onClick={handleApplicants} style={{background:"black",borderRadius:"25px"}}>
+                <button type="button" className="btn btn-dark" onClick={handleApplicants} style={{borderRadius:"25px"}}>
                   Applicants
                 </button>
               
                 <Link
                   to={`/updatecompany/${selectedCompany.id}`}
-                  className="btn btn-danger" style={{background:"black",borderRadius:"25px"}}
+                  className="btn btn-dark" style={{borderRadius:"25px"}}
                 >
                   Update
                 </Link>
                 <button
                   type="button"
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(selectedCompany.id)} style={{background:"black",borderRadius:"25px"}}
+                  className="btn btn-dark"
+                  onClick={() => handleDelete(selectedCompany.id)} style={{borderRadius:"25px"}}
                 >
                   Delete
                 </button>
                 <button
                   type="button"
-                  className="btn btn-success"
-                  onClick={handleDownloadShortlist} style={{background:"black", borderRadius:"25px"}}
+                  className="btn btn-dark"
+                  onClick={handleDownloadShortlist} style={{ borderRadius:"25px"}}
                 >
                   Download Shortlist
                 </button>
