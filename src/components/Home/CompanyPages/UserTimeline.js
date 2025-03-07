@@ -13,21 +13,24 @@ function Spinner() {
 }
 
 function UserTimeline() {
-  const { id, name:companyName } = useParams();
+  const { id, name:companyName} = useParams();
   const location = useLocation();
-  const user = location.state?.user || null;
-  const company = location.state?.company || null;
+  const { user } = location.state || {};
+  const [loc,setLoc]=useState(null);
 
   const [loading, setLoading] = useState(true);
   const [timelineData, setTimelineData] = useState([]);
 
   useEffect(() => {
     if (!user) return;
-
+    console.log(companyName);
     const fetchTimelineData = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/auth/timeline/${id}/${user.rollNo}`);
         setTimelineData(response.data);
+
+        const res=await axios.get(`http://localhost:3001/auth/loc/${id}`);
+        setLoc(res.data.location);
       } catch (error) {
         console.error("Error fetching timeline data:", error);
       } finally {
@@ -120,8 +123,8 @@ function UserTimeline() {
   Add
 </button>
 
-                        {company?.loc ? (
-                          <Link to={`/location/${encodeURIComponent(company.loc)}`} className="interview-button">
+                        {loc!=null ? (
+                          <Link to={`/location/${encodeURIComponent(loc)}`} className="interview-button">
                             Location
                           </Link>
                         ) : (

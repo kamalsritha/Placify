@@ -161,8 +161,8 @@ function CompanyTrack() {
 
 
                 <Link 
-                  to={`/user/timeline/${company._id}/${company.companyname}`} 
-                  state={{ user }}  
+                  to={`/user/timeline/${company._id}/${company.companyname}/`} 
+                  state={{ user,company }}  
                   className="track-button"
                 >
                   Track

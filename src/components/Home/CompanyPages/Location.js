@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 function Location() {
   const { loc } = useParams(); 
+  console.log(JSON.stringify(loc));
+
 
   if (!loc) {
     return <p style={{ textAlign: "center", marginTop: "20px" }}>Location not available</p>;

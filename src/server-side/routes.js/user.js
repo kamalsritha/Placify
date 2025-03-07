@@ -11,6 +11,7 @@ import fileUpload from 'express-fileupload';
 import ExcelJS from 'exceljs';
 import mongoose from "mongoose";
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import twilio from 'twilio';
 
 const router = express.Router();
 router.use(fileUpload());
@@ -477,7 +478,7 @@ router.get('/companies/:id/status-check', async (req, res) => {
     const statusCheck = {
       assessmentRounds: company.assessmentRounds.map(round => ({
         roundName: round.name,
-        completed: new Date(round.date) < today &&  company.expire< round.data,
+        completed: new Date(round.date) < today  &&  company.expire< round.date,
         lab: round.lab,
         date:round.date,
         done:round.selects.length>0
@@ -490,6 +491,28 @@ router.get('/companies/:id/status-check', async (req, res) => {
     res.status(500).json({ message: "Error checking company status", error });
   }
 });
+
+router.get('/loc/:id', async (req,res)=>{
+    try{
+      const {id} = req.params;
+      const company=await CompanyData.findById(id);
+      if(company)
+      {
+        const location=company.loc;
+          res.json({location})
+      }
+      else
+      {
+        console.log("error")
+         res.status(404).json({ error: "Company not found" })
+      }
+
+    }
+    catch{
+      console.log("error fetching location");
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
 
 
 router.get('/company-status/:companyId/:rollNo', async (req, res) => {
@@ -1168,11 +1191,14 @@ console.log(req.body);
             <li><strong>Job Description:</strong> ${jobdescription}</li>
             <li><strong>Company Website:</strong> ${website}</li>
           </ul>
-          <p>Please log in to your dashboard to apply for this position.</p>
+          <p>Please log in to your Placify account dashboard to apply for this position.</p>
           <p><strong>Note:</strong> This opportunity is available based on your academic credentials meeting the company's criteria.</p>
           <p>Best regards,<br>Campus Recruitment Team</p>
         `
       };
+
+      
+
 
       try {
         await transporter.sendMail(mailOptions);
@@ -1180,6 +1206,29 @@ console.log(req.body);
         console.error(`Failed to send email to ${student.email}:`, error);
       }
     }
+
+    const accountSid = 'ACbe373d18fe378efbf71f39a3c1fb7f1f'; 
+const authToken = '47a9e634d93ae694be9a9f5c95fe1b5e'; 
+const client = twilio(accountSid, authToken);
+
+
+const sendWhatsAppMessages = async () => {
+    for (const student of eligibleStudents) {
+        try {
+            const message = await client.messages.create({
+                from: 'whatsapp:+14155238886', 
+                to: `whatsapp:+91${student.contactNumber}`, 
+                body: `Hello ${student.name},\n\nYou have been shortlisted for a new job opportunity at ${companyname}.\n\nPlease log in to your Placify account to apply for this position.`
+            });
+
+            console.log(`Message sent to ${student.name} (${student.contactNumber}): ${message.sid}`);
+        } catch (error) {
+            console.error(`Failed to send message to ${student.name}:`, error);
+        }
+    }
+};
+
+sendWhatsAppMessages();
 
     return res.json({ 
       message: "Company Registered and Notifications Sent",

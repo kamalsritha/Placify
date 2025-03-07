@@ -137,3 +137,20 @@
   text-align: center;
   margin: 20px 0;
 }
+
+.slow-load {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeUp 2s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

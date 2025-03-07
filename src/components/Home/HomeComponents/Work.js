@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./Work.css"
 
 const Dashboard = () => {
   const [totalCompanies, setTotalCompanies] = useState(0);
@@ -36,6 +37,8 @@ const Dashboard = () => {
         fontFamily: "'Poppins', sans-serif",
         padding: "40px 0",
       }}
+
+      className="slow-load"
     >
       <div
         style={{

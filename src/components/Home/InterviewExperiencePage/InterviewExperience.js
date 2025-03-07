@@ -10,7 +10,7 @@ function InterviewExperience() {
   const [interviews, setInterviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredInterviews, setFilteredInterviews] = useState([]);
-  const [loading, setLoading] = useState(true); // Loader state
+  const [loading, setLoading] = useState(true); 
 
   const fetchInterviews = async () => {
     try {
@@ -20,7 +20,7 @@ function InterviewExperience() {
     } catch (error) {
       console.error('Error fetching interview experiences:', error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
     }
   };
 
