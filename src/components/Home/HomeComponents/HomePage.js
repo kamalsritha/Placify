@@ -92,8 +92,8 @@ const HomePage = () => {
             companies.map((drive, index) => (
               <div key={index} className="notice-card">
                 <h3>{drive.companyname}</h3>
-                <p>Assessment: <strong>{drive.doa}</strong></p>
-                <p>Interview: <strong>{new Date(drive.doa).toLocaleDateString()}</strong></p>
+                <p>Ctc: <strong>{drive.ctc} LPA</strong></p>
+                <p>Rounds: <strong>{drive.assessmentRounds.length}</strong></p>
                 <p>Expires on: <strong>{new Date(drive.expire).toLocaleDateString()}</strong></p>
               </div>
             ))

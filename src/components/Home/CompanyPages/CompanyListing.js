@@ -16,7 +16,7 @@ function CompanyListing() {
   const [currentUser, setCurrentUser] = useState(null);
   const [filterOption, setFilterOption] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // Holds actual search term on button click
+  const [searchTerm, setSearchTerm] = useState(""); 
   const [sortOption, setSortOption] = useState("none");
   const [loading, setLoading] = useState(true);
 

@@ -752,9 +752,7 @@ router.post("/add-interview", async (req, res) => {
   }
 });
 
-// 
 
-// In server-side/routes/user.js
   router.get("/remote-jobs", async (req, res) => {
     try {
       const response = await axios.get('https://serpapi.com/search?engine=google_jobs', {
@@ -764,11 +762,11 @@ router.post("/add-interview", async (req, res) => {
           location: 'India',
           api_key: process.env.SERP_API_KEY,
           chips: 'date_posted:week,experience_level:ENTRY_LEVEL',
-          hl: 'en',    // Number of results
+          hl: 'en',    
         }
       });
   
-      // Add keywords to filter more specifically for fresher roles
+  
       const fresherKeywords = [
         'fresher',
         'entry level',
@@ -785,7 +783,7 @@ router.post("/add-interview", async (req, res) => {
   
       const jobs = response.data?.jobs_results || [];
       
-      // Filter jobs specifically for freshers/entry-level
+     
       const filteredJobs = jobs.filter(job => {
         const jobText = `${job.title} ${job.description}`.toLowerCase();
         return fresherKeywords.some(keyword => jobText.includes(keyword.toLowerCase()));
