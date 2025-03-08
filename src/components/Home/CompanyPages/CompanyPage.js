@@ -8,11 +8,10 @@ import Navbar from "../HomeComponents/Navbar.js";
 import ApplyJobs from "../Assets/applyjobs.png";
 import { toast, ToastContainer } from "react-toastify";
 import mammoth from 'mammoth';
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
-import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry.js';
+import * as pdfjsLib from 'pdfjs-dist';
+import { PDFWorker } from 'pdfjs-dist';
 
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc = PDFWorker;
 const CircularProgress = ({ value }) => {
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
