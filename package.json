@@ -15,12 +15,9 @@
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
-    "browserify-zlib": "^0.2.0",
-    "buffer": "^6.0.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cosine-similarity": "^1.0.1",
-    "crypto-browserify": "^3.12.0",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
@@ -34,9 +31,7 @@
     "natural": "^8.0.1",
     "nodemailer": "^6.9.16",
     "nodemon": "^3.1.0",
-    "path-browserify": "^1.0.1",
     "pdf-parse": "^1.1.1",
-    "querystring-es3": "^0.2.1",
     "quill": "^2.0.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
@@ -54,17 +49,13 @@
     "react-toastify": "^10.0.6",
     "sanitize-html": "^2.13.0",
     "stopword": "^3.1.4",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
     "string-similarity": "^4.0.4",
-    "url": "^0.11.3",
-    "util": "^0.12.5",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --resolve.alias zlib=browserify-zlib querystring=querystring-es3 path=path-browserify crypto=crypto-browserify stream=stream-browserify stream-http=stream-http url=url buffer=buffer/ util=util/",
+    "build": "webpack --mode production",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -87,6 +78,16 @@
     ]
   },
   "devDependencies": {
-    "webpack": "^5.91.0"
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "path-browserify": "^1.0.1",
+    "querystring-es3": "^0.2.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.4",
+    "util": "^0.12.5",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
   }
 }
