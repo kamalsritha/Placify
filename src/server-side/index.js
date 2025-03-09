@@ -9,7 +9,7 @@ dotenv.config();
 const allowedOrigins = ["http://localhost:3000","https://placify-rho.vercel.app/"];
 app.use(cors({
   origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true 
 }))
 app.use(cookieParser())
