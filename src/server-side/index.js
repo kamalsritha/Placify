@@ -6,10 +6,11 @@ import cookieParser from "cookie-parser";
 import { UserRouter } from "./routes.js/user.js";
 const app = express();
 dotenv.config();
+const allowedOrigins = ["http://localhost:3000","https://placify-rho.vercel.app/"];
 app.use(cors({
-  origin: ['http://localhost:3000'],//frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-  credentials: true // If using cookies or authentication
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  credentials: true 
 }))
 app.use(cookieParser())
 app.use(express.json()); 

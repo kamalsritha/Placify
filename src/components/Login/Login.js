@@ -1,3 +1,4 @@
+import React from "react"
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -15,10 +16,9 @@ function Login() {
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    // Add login-specific styles to body
+  
     document.body.classList.add("placify-login-body");
 
-    // Cleanup function to remove styles when leaving login page
     return () => {
       document.body.classList.remove("placify-login-body");
     };

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react"
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getCompanies } from "../../redux/companySlice.jsx";
 import HomePage from './HomeComponents/HomePage.js';
 import Work from "./HomeComponents/Work.js";
 import Feedback from "./HomeComponents/Feedback.js";
+import { useNavigate } from "react-router-dom";
 import JobNotifications from "./HomeComponents/JobNotifications.js";
 import { toast, ToastContainer } from 'react-toastify';
 import "./Home-CSS/Application.css";

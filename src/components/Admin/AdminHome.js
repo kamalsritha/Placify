@@ -1,7 +1,8 @@
+import React from "react"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Admin/Admin-CSS/AdminNav.css';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "../Home/Assets/placify_logo.png";
 
