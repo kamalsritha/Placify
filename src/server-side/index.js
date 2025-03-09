@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { UserRouter } from "./routes.js/user.js";
 const app = express();
 dotenv.config();
-const allowedOrigins = ["http://localhost:3000","https://placify-rho.vercel.app/"];
+const allowedOrigins = ["http://localhost:3000","https://placify-rho.vercel.app"];
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
