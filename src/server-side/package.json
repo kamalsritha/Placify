@@ -10,7 +10,7 @@
         "dev": "nodemon index.js"
     },
     "dependencies": {
-                "@google/generative-ai": "^0.24.0",
+        "@google/generative-ai": "^0.24.0",
         "axios": "^1.7.9",
         "bcrypt": "^5.1.1",
         "bootstrap": "^5.3.3",
@@ -56,8 +56,7 @@
     },
     "devDependencies": {
         "nodemon": "^3.0.1"
-    }
-    ,
+    },
     "main": "index.js",
     "keywords": [],
     "author": "",
