@@ -3,14 +3,14 @@
     "version": "0.1.0",
     "type": "module",
     "engines": {
-        "node": "18.20.5"
+        "node": "18.x"
     },
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js"
     },
     "dependencies": {
-        "@google/generative-ai": "^0.24.0",
+                "@google/generative-ai": "^0.24.0",
         "axios": "^1.7.9",
         "bcrypt": "^5.1.1",
         "bootstrap": "^5.3.3",
@@ -55,12 +55,9 @@
         "xlsx": "^0.18.5"
     },
     "devDependencies": {
-        "@types/mongoose": "^5.11.96",
-        "@types/node": "^22.13.13",
-        "nodemon": "^3.1.0",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.8.2"
-    },
+        "nodemon": "^3.0.1"
+    }
+    ,
     "main": "index.js",
     "keywords": [],
     "author": "",
