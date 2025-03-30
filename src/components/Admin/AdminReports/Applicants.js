@@ -14,7 +14,7 @@ function Applicants() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/auth/getCompanies");
+                const response = await axios.get("https://placify-server.onrender.com/auth/getCompanies");
                 dispatch(getCompanies(response.data));
             } catch (err) {
                 console.error(err);

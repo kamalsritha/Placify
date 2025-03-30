@@ -20,14 +20,14 @@ function CompanyTrack() {
 
   useEffect(() => {
 
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (!res.data.status) {
         navigate("/");
       }
     });
 
     axios
-      .get("http://localhost:3001/auth/currentUser")
+      .get("https://placify-server.onrender.com/auth/currentUser")
       .then((res) => setUser(res.data.user))
       .catch((err) => console.error("Error fetching current user:", err));
         
@@ -36,7 +36,7 @@ function CompanyTrack() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/track/companies/${user._id}`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/track/companies/${user._id}`);
         setCompanies(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("Error fetching companies:", err);

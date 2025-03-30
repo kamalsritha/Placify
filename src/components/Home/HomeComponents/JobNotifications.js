@@ -8,7 +8,7 @@ function JobNotifications() {
     useEffect(() => {
         const fetchEligibleJobs = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/auth/jobs/eligible');
+                const response = await axios.get('https://placify-server.onrender.com/auth/jobs/eligible');
                 const jobs = response.data?.data || []; 
                 setEligibleJobs(jobs);
             } catch (error) {

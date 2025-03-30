@@ -13,7 +13,7 @@ function ScheduledInterview() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify")
+    axios.get("https://placify-server.onrender.com/auth/verify")
       .then((res) => {
         if (!res.data.status) {
           navigate("/");
@@ -24,7 +24,7 @@ function ScheduledInterview() {
         navigate("/");
       });
 
-    axios.get("http://localhost:3001/auth/currentUser")
+    axios.get("https://placify-server.onrender.com/auth/currentUser")
       .then((res) => {
         setCurrentUser(res.data.user);
       })
@@ -40,7 +40,7 @@ function ScheduledInterview() {
         try {
           const userId = currentUser._id;
           const response = await axios.get(
-            `http://localhost:3001/auth/scheduledInterviews/${userId}`
+            `https://placify-server.onrender.com/auth/scheduledInterviews/${userId}`
           );
           setScheduledInterviews(response.data.scheduledInterviews);
         } catch (error) {

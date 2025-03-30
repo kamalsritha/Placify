@@ -26,10 +26,10 @@ function UserTimeline() {
     console.log(companyName);
     const fetchTimelineData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/timeline/${id}/${user.rollNo}`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/timeline/${id}/${user.rollNo}`);
         setTimelineData(response.data);
 
-        const res=await axios.get(`http://localhost:3001/auth/loc/${id}`);
+        const res=await axios.get(`https://placify-server.onrender.com/auth/loc/${id}`);
         setLoc(res.data.location);
       } catch (error) {
         console.error("Error fetching timeline data:", error);

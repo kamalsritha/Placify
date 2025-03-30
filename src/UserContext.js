@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/auth/currentUser", { withCredentials: true });
+      const res = await axios.get("https://placify-server.onrender.com/auth/currentUser", { withCredentials: true });
       if (res.data.user) {
         setUser(res.data.user);
         localStorage.setItem("currentUser", JSON.stringify(res.data.user));

@@ -20,23 +20,23 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const verifyResponse = await axios.get("http://localhost:3001/auth/verify");
+        const verifyResponse = await axios.get("https://placify-server.onrender.com/auth/verify");
         if (!verifyResponse.data.status) {
           navigate("/");
           return;
         }
 
-        const userResponse = await axios.get("http://localhost:3001/auth/currentUser");
+        const userResponse = await axios.get("https://placify-server.onrender.com/auth/currentUser");
         setCurrentUser(userResponse.data.user);
 
         if (userResponse.data.user) {
           const placementResponse = await axios.get(
-            `http://localhost:3001/auth/placementStatus/${userResponse.data.user._id}`
+            `https://placify-server.onrender.com/auth/placementStatus/${userResponse.data.user._id}`
           );
           setPlacementStatus(placementResponse.data);
         }
 
-        const companiesResponse = await axios.get("http://localhost:3001/auth/getCompanies");
+        const companiesResponse = await axios.get("https://placify-server.onrender.com/auth/getCompanies");
         dispatch(getCompanies(companiesResponse.data));
       } catch (err) {
         console.error("Error fetching data:", err);

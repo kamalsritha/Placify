@@ -13,7 +13,7 @@ const List = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/auth/list/${selectedYear}`);
+        const response = await fetch(`https://placify-server.onrender.com/auth/list/${selectedYear}`);
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }

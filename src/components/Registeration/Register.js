@@ -76,7 +76,7 @@ function Registration() {
       isAdmin: null
     };
     axios
-      .post("http://localhost:3001/auth/register", userData)
+      .post("https://placify-server.onrender.com/auth/register", userData)
       .then((result) => {
         console.log(result);
         navigate("/");

@@ -18,7 +18,7 @@ function Allocation() {
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/applicant/${id}`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/applicant/${id}`);
         setStudentList(response.data.applied);
         setDoa(response.data.doa);
       } catch (err) {
@@ -74,8 +74,8 @@ function Allocation() {
       XLSX.utils.book_append_sheet(wb, ws, "Lab Venues");
       XLSX.writeFile(wb, `${companyName}_Lab_Venues.xlsx`);
       
-      await axios.put(`http://localhost:3001/auth/labAllocation/${id}/${roundName}`);
-      await axios.post('http://localhost:3001/auth/sendLabEmails', { studentsWithVenues, companyName, doa});
+      await axios.put(`https://placify-server.onrender.com/auth/labAllocation/${id}/${roundName}`);
+      await axios.post('https://placify-server.onrender.com/auth/sendLabEmails', { studentsWithVenues, companyName, doa});
 
       toast.success('Venue allocation completed and downloaded');
     } catch (error) {

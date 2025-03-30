@@ -49,10 +49,10 @@ function ScheduledInterviewData() {
 
   
     try {
-      const response = await axios.post(`http://localhost:3001/auth/checklastround/${id}/${activity}`)
+      const response = await axios.post(`https://placify-server.onrender.com/auth/checklastround/${id}/${activity}`)
       if (response.data===true) {
         
-          await axios.post("http://localhost:3001/auth/updatePlacementStatus", {
+          await axios.post("https://placify-server.onrender.com/auth/updatePlacementStatus", {
             userIds: rolls,
             companyId: id,
             status: "Placed",
@@ -62,7 +62,7 @@ function ScheduledInterviewData() {
       }
       
 
-        await axios.post(`http://localhost:3001/auth/updateShortlisting/${id}/${activity}/${rollNumbers}`);
+        await axios.post(`https://placify-server.onrender.com/auth/updateShortlisting/${id}/${activity}/${rollNumbers}`);
         toast.success(`${uploadedData.length} students have been added to ${activityTitle}!`);
 
     } catch (error) {

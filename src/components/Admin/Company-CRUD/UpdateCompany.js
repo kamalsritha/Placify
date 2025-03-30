@@ -12,7 +12,7 @@ import "../Admin-CSS/UpdateCompany.css";
 
 function UpdateCompany() {
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (res.data.status) {
       } else {
         navigate("/");
@@ -55,7 +55,7 @@ function UpdateCompany() {
     };
 
     axios
-      .put("http://localhost:3001/auth/updatecompany/" + id, CompanyData)
+      .put("https://placify-server.onrender.com/auth/updatecompany/" + id, CompanyData)
       .then((result) => {
         dispatch(
           updateCompany({

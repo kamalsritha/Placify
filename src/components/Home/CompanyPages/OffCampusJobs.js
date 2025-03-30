@@ -15,7 +15,7 @@ function OffCampusJobs() {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:3001/auth/remote-jobs');
+        const response = await axios.get('https://placify-server.onrender.com/auth/remote-jobs');
 
         if (response.data && response.data.jobs) {
           setJobs(response.data.jobs.slice(0, 30));

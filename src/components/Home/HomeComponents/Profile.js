@@ -11,13 +11,13 @@ function Profile() {
 
   useEffect(() => {
     const fetchData = async () => {
-    const userResponse = await axios.get("http://localhost:3001/auth/currentUser");
+    const userResponse = await axios.get("https://placify-server.onrender.com/auth/currentUser");
         setUser(userResponse.data.user);
     
     
     if (user?.appliedCompanies?.length > 0) {
       axios
-        .post("http://localhost:3001/auth/getCompaniesApplied", {
+        .post("https://placify-server.onrender.com/auth/getCompaniesApplied", {
           companyIds: user.appliedCompanies,
         })
         .then((res) => setCompanyNames(res.data))
@@ -30,7 +30,7 @@ function Profile() {
   const handleUpdateCGPA = () => {
     if (!newCGPA) return;
     axios
-      .post("http://localhost:3001/auth/updateCGPA", {
+      .post("https://placify-server.onrender.com/auth/updateCGPA", {
         userId: user._id,  
         cgpa: newCGPA
       }, { withCredentials: true })

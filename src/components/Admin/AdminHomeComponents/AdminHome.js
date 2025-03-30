@@ -6,18 +6,18 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function AdminHome() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assume the user is logged in initially
-  const [errorMessage, setErrorMessage] = useState(""); // Error state for logout issues
+  const [isLoggedIn, setIsLoggedIn] = useState(true); 
+  const [errorMessage, setErrorMessage] = useState(""); 
   axios.defaults.withCredentials = true;
   const navigate = useNavigate();
 
   const handleLogout = () => {
     axios
-      .post("http://localhost:3001/auth/logout", {}, { withCredentials: true })
+      .post("https://placify-server.onrender.com/auth/logout", {}, { withCredentials: true })
       .then(() => {
         console.log("Logging out...");
         setIsLoggedIn(false);
-        navigate("/"); // Redirect to the login page or home
+        navigate("/"); 
       })
       .catch((error) => {
         console.error("Logout failed:", error);

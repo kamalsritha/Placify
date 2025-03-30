@@ -14,7 +14,7 @@ function CompanyTimeline() {
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/companies/${id}`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/companies/${id}`);
         setCompany(response.data);
       } catch (error) {
         console.error('Error fetching company data:', error);
@@ -23,7 +23,7 @@ function CompanyTimeline() {
 
     const checkCompanyStatus = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/companies/${id}/status-check`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/companies/${id}/status-check`);
         setAssessmentRounds(response.data.assessmentRounds);
       } catch (error) {
         console.error('Error checking company status:', error);

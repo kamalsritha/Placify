@@ -21,7 +21,7 @@ function AddExperience() {
   const [alertColor, setAlertColor] = useState('');
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (res.data.status) {
       } else {
         navigate("/interviewexperience");
@@ -43,7 +43,7 @@ function AddExperience() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/auth/add-interview', formData);
+      const response = await axios.post('https://placify-server.onrender.com/auth/add-interview', formData);
       console.log(response.data);
       
       setFormData({

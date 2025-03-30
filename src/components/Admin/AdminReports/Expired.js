@@ -16,7 +16,7 @@ function Track() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/auth/companies");
+        const response = await axios.get("https://placify-server.onrender.com/auth/companies");
         console.log("API Response:", response.data); 
 
         if (response.data) {

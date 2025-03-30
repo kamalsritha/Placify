@@ -29,7 +29,7 @@ function Login() {
 
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/auth/validate", {
+        const response = await axios.get("https://placify-server.onrender.com/auth/validate", {
           withCredentials: true,
         });
         if (response.data.status) {
@@ -52,7 +52,7 @@ function Login() {
     }
 
     try {
-      const result = await axios.post("http://localhost:3001/auth", { email, password });
+      const result = await axios.post("https://placify-server.onrender.com/auth", { email, password });
 
       if (result.data === "Success") {
         navigate("/home");

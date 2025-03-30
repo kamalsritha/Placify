@@ -12,7 +12,7 @@ function LabAllocation() {
   const [studentList, setStudentList] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Lab configuration
+ 
   const blocks = {
     CM: {
       name: "CM Block",

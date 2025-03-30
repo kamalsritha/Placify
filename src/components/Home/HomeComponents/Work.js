@@ -10,7 +10,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const studentsResponse = await axios.get("http://localhost:3001/auth/students");
+        const studentsResponse = await axios.get("https://placify-server.onrender.com/auth/students");
         setPlacedStudents(studentsResponse.data.placedCount);
         setTotalStudents(studentsResponse.data.totalCount);
         setTotalCompanies(studentsResponse.data.companiesCount);

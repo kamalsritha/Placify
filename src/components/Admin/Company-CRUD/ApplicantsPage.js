@@ -16,7 +16,7 @@ function ApplicantsPage() {
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/Applicants/${id}`);
+        const response = await axios.get(`https://placify-server.onrender.com/auth/Applicants/${id}`);
         setAppliedStudents(response.data.applied);
         setNotAppliedStudents(response.data.notApplied);
       } catch (err) {

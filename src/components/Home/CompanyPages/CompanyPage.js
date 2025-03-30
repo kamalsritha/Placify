@@ -187,7 +187,7 @@ function CompanyPage() {
   
     try {
       const response = await axios.post(
-        "http://localhost:3001/auth/atsScore",
+        "https://placify-server.onrender.com/auth/atsScore",
         {
           parsedResumeText,
           jobDescription: companies[0].jobdescription
@@ -223,7 +223,7 @@ function CompanyPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/auth/applyCompany/${currentUser._id}/${id}`
+        `https://placify-server.onrender.com/auth/applyCompany/${currentUser._id}/${id}`
       );
       toast.success(response.data.message);
       setHasApplied(true);
@@ -238,7 +238,7 @@ function CompanyPage() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/auth/getCompanies/${id}`
+          `https://placify-server.onrender.com/auth/getCompanies/${id}`
         );
         dispatch(getCompanies(response.data));
       } catch (err) {
@@ -250,7 +250,7 @@ function CompanyPage() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify")
+    axios.get("https://placify-server.onrender.com/auth/verify")
       .then((res) => {
         if (!res.data.status) {
           navigate("/");
@@ -261,7 +261,7 @@ function CompanyPage() {
         navigate("/");
       });
 
-    axios.get("http://localhost:3001/auth/currentUser")
+    axios.get("https://placify-server.onrender.com/auth/currentUser")
       .then((res) => {
         setCurrentUser(res.data.user);
       })

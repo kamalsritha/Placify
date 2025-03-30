@@ -21,14 +21,14 @@ function Home() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (!res.data.status) {
         navigate("/");
       }
     });
 
     axios
-      .get("http://localhost:3001/auth/currentUser")
+      .get("https://placify-server.onrender.com/auth/currentUser")
       .then((res) => {
         setCurrentUser(res.data.user);
       })
@@ -41,7 +41,7 @@ function Home() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3001/auth/getCompanies"
+          "https://placify-server.onrender.com/auth/getCompanies"
         );
         dispatch(getCompanies(response.data));
       } catch (err) {
@@ -54,7 +54,7 @@ function Home() {
   useEffect(() => {
     const checkEligibleJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/auth/jobs/eligible');
+        const response = await axios.get('https://placify-server.onrender.com/auth/jobs/eligible');
         if (response.data.length > 0 && !toast.isActive('newJobs')) {
           toast.info(`You have ${response.data.length} new job opportunities!`, {
             position: "top-right",

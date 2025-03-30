@@ -9,7 +9,7 @@ import AdminHome from "../AdminHome.js";
 function AdminDashboard() {
   const navigate = useNavigate();
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (!res.data.status) {
         navigate("/");
       }
@@ -30,7 +30,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/auth/getUsers")
+      .get("https://placify-server.onrender.com/auth/getUsers")
       .then((response) => {
         const modifiedData = response.data.data.map((user) => ({
           ...user,

@@ -12,7 +12,7 @@ function ForgetPassword() {
     e.preventDefault();
     const userData = { email };
     axios
-      .post("http://localhost:3001/auth/forgotpassword", {
+      .post("https://placify-server.onrender.com/auth/forgotpassword", {
         email,
       })
       .then((response) => {

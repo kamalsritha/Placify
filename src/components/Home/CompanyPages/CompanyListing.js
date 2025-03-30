@@ -23,7 +23,7 @@ function CompanyListing() {
   useEffect(() => {
     const fetchEligibleJobs = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/auth/jobs/eligible");
+        const response = await axios.get("https://placify-server.onrender.com/auth/jobs/eligible");
         setIds(response.data.map((job) => job._id));
       } catch (error) {
         console.error("Error checking eligible jobs:", error);
@@ -34,14 +34,14 @@ function CompanyListing() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/verify").then((res) => {
+    axios.get("https://placify-server.onrender.com/auth/verify").then((res) => {
       if (!res.data.status) {
         navigate("/");
       }
     });
 
     axios
-      .get("http://localhost:3001/auth/currentUser")
+      .get("https://placify-server.onrender.com/auth/currentUser")
       .then((res) => setCurrentUser(res.data.user))
       .catch((err) => console.error("Error fetching current user:", err));
   }, [navigate]);
@@ -49,7 +49,7 @@ function CompanyListing() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/auth/getCompanies");
+        const response = await axios.get("https://placify-server.onrender.com/auth/getCompanies");
         console.log(response.data)
         dispatch(getCompanies(response.data));
       } catch (err) {

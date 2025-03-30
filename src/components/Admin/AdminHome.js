@@ -15,7 +15,7 @@ function AdminHome() {
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    axios.get("http://localhost:3001/auth/validate", { withCredentials: true })
+    axios.get("https://placify-server.onrender.com/auth/validate", { withCredentials: true })
       .then((response) => {
         if (response.data.status) {
           setIsLoggedIn(true);
@@ -32,7 +32,7 @@ function AdminHome() {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3001/auth/logout",
+        "https://placify-server.onrender.com/auth/logout",
         {},
         { withCredentials: true }
       );
