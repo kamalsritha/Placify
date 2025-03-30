@@ -57,16 +57,15 @@ function Login() {
         { withCredentials: true }
       );
 
-      if (result.data === "Success") {
+      if (result.data.success) {
         localStorage.setItem("isLoggedIn", "true");
-        navigate("/home");
-      } else if (result.data === "Password Incorrect") {
-        setErrorMessage("Incorrect Password");
-      } else if (result.data === "Admin") {
-        localStorage.setItem("isLoggedIn", "true");
-        navigate("/admin");
+        if (result.data.role === "Admin") {
+          navigate("/admin");
+        } else {
+          navigate("/home");
+        }
       } else {
-        setErrorMessage("Invalid User");
+        setErrorMessage(result.data.message || "Invalid User");
       }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again later.");
