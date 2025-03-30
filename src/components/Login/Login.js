@@ -54,7 +54,6 @@ function Login() {
       const result = await axios.post(
         "https://placify-server.onrender.com/auth", 
         { email, password }, 
-        { withCredentials: true }
       );
 
       if (result.data === "Success") {
