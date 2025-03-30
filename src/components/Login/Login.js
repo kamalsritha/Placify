@@ -1,5 +1,4 @@
-import React from "react"
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import placifyLogo from "../Home/Assets/placify_logo.png";
@@ -10,15 +9,14 @@ function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  const navigate = useNavigate();
 
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-  
     document.body.classList.add("placify-login-body");
-
     return () => {
       document.body.classList.remove("placify-login-body");
     };
@@ -37,6 +35,8 @@ function Login() {
         }
       } catch (error) {
         console.log("User is not authenticated");
+      } finally {
+        setAuthChecked(true);
       }
     };
 
@@ -45,20 +45,25 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!email || !password) {
       setErrorMessage("Email and password are required");
       return;
     }
 
     try {
-      const result = await axios.post("https://placify-server.onrender.com/auth", { email, password });
+      const result = await axios.post(
+        "https://placify-server.onrender.com/auth", 
+        { email, password }, 
+        { withCredentials: true }
+      );
 
       if (result.data === "Success") {
+        localStorage.setItem("isLoggedIn", "true");
         navigate("/home");
       } else if (result.data === "Password Incorrect") {
         setErrorMessage("Incorrect Password");
       } else if (result.data === "Admin") {
+        localStorage.setItem("isLoggedIn", "true");
         navigate("/admin");
       } else {
         setErrorMessage("Invalid User");
@@ -67,6 +72,10 @@ function Login() {
       setErrorMessage("An error occurred. Please try again later.");
     }
   };
+
+  if (!authChecked) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={`placify-login-container ${isLoaded ? "placify-login-fade-in" : ""}`}>
